@@ -1,0 +1,61 @@
+<div
+  class="window"
+  [class.active]="isActive()"
+  [style.width.px]="w()"
+  [style.height.px]="h()"
+  [style.transform]="transform()"
+>
+  <div class="window-titlebar" (pointerdown)="onTitlebarPointerDown($event)">
+    <div class="traffic-lights">
+      <button class="traffic-light traffic-close" aria-label="Close" (click)="closed.emit()">
+        <span class="traffic-symbol">✕</span>
+      </button>
+      <button
+        class="traffic-light traffic-minimize"
+        aria-label="Minimize"
+        (click)="minimized.emit()"
+      >
+        <span class="traffic-symbol">−</span>
+      </button>
+      <button
+        class="traffic-light traffic-maximize"
+        aria-label="Maximize"
+        (click)="maximized.emit()"
+      >
+        <span class="traffic-symbol">⤢</span>
+      </button>
+    </div>
+
+    <span class="window-title">{{ title() }}</span>
+
+    <div class="window-titlebar-right">
+      <button class="window-thoughts-btn" aria-label="Thoughts">ⓘ</button>
+    </div>
+  </div>
+
+  <div class="window-body">
+    <ng-content />
+  </div>
+
+  <!-- Resize handles -->
+  <div class="resize-handle resize-handle-e" (pointerdown)="onResizePointerDown($event, 'e')"></div>
+  <div class="resize-handle resize-handle-s" (pointerdown)="onResizePointerDown($event, 's')"></div>
+  <div class="resize-handle resize-handle-w" (pointerdown)="onResizePointerDown($event, 'w')"></div>
+  <div class="resize-handle resize-handle-n" (pointerdown)="onResizePointerDown($event, 'n')"></div>
+  <div
+    class="resize-handle resize-handle-se"
+    (pointerdown)="onResizePointerDown($event, 'se')"
+  ></div>
+  <div
+    class="resize-handle resize-handle-sw"
+    (pointerdown)="onResizePointerDown($event, 'sw')"
+  ></div>
+  <div
+    class="resize-handle resize-handle-ne"
+    (pointerdown)="onResizePointerDown($event, 'ne')"
+  ></div>
+  <div
+    class="resize-handle resize-handle-nw"
+    (pointerdown)="onResizePointerDown($event, 'nw')"
+  ></div>
+</div>

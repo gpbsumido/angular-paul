@@ -1,5 +1,28 @@
 <app-desktop />
 <app-menu-bar />
+
+@for (launched of launcher.launchedWindows(); track launched.windowId) {
+  @let win = windowManager.getWindow(launched.windowId);
+  @if (win) {
+    <app-window
+      [title]="win.title"
+      [x]="win.x"
+      [y]="win.y"
+      [width]="win.width"
+      [height]="win.height"
+      [isActive]="windowManager.focusedWindowId() === win.id"
+      [style.z-index]="win.zIndex"
+      [style.display]="win.minimized ? 'none' : 'block'"
+      (closed)="onWindowClosed(win.id, win.appId)"
+      (minimized)="onWindowMinimized(win.id, win.appId)"
+      (maximized)="onWindowMaximized(win.id)"
+      (pointerdown)="onWindowFocused(win.id, win.appId)"
+    >
+      <ng-container *ngComponentOutlet="launched.component" />
+    </app-window>
+  }
+}
+
 <app-dock />
 
 <router-outlet />

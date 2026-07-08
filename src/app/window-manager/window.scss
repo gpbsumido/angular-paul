@@ -1,0 +1,208 @@
+:host {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.window {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--window-radius);
+  overflow: hidden;
+  border: 0.5px solid var(--window-border);
+  box-shadow: var(--window-shadow);
+  background: var(--window-bg);
+  backdrop-filter: blur(var(--window-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--window-backdrop-blur));
+  transition:
+    box-shadow var(--transition-normal),
+    opacity var(--transition-normal);
+  opacity: 0.85;
+  height: 100%;
+
+  &.active {
+    box-shadow: var(--window-shadow-focused);
+    opacity: 1;
+  }
+}
+
+.window {
+  position: relative;
+}
+
+.window-titlebar {
+  display: flex;
+  align-items: center;
+  height: var(--window-titlebar-height);
+  padding: 0 10px;
+  background: var(--window-titlebar-bg);
+  border-bottom: 0.5px solid var(--window-border);
+  flex-shrink: 0;
+  position: relative;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.traffic-lights {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 1;
+}
+
+.traffic-light {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: filter var(--transition-fast);
+
+  .traffic-symbol {
+    font-size: 8px;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  &:hover .traffic-symbol {
+    opacity: 1;
+  }
+}
+
+.traffic-close {
+  background: var(--traffic-close);
+}
+
+.traffic-minimize {
+  background: var(--traffic-minimize);
+}
+
+.traffic-maximize {
+  background: var(--traffic-maximize);
+}
+
+.window:not(.active) .traffic-light {
+  background: var(--traffic-inactive);
+}
+
+.window-title {
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-system);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--window-titlebar-text);
+  pointer-events: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 80px;
+}
+
+.window:not(.active) .window-title {
+  color: var(--text-secondary);
+}
+
+.window-titlebar-right {
+  margin-left: auto;
+  z-index: 1;
+}
+
+.window-thoughts-btn {
+  font-size: 14px;
+  color: var(--text-secondary);
+  padding: 0 2px;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.window-body {
+  flex: 1;
+  overflow: auto;
+  background: var(--window-bg-solid);
+}
+
+// Resize handles
+$handle-size: 6px;
+
+.resize-handle {
+  position: absolute;
+  z-index: 2;
+}
+
+.resize-handle-e {
+  top: $handle-size;
+  right: 0;
+  bottom: $handle-size;
+  width: $handle-size;
+  cursor: ew-resize;
+}
+
+.resize-handle-w {
+  top: $handle-size;
+  left: 0;
+  bottom: $handle-size;
+  width: $handle-size;
+  cursor: ew-resize;
+}
+
+.resize-handle-s {
+  left: $handle-size;
+  right: $handle-size;
+  bottom: 0;
+  height: $handle-size;
+  cursor: ns-resize;
+}
+
+.resize-handle-n {
+  left: $handle-size;
+  right: $handle-size;
+  top: 0;
+  height: $handle-size;
+  cursor: ns-resize;
+}
+
+.resize-handle-se {
+  right: 0;
+  bottom: 0;
+  width: $handle-size * 2;
+  height: $handle-size * 2;
+  cursor: nwse-resize;
+}
+
+.resize-handle-sw {
+  left: 0;
+  bottom: 0;
+  width: $handle-size * 2;
+  height: $handle-size * 2;
+  cursor: nesw-resize;
+}
+
+.resize-handle-ne {
+  right: 0;
+  top: 0;
+  width: $handle-size * 2;
+  height: $handle-size * 2;
+  cursor: nesw-resize;
+}
+
+.resize-handle-nw {
+  left: 0;
+  top: 0;
+  width: $handle-size * 2;
+  height: $handle-size * 2;
+  cursor: nwse-resize;
+}
