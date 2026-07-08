@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-08 - version 0.1.6
+
+- Retroactive tests for `MenuBarComponent` (7 tests): renders, Apple logo, active app name, menu items, clock rendering, clock signal updates via Vitest fake timers, translucent/blur styling class
+- Retroactive tests for `DockService` (9 tests): initial state, launch/close/focus, `isRunning`, `focusedAppId` computed, no duplicates on re-launch, transient apps for non-pinned apps
+- Retroactive tests for `DockComponent` (8 tests): renders all 7 items, icon emoji + tooltip, click delegates to service, running app dot indicator, focused app active indicator, unfocused inactive indicator, non-pinned apps after separator, cleanup on close
+
 ## 2026-07-08 - version 0.1.5
 
 - Retroactive characterization tests for `DesktopComponent` (5 tests): renders, position fixed/inset 0, display block, default wallpaper signal value, wallpaper signal updates rendered background
