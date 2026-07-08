@@ -1,11 +1,5 @@
-import { Component, computed, signal } from '@angular/core';
-
-export interface DockItem {
-  id: string;
-  label: string;
-  icon: string;
-  color: string;
-}
+import { Component, computed, inject, signal } from '@angular/core';
+import { DockItem, DockService } from '../shared/dock.service';
 
 @Component({
   selector: 'app-dock',
@@ -13,19 +7,11 @@ export interface DockItem {
   styleUrl: './dock.scss',
 })
 export class Dock {
-  readonly apps = signal<DockItem[]>([
-    { id: 'finder', label: 'Finder', icon: '🗂', color: '#2196F3' },
-    { id: 'about', label: 'About', icon: '👤', color: '#9C27B0' },
-    { id: 'projects', label: 'Projects', icon: '📁', color: '#4CAF50' },
-    { id: 'terminal', label: 'Terminal', icon: '⬛', color: '#1a1a1a' },
-    { id: 'thoughts', label: 'Thoughts', icon: '💭', color: '#FF9800' },
-    { id: 'settings', label: 'Settings', icon: '⚙️', color: '#607D8B' },
-    { id: 'contact', label: 'Contact', icon: '✉️', color: '#03A9F4' },
-  ]);
+  private dockService = inject(DockService);
 
-  readonly recentApps = signal<DockItem[]>([
-    { id: 'notes', label: 'Notes', icon: '📝', color: '#FFC107' },
-  ]);
+  readonly apps = this.dockService.pinnedApps;
+  readonly transientApps = this.dockService.transientApps;
+  readonly indicators = this.dockService.appIndicators;
 
   readonly mouseX = signal(-1);
   readonly hovering = signal(false);
@@ -39,7 +25,7 @@ export class Dock {
       return items.map(() => 1);
     }
 
-    const iconFullSize = 56; // icon size + gap approximation
+    const iconFullSize = 56;
     return items.map((_, i) => {
       const iconCenter = i * iconFullSize + iconFullSize / 2;
       const distance = Math.abs(mx - iconCenter);
@@ -51,6 +37,10 @@ export class Dock {
       return Math.round(scale * 100) / 100;
     });
   });
+
+  getIndicator(appId: string): 'active' | 'inactive' | null {
+    return this.indicators().get(appId) ?? null;
+  }
 
   onDockMouseMove(event: MouseEvent): void {
     const target = event.currentTarget as HTMLElement;
@@ -64,7 +54,7 @@ export class Dock {
     this.hovering.set(false);
   }
 
-  launchApp(app: DockItem): void {
-    console.log(`Launching ${app.label}...`);
+  onIconClick(app: DockItem): void {
+    this.dockService.handleDockClick(app);
   }
 }

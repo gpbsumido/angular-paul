@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-08 - version 0.1.4
+
+- `DockService` (providedIn root) managing shared app state across components via signals
+- `runningApps` signal (Map of app id to state: `running` | `focused` | `minimized`) with Finder running by default
+- `appIndicators` computed signal deriving indicator state (`active`/`inactive`) from running apps
+- `focusedAppId` computed signal for the currently focused app
+- `transientApps` signal for non-pinned running apps shown after the dock separator
+- macOS-style dock click behavior: launch if not running, focus if backgrounded/minimized, minimize if already focused
+- `launchApp`, `focusApp`, `closeApp` methods with automatic focus management (unfocuses previous app)
+- Dock component refactored to consume `DockService`, indicators conditionally rendered with active/inactive styling
+- Active indicator glows with `box-shadow`, inactive shows dimmed dot
+
 ## 2026-07-08 - version 0.1.3
 
 - `DockComponent` (standalone) floating at the bottom center with translucent background, backdrop blur, and rounded corners

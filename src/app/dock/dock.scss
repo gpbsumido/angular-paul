@@ -114,9 +114,16 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--dock-indicator);
-  opacity: 0.8;
+  background: rgba(255, 255, 255, 0.4);
   margin-top: 2px;
+  transition:
+    background var(--transition-fast),
+    box-shadow var(--transition-fast);
+
+  &.dock-indicator-active {
+    background: var(--dock-indicator);
+    box-shadow: 0 0 4px var(--dock-indicator);
+  }
 }
 
 .dock-separator {

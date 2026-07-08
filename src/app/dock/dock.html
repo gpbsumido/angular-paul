@@ -6,27 +6,40 @@
         [style.transform]="'scale(' + iconScales()[i] + ')'"
         [style.transform-origin]="'bottom center'"
         [attr.aria-label]="app.label"
-        (click)="launchApp(app)"
+        (click)="onIconClick(app)"
       >
         <div class="dock-icon-tile" [style.background]="app.color">
           <span class="dock-icon-emoji">{{ app.icon }}</span>
         </div>
         <span class="dock-icon-label">{{ app.label }}</span>
-        <span class="dock-indicator"></span>
+        @if (getIndicator(app.id); as indicator) {
+          <span
+            class="dock-indicator"
+            [class.dock-indicator-active]="indicator === 'active'"
+          ></span>
+        }
       </button>
     }
   </div>
 
-  <div class="dock-separator"></div>
+  @if (transientApps().length > 0) {
+    <div class="dock-separator"></div>
 
-  <div class="dock-items dock-recent">
-    @for (app of recentApps(); track app.id) {
-      <button class="dock-icon" [attr.aria-label]="app.label" (click)="launchApp(app)">
-        <div class="dock-icon-tile" [style.background]="app.color">
-          <span class="dock-icon-emoji">{{ app.icon }}</span>
-        </div>
-        <span class="dock-icon-label">{{ app.label }}</span>
-      </button>
-    }
-  </div>
+    <div class="dock-items dock-recent">
+      @for (app of transientApps(); track app.id) {
+        <button class="dock-icon" [attr.aria-label]="app.label" (click)="onIconClick(app)">
+          <div class="dock-icon-tile" [style.background]="app.color">
+            <span class="dock-icon-emoji">{{ app.icon }}</span>
+          </div>
+          <span class="dock-icon-label">{{ app.label }}</span>
+          @if (getIndicator(app.id); as indicator) {
+            <span
+              class="dock-indicator"
+              [class.dock-indicator-active]="indicator === 'active'"
+            ></span>
+          }
+        </button>
+      }
+    </div>
+  }
 </div>
