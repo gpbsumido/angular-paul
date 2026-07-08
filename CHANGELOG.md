@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-08 - version 0.1.3
+
+- `DockComponent` (standalone) floating at the bottom center with translucent background, backdrop blur, and rounded corners
+- 7 app icons (Finder, About, Projects, Terminal, Thoughts, Settings, Contact) rendered via `@for` with rounded-rect tiles, glossy overlay, and emoji icons
+- Signal-driven magnification effect: `mouseX` signal tracks cursor position, `computed()` derives per-icon scale using cosine falloff for smooth neighbor scaling
+- Tooltip labels on hover, dot indicators for running apps
+- Vertical separator before a "recent apps" section (Notes)
+- Reflective surface hint via gradient pseudo-element, icon shadows, and glossy tile overlays
+- `launchApp()` method wired to icon clicks
+
 ## 2026-07-08 - version 0.1.2
 
 - `MenuBarComponent` (standalone) fixed to the top of the screen with translucent dark background and backdrop blur vibrancy
