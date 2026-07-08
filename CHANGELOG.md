@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-08 - version 0.1.2
+
+- `MenuBarComponent` (standalone) fixed to the top of the screen with translucent dark background and backdrop blur vibrancy
+- Apple logo SVG icon, active app name (bold), and menu items (File, Edit, View, Window, Help) on the left
+- Live clock on the right using a signal updated every second via `effect()` and `setInterval`, with proper cleanup via `DestroyRef`
+- macOS-style hover/active states on menu items
+- Tabular-nums font variant for non-jumping clock digits
+
 ## 2026-07-07 - version 0.1.1
 
 - `DesktopComponent` (standalone) filling the entire viewport as the base layer (`position: fixed; inset: 0`)
