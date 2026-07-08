@@ -1,6 +1,8 @@
 :host {
   display: block;
   position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .window {
@@ -25,6 +27,10 @@
   }
 }
 
+.window {
+  position: relative;
+}
+
 .window-titlebar {
   display: flex;
   align-items: center;
@@ -34,6 +40,11 @@
   border-bottom: 0.5px solid var(--window-border);
   flex-shrink: 0;
   position: relative;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 .traffic-lights {
@@ -122,4 +133,76 @@
   flex: 1;
   overflow: auto;
   background: var(--window-bg-solid);
+}
+
+// Resize handles
+$handle-size: 6px;
+
+.resize-handle {
+  position: absolute;
+  z-index: 2;
+}
+
+.resize-handle-e {
+  top: $handle-size;
+  right: 0;
+  bottom: $handle-size;
+  width: $handle-size;
+  cursor: ew-resize;
+}
+
+.resize-handle-w {
+  top: $handle-size;
+  left: 0;
+  bottom: $handle-size;
+  width: $handle-size;
+  cursor: ew-resize;
+}
+
+.resize-handle-s {
+  left: $handle-size;
+  right: $handle-size;
+  bottom: 0;
+  height: $handle-size;
+  cursor: ns-resize;
+}
+
+.resize-handle-n {
+  left: $handle-size;
+  right: $handle-size;
+  top: 0;
+  height: $handle-size;
+  cursor: ns-resize;
+}
+
+.resize-handle-se {
+  right: 0;
+  bottom: 0;
+  width: $handle-size * 2;
+  height: $handle-size * 2;
+  cursor: nwse-resize;
+}
+
+.resize-handle-sw {
+  left: 0;
+  bottom: 0;
+  width: $handle-size * 2;
+  height: $handle-size * 2;
+  cursor: nesw-resize;
+}
+
+.resize-handle-ne {
+  right: 0;
+  top: 0;
+  width: $handle-size * 2;
+  height: $handle-size * 2;
+  cursor: nesw-resize;
+}
+
+.resize-handle-nw {
+  left: 0;
+  top: 0;
+  width: $handle-size * 2;
+  height: $handle-size * 2;
+  cursor: nwse-resize;
 }

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-08 - version 0.2.1
+
+### Added (TDD)
+
+- Window drag behavior via pointer events on the title bar, with viewport bounds clamping
+- Drag excluded from traffic-light buttons and thoughts button (via `closest()` check)
+- Window resize from all 8 edges/corners (e, w, n, s, se, sw, ne, nw) with dedicated resize handles
+- Minimum window size enforcement (200x150) during resize
+- `linkedSignal` for mutable position (`posX`, `posY`) and size (`w`, `h`) derived from inputs
+- `transform` linkedSignal deriving CSS `translate()` string from position signals
+- Resize handle cursor styles (ew-resize, ns-resize, nwse-resize, nesw-resize)
+- Grab/grabbing cursor on title bar during drag
+- 9 TDD tests: drag updates position, drag ignores traffic lights, viewport bounds clamping, resize from right/bottom/corner edges, minimum size enforcement, linkedSignal transform derivation and updates
+
 ## 2026-07-08 - version 0.2.0
 
 - `WindowComponent` (standalone) built test-first with 10 tests written before implementation
