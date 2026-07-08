@@ -2,9 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## 2026-07-08 - version 0.2.1
+## 2026-07-08 - version 0.2.2
 
-### Added (TDD)
+- `WindowManagerService` (providedIn root) managing window lifecycle and z-index ordering
+- `_windows` private signal array of `WindowState` (id, appId, title, x, y, width, height, minimized, maximized, zIndex)
+- `windows` computed for read-only external access (no `.set`/`.update` exposed)
+- `focusedWindowId` computed signal tracking the currently focused window
+- `openWindow()` creates window state with auto-incremented id and z-index, auto-focuses
+- `closeWindow()` removes window and focuses topmost remaining
+- `focusWindow()` assigns highest z-index and sets focused id
+- `minimizeWindow()` sets minimized flag and focuses next visible window
+- `maximizeWindow()` toggles maximized flag
+- `getWindow()` and `updateWindow()` for state lookup and partial updates
+- 16 TDD tests covering open/close/focus/minimize/maximize, z-index ordering, unique ids, read-only signal, and edge cases
+
+## 2026-07-08 - version 0.2.1
 
 - Window drag behavior via pointer events on the title bar, with viewport bounds clamping
 - Drag excluded from traffic-light buttons and thoughts button (via `closest()` check)
