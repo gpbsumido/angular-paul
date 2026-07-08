@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-08 - version 0.1.5
+
+- Retroactive characterization tests for `DesktopComponent` (5 tests): renders, position fixed/inset 0, display block, default wallpaper signal value, wallpaper signal updates rendered background
+- Fixed broken `App` spec that referenced removed `<p>` element
+
 ## 2026-07-08 - version 0.1.4
 
 - `DockService` (providedIn root) managing shared app state across components via signals
