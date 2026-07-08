@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.1] - 2026-07-07
+
+- `DesktopComponent` (standalone) filling the entire viewport as the base layer (`position: fixed; inset: 0`)
+- Default wallpaper as a dark gradient with subtle blue-purple tones, held in a signal for runtime swapping
+- Integrated desktop into the app shell
+
 ## [0.1.0] - 2026-07-07
 
 ### Added
