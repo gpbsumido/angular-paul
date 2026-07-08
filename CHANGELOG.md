@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-08 - version 0.2.0
+
+- `WindowComponent` (standalone) built test-first with 10 tests written before implementation
+- Signal inputs: `title`, `icon`, `width`, `height`, `x`, `y`, `isActive`
+- Outputs via `output()`: `closed`, `minimized`, `maximized` events
+- macOS-style window chrome: traffic-light buttons (red close, yellow minimize, green maximize) with symbols on hover, centered title, thoughts button (ⓘ)
+- `<ng-content>` projection for window body content
+- `.active` class toggling: focused shadow, full opacity; inactive windows get dimmed with gray traffic lights
+- Rounded corners (10px), dark translucent titlebar, backdrop blur, subtle shadow
+
 ## 2026-07-08 - version 0.1.6
 
 - Retroactive tests for `MenuBarComponent` (7 tests): renders, Apple logo, active app name, menu items, clock rendering, clock signal updates via Vitest fake timers, translucent/blur styling class
