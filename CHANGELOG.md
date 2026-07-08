@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-08 - version 0.2.3
+
+- `AppLauncherService` (providedIn root) mapping app IDs to component types and metadata
+- `register()` adds app registrations (appId, title, icon, component type, optional default size)
+- `getRegistration()` retrieves registration metadata by app ID
+- `launch()` creates a window via `WindowManagerService`, tracks launched component type, returns window ID
+- Launching same app twice creates separate window instances with unique IDs
+- `launch()` returns null gracefully for unknown app IDs without creating windows
+- `launchedWindows` read-only signal tracking active windows with their component types
+- `closeLaunchedWindow()` removes from both `WindowManagerService` and launched tracking
+- 11 TDD tests: registry storage, metadata, launch/close lifecycle, duplicate instances, unknown app handling, component type tracking
+
 ## 2026-07-08 - version 0.2.2
 
 - `WindowManagerService` (providedIn root) managing window lifecycle and z-index ordering
