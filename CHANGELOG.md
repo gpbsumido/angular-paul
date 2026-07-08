@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-08 - version 0.2.4
+
+- `PlaceholderApp` component with signal inputs (`appId`, `icon`), renders "coming soon" message
+- All 7 pinned dock apps auto-registered in `AppLauncherService` with `PlaceholderApp` as default component
+- Dock `onIconClick` wired to `AppLauncherService.launch()` + `DockService` state management (launch/focus/minimize cycle)
+- End-to-end integration: dock click → app launcher → window manager → dock indicator updates
+- 7 integration tests: dock click calls launcher with correct app ID, creates window in WindowManagerService, window title matches dock label, close removes from window manager, close updates dock running indicator, PlaceholderApp renders correctly, all apps registered
+- Window rendering layer in root `App` component — the first "it works end-to-end" moment
+- `@for` loop over `launcher.launchedWindows()` rendering `<app-window>` per launched app
+- Each window bound to `WindowManagerService` state: position, size, title, z-index, isActive
+- `NgComponentOutlet` inside each `<app-window>` dynamically renders the app component (PlaceholderApp)
+- `(closed)` / `(minimized)` / `(maximized)` outputs wired back to both `WindowManagerService` and `DockService`
+- `(pointerdown)` on window triggers focus via `WindowManagerService.focusWindow()` + `DockService.focusApp()`
+- Minimized windows hidden via `display: none` (not destroyed — preserves component state)
+- z-index from `WindowManagerService` applied via `[style.z-index]` for proper window stacking
+
 ## 2026-07-08 - version 0.2.3
 
 - `AppLauncherService` (providedIn root) mapping app IDs to component types and metadata

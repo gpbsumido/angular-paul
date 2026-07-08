@@ -1,4 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { PlaceholderApp } from '../apps/placeholder-app';
+import { AppLauncherService } from '../shared/app-launcher.service';
 import { DockItem, DockService } from '../shared/dock.service';
 
 @Component({
@@ -8,6 +10,7 @@ import { DockItem, DockService } from '../shared/dock.service';
 })
 export class Dock {
   private dockService = inject(DockService);
+  private launcher = inject(AppLauncherService);
 
   readonly apps = this.dockService.pinnedApps;
   readonly transientApps = this.dockService.transientApps;
@@ -38,6 +41,20 @@ export class Dock {
     });
   });
 
+  constructor() {
+    // Register all pinned apps with the launcher
+    for (const app of this.dockService.pinnedApps()) {
+      if (!this.launcher.getRegistration(app.id)) {
+        this.launcher.register({
+          appId: app.id,
+          title: app.label,
+          icon: app.icon,
+          component: PlaceholderApp,
+        });
+      }
+    }
+  }
+
   getIndicator(appId: string): 'active' | 'inactive' | null {
     return this.indicators().get(appId) ?? null;
   }
@@ -55,6 +72,18 @@ export class Dock {
   }
 
   onIconClick(app: DockItem): void {
-    this.dockService.handleDockClick(app);
+    const state = this.dockService.getState(app.id);
+
+    if (!state) {
+      // Not running — launch it
+      this.launcher.launch(app.id);
+      this.dockService.launchApp(app);
+    } else if (state === 'focused') {
+      // Already focused — minimize
+      this.dockService.handleDockClick(app);
+    } else {
+      // Running but not focused — focus it
+      this.dockService.focusApp(app.id);
+    }
   }
 }
