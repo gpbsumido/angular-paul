@@ -2,6 +2,93 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.14
+
+- Wired all real app components to dock launcher — clicking dock icons now opens the actual apps instead of PlaceholderApp
+- App component mapping: Finder → `FinderApp`, About → `AboutApp`, Projects → `ProjectsApp`, Terminal → `TerminalApp`, Settings → `SystemPreferencesApp`, Contact → `ContactApp`; Thoughts remains `PlaceholderApp` pending dedicated app
+- `PlaceholderApp` retained as fallback for any unregistered app IDs
+- Updated dock-launcher integration test to assert component registration without coupling to a specific component type
+
+## 2026-07-13 - version 0.2.13
+
+- `ContactApp` component (standalone) styled like macOS Mail compose — toolbar header, labeled fields, accent-colored send button
+- Reactive form via `FormBuilder.nonNullable.group()` with `Validators.required` and `Validators.email`
+- Validation errors shown per-field when touched: name required, valid email required, message required
+- Submit button disabled when form invalid or submission pending
+- `submissionStatus` signal cycling `idle → pending → success` with simulated async submission (500ms)
+- Loading indicator, success message, and error state rendered via `@if` on status signal
+- Form auto-resets after successful submission
+- 10 TDD tests: field rendering, disabled submit, 3 validation errors (name/email/message), enabled submit, submission trigger, loading state, success message, form reset
+
+## 2026-07-13 - version 0.2.12
+
+- `FileSystemService` (providedIn root) — virtual file tree backed by `Map<string, FileEntry[]>` with `getChildren(path)` API
+- Root entries: `/Applications/`, `/Thoughts/`, `/Projects/`, `/Preferences/` (all folders)
+- `/Applications/` populated from all 7 dock apps; `/Thoughts/` populated dynamically from `THOUGHTS` data; `/Projects/` and `/Preferences/` with launcher shortcuts
+- Each `FileEntry` has name, type (file/folder), icon, path, and action metadata (e.g. `launch:terminal`, `thought:signals`)
+- `FinderApp` component (standalone) styled like macOS Finder — sidebar with Favorites, dual-column view, toolbar with back/forward navigation
+- Signal-based navigation history for back/forward; `computed` breadcrumb trail from current path
+- Sidebar click navigates to directory; folder click renders children in adjacent column; file click emits `openFile` output with action string
+- `@for` with `track` for entries and sidebar items; `@if` for conditional child column
+- 13 TDD tests: 6 service (root entries, folder type, app children, thought files, entry metadata, empty path), 7 component (sidebar, column rendering, navigation, folder expansion, breadcrumb, file event, toolbar buttons)
+
+## 2026-07-13 - version 0.2.11
+
+- `SettingsService` (providedIn root) with signal-based state for theme, clockFormat, wallpaper, dockSize, accentColor
+- localStorage persistence via `effect()` — saves on any signal change, restores on initialization; SSR-safe with `isPlatformBrowser` guard
+- Setter methods: `setTheme()`, `setClockFormat()`, `setWallpaper()`, `setDockSize()`, `setAccentColor()`
+- `SystemPreferencesApp` component (standalone) styled like macOS System Settings — sidebar navigation with 3 panes
+- Appearance pane: theme toggle (light/dark), accent color picker with 6 swatches + current indicator
+- Desktop & Dock pane: dock size range slider with live value display, wallpaper preview
+- General pane: clock format toggle (12h/24h)
+- `@switch` for pane routing, `@for` for sidebar items and color swatches
+- 14 TDD tests: 8 service (defaults, setters, localStorage persist/restore), 6 component (sidebar rendering, default pane, pane switching, theme toggle, dock slider, accent color)
+
+## 2026-07-13 - version 0.2.10
+
+- Fixed "Cannot GET /" error by adding empty-path root route (`path: '', pathMatch: 'full'`) to `app.routes.ts`
+- Changed `**` catch-all server route from `RenderMode.Prerender` to `RenderMode.Client` so the SSR engine serves the app shell for unmatched routes
+- `ThoughtsService` (providedIn root) with `getAll()` (sorted newest first), `getBySlug()`, `getByTag()` methods
+- Expanded `ThoughtEntry` interface with `tags`, `content`, and `relatedApp` fields; 3 full thought entries (signals, httpResource, TDD)
+- `ThoughtsListComponent` (standalone) rendering thought cards via `@for` with `track` — each card shows title, date, tag pills, and summary preview
+- Card click navigates to `/thoughts/:slug` via `Router`
+- `ThoughtDetailComponent` (standalone) rendering full thought content from route param, back button, tag pill badges, `@if` not-found state
+- Lazy-loaded routes in `app.routes.ts`: `/thoughts` (list), `/thoughts/:slug` (detail) via `loadComponent`
+- Server route config: parameterized `/thoughts/:slug` set to `RenderMode.Client` to avoid prerender param errors
+- 11 TDD tests: 5 service (sort order, slug lookup, unknown slug, tag filter, unknown tag), 3 list (card count, card content, navigation), 3 detail (content rendering, back navigation, tag badges)
+
+## 2026-07-12 - version 0.2.9
+
+- `CommandParserService` (providedIn root) — pure-logic command parser with `parse()` returning `ParseResult` (output + optional clear flag)
+- Commands: `help` (lists all commands), `about` (developer info), `clear` (clear signal), `echo <text>`, `thoughts [slug]` (list or view entries), `ls` (directory listing), unknown command fallback
+- `ThoughtEntry` interface and `THOUGHTS` data in `thoughts-content/thoughts-data.ts` — 3 entries: signals, httpResource, TDD with slug/title/date/summary
+- `TerminalApp` component (standalone) styled like macOS Terminal.app — dark background (#1a1a1a), SF Mono/Menlo monospace font, green `$` prompt, signal-driven history
+- Command input with Enter submission, history rendered via `@for` (newest at bottom), `submitCommand()` public API
+- `clear` command resets history signal to empty array
+- 13 TDD tests: 9 for command parser (help/about/clear/echo/thoughts list/thoughts lookup/thoughts not found/ls/unknown), 4 for terminal (input rendering, Enter submission, history order, component structure)
+
+## 2026-07-12 - version 0.2.8
+
+- `ProjectsApp` component (standalone) showcasing Angular 21's `httpResource()` reactive async primitive
+- `ProjectsService` with `httpResource` fetching GitHub repos via reactive URL driven by `search` signal
+- Loading, error, and empty states rendered via `@if` status checks on resource signals
+- Project cards rendered via `@for` with `track`, each showing name, description, star count, and language
+- Client-side search/filter input with local signal — filters fetched repos by name/description without re-fetching
+- `thoughtRequested` output for cross-app navigation
+- `provideHttpClient(withFetch())` added to `app.config.ts` for runtime HTTP support
+- 9 TDD tests: search input rendering, loading state, card rendering with mock data, card content (name/description/stars/language), error state, empty filter state, thoughts button event, service httpResource construction, service reactive search re-fetch
+
+## 2026-07-12 - version 0.2.7
+
+- `AboutApp` component (standalone) styled like macOS "About This Mac" — centered layout, large avatar icon, name/title, tabbed content area
+- Profile: Paul Sumido, Software Engineer, with GitHub and LinkedIn links
+- Three tabs (Overview, Skills, Experience) switched via `@switch` on `activeTab` signal
+- Overview: intro text + "thoughts" link emitting `thoughtRequested` output
+- Skills: TypeScript/JavaScript, Angular/React, Node.js/Python, Cloud (AWS/GCP), System Design
+- Experience: placeholder entry for web application work
+- `view-transition-name` on tab content area for View Transitions API support
+- 9 TDD tests: name/title rendering, avatar, tab labels, default tab, tab switching (Skills/Experience), @switch exclusivity, thoughtRequested event, social link hrefs
+
 ## 2026-07-12 - version 0.2.6
 
 - `ContextMenuComponent` (standalone) with macOS-style translucent vibrancy panel, backdrop blur, rounded corners, subtle separators

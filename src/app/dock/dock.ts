@@ -1,5 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, Type } from '@angular/core';
+import { AboutApp } from '../apps/about-app';
+import { ContactApp } from '../apps/contact-app';
+import { FinderApp } from '../apps/finder/finder-app';
 import { PlaceholderApp } from '../apps/placeholder-app';
+import { ProjectsApp } from '../apps/projects-app';
+import { SystemPreferencesApp } from '../apps/settings/system-preferences';
+import { TerminalApp } from '../apps/terminal-app';
 import { AppLauncherService } from '../shared/app-launcher.service';
 import { DockItem, DockService } from '../shared/dock.service';
 
@@ -41,15 +47,24 @@ export class Dock {
     });
   });
 
+  private readonly appComponents: Record<string, Type<unknown>> = {
+    finder: FinderApp,
+    about: AboutApp,
+    projects: ProjectsApp,
+    terminal: TerminalApp,
+    thoughts: PlaceholderApp,
+    settings: SystemPreferencesApp,
+    contact: ContactApp,
+  };
+
   constructor() {
-    // Register all pinned apps with the launcher
     for (const app of this.dockService.pinnedApps()) {
       if (!this.launcher.getRegistration(app.id)) {
         this.launcher.register({
           appId: app.id,
           title: app.label,
           icon: app.icon,
-          component: PlaceholderApp,
+          component: this.appComponents[app.id] ?? PlaceholderApp,
         });
       }
     }

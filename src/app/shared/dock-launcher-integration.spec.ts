@@ -45,7 +45,7 @@ describe('Dock-Launcher Integration', () => {
       for (const app of pinnedApps) {
         const reg = launcher.getRegistration(app.id);
         expect(reg).toBeTruthy();
-        expect(reg!.component).toBe(PlaceholderApp);
+        expect(reg!.component).toBeTruthy();
       }
     });
   });
