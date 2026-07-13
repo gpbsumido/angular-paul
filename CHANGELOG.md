@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.11
+
+- `SettingsService` (providedIn root) with signal-based state for theme, clockFormat, wallpaper, dockSize, accentColor
+- localStorage persistence via `effect()` — saves on any signal change, restores on initialization; SSR-safe with `isPlatformBrowser` guard
+- Setter methods: `setTheme()`, `setClockFormat()`, `setWallpaper()`, `setDockSize()`, `setAccentColor()`
+- `SystemPreferencesApp` component (standalone) styled like macOS System Settings — sidebar navigation with 3 panes
+- Appearance pane: theme toggle (light/dark), accent color picker with 6 swatches + current indicator
+- Desktop & Dock pane: dock size range slider with live value display, wallpaper preview
+- General pane: clock format toggle (12h/24h)
+- `@switch` for pane routing, `@for` for sidebar items and color swatches
+- 14 TDD tests: 8 service (defaults, setters, localStorage persist/restore), 6 component (sidebar rendering, default pane, pane switching, theme toggle, dock slider, accent color)
+
 ## 2026-07-13 - version 0.2.10
 
 - Fixed "Cannot GET /" error by adding empty-path root route (`path: '', pathMatch: 'full'`) to `app.routes.ts`
