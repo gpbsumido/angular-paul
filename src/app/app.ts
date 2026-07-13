@@ -1,5 +1,5 @@
 import { NgComponentOutlet } from '@angular/common';
-import { Component, inject, viewChild } from '@angular/core';
+import { Component, HostListener, inject, viewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ContextMenuComponent, DEFAULT_DESKTOP_MENU_ITEMS } from './context-menu/context-menu';
 import { Desktop } from './desktop/desktop';
@@ -8,6 +8,7 @@ import { Dock } from './dock/dock';
 import { MenuBar } from './menu-bar/menu-bar';
 import { AppLauncherService } from './shared/app-launcher.service';
 import { DockService } from './shared/dock.service';
+import { Spotlight } from './spotlight/spotlight';
 import { THOUGHTS } from './thoughts-content/thoughts-data';
 import { Window } from './window-manager/window';
 import { WindowManagerService } from './window-manager/window-manager.service';
@@ -23,6 +24,7 @@ import { WindowManagerService } from './window-manager/window-manager.service';
     Dock,
     Window,
     NgComponentOutlet,
+    Spotlight,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
@@ -32,7 +34,39 @@ export class App {
   protected readonly windowManager = inject(WindowManagerService);
   private readonly dockService = inject(DockService);
   protected readonly contextMenu = viewChild(ContextMenuComponent);
+  protected readonly spotlight = viewChild(Spotlight);
   protected readonly desktopMenuItems = DEFAULT_DESKTOP_MENU_ITEMS;
+
+  @HostListener('document:keydown', ['$event'])
+  onKeydown(event: KeyboardEvent): void {
+    if (event.metaKey && event.code === 'Space') {
+      event.preventDefault();
+      this.toggleSpotlight();
+    }
+  }
+
+  toggleSpotlight(): void {
+    const sl = this.spotlight();
+    if (sl) {
+      if (sl.isOpen()) {
+        sl.close();
+      } else {
+        sl.open();
+      }
+    }
+  }
+
+  onSpotlightResult(action: string): void {
+    if (action.startsWith('launch:')) {
+      const appId = action.replace('launch:', '');
+      this.launcher.launch(appId);
+      const app = this.dockService.pinnedApps().find((a) => a.id === appId);
+      if (app) this.dockService.launchApp(app);
+    } else if (action.startsWith('openThought:')) {
+      const slug = action.replace('openThought:', '');
+      this.launcher.openThought(slug);
+    }
+  }
 
   onDesktopContextMenu(event: MouseEvent) {
     const target = event.target as HTMLElement;

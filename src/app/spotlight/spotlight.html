@@ -1,0 +1,35 @@
+@if (isOpen()) {
+  <div class="spotlight-overlay" (mousedown)="onOverlayClick($event)">
+    <div class="spotlight-container">
+      <div class="spotlight-search">
+        <span class="spotlight-icon">🔍</span>
+        <input
+          class="spotlight-input"
+          type="text"
+          placeholder="Spotlight Search"
+          [value]="query()"
+          (input)="onInput($event)"
+          (keydown)="onKeydown($event)"
+        />
+      </div>
+
+      @if (query() && results().length > 0) {
+        <div class="spotlight-results">
+          @for (group of results(); track group.category) {
+            <div class="spotlight-category">
+              <div class="spotlight-category-header">{{ group.category }}</div>
+              @for (item of group.items; track item.label) {
+                <button class="spotlight-result-item" (click)="onResultClick(item.action)">
+                  <span class="spotlight-result-icon">{{ item.icon }}</span>
+                  <span class="spotlight-result-label">{{ item.label }}</span>
+                </button>
+              }
+            </div>
+          }
+        </div>
+      } @else if (query() && results().length === 0) {
+        <div class="spotlight-empty">No results found for "{{ query() }}"</div>
+      }
+    </div>
+  </div>
+}

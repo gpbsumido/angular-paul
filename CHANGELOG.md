@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.18
+
+- `SearchService` — filters across Applications (dock apps), Thoughts (title + tags), and Files (desktop items); case-insensitive partial matching; results grouped by category
+- `Spotlight` component styled like macOS Spotlight — centered floating translucent panel with `backdrop-filter: blur(40px)`, categorized result groups, empty state
+- Search input renders results panel only when matches exist; no-results state shows "No results found" message
+- Clicking a result emits `resultSelected` with the action string; Escape closes the overlay
+- App integration: `Cmd+Space` keyboard shortcut toggles Spotlight; menu bar magnifying glass 🔍 button triggers it
+- Spotlight result actions wire to `AppLauncherService.launch()` for apps and `openThought()` for thought entries
+- 13 new tests (205 total), all passing
+
 ## 2026-07-13 - version 0.2.17
 
 - TDD thought linking behavior across window, launcher, terminal, and Finder

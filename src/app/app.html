@@ -1,7 +1,7 @@
 <app-desktop (contextmenu)="onDesktopContextMenu($event)" />
 <app-desktop-icons />
 <app-context-menu [items]="desktopMenuItems" (action)="onContextMenuAction($event)" />
-<app-menu-bar />
+<app-menu-bar (spotlightRequested)="toggleSpotlight()" />
 
 @for (launched of launcher.launchedWindows(); track launched.windowId) {
   @let win = windowManager.getWindow(launched.windowId);
@@ -26,6 +26,8 @@
     </app-window>
   }
 }
+
+<app-spotlight (resultSelected)="onSpotlightResult($event)" />
 
 <app-dock />
 
