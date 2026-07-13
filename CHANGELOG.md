@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.23
+
+- 3-layer accessibility testing matching paul-explore setup:
+  - **Layer 1 — ESLint**: `angular-eslint` with `templateAccessibility` config (Angular equivalent of `jsx-a11y`); fixed 18 a11y violations (keyboard handlers, focusable elements, label associations, button content)
+  - **Layer 2 — Unit axe scans**: `vitest-axe` configured to WCAG 2.1 AA; 7 component scans (Dock, MenuBar, Spotlight, Window, DesktopIcon, ContextMenu)
+  - **Layer 3 — E2E axe scans**: `@axe-core/playwright` with smoke tests (desktop loads, dock opens windows) + axe page scans + landmark/ARIA checks
+- GitHub Actions CI (`.github/workflows/ci.yml`): `quality` job (lint → typecheck → unit tests) gates `e2e-accessibility` job (Playwright + axe); runs on every PR to master/develop
+- `npm run lint` script added; `npm run test:e2e` / `test:e2e:ui` / `test:e2e:report` scripts
+- README app updated with Testing section and full keyboard shortcuts
+- New thought entry: "Three-Layer Accessibility Testing" — lint vs unit-axe vs E2E-axe, why all three are needed, CI gating philosophy
+- 229 tests, all passing; zero ESLint errors
+
 ## 2026-07-13 - version 0.2.22
 
 - `KeyboardShortcutService` — macOS-convention keyboard shortcuts: `Cmd+W` close window, `Cmd+Q` quit app (closes all windows for active app), `Cmd+H` minimize, `Cmd+Space` toggle Spotlight, `Cmd+Tab` cycle focus to next window

@@ -29,8 +29,11 @@ export const DEFAULT_DESKTOP_MENU_ITEMS: ContextMenuItem[] = [
           } @else {
             <div
               class="context-menu-item"
+              role="menuitem"
+              tabindex="0"
               [class.disabled]="item.disabled"
               (click)="onItemClick(item)"
+              (keydown.enter)="onItemClick(item)"
             >
               {{ item.label }}
             </div>

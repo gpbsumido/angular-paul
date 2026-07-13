@@ -288,4 +288,24 @@ One gotcha: event replay. If a user clicks a button inside a deferred block befo
 The bundle size impact is real. With full hydration, the browser must download and parse every component upfront. With incremental hydration, lazy-loaded components stay in separate chunks that only download when needed. For this portfolio, that means the Terminal, Settings, and Finder chunks never load unless the user opens those apps.`,
     relatedApp: 'terminal',
   },
+  {
+    slug: 'three-layer-a11y-testing',
+    title: 'Three-Layer Accessibility Testing',
+    date: '2026-07-13',
+    summary:
+      'Lint catches the easy stuff. Unit axe scans catch rendered violations. E2E axe scans catch integration-level failures. You need all three.',
+    tags: ['accessibility', 'testing', 'wcag'],
+    content: `Accessibility testing that only runs one tool at one stage catches maybe 30% of issues. The approach that actually works uses three layers, each catching different classes of problems, gated on every pull request.
+
+Layer one is lint-time static analysis. For Angular, angular-eslint's template-accessibility config catches the obvious mistakes — click handlers without keyboard events, images without alt text, labels not associated with controls, empty buttons. These rules run instantly, surface in the editor, and block CI. They catch the low-hanging fruit that developers introduce by habit: a div with (click) that should be a button, a form label without a for attribute.
+
+Layer two is unit-level axe scanning with vitest-axe. You render a component in the test environment and run axe-core against the resulting DOM. This catches violations that only appear after Angular's template engine runs — conditional rendering, dynamic attributes, computed ARIA states. The key insight is configuring axe to WCAG 2.1 AA standards specifically (wcag2a, wcag2aa, wcag21a, wcag21aa tags), not running every rule. Running every rule produces false positives that erode trust in the tool.
+
+Layer three is E2E axe scanning with @axe-core/playwright. This runs axe against the real application in a real browser with real CSS applied. It catches violations that only manifest at integration level — z-index stacking that hides focusable elements, CSS that makes text unreadable, viewport-dependent layout issues, dynamic content loaded after user interaction. The E2E layer also tests semantic structure: landmarks, skip links, focus management.
+
+The three layers are complementary, not redundant. Lint catches patterns, unit axe catches rendered output, E2E axe catches the assembled application. A label-has-associated-control lint rule catches a missing for attribute. A unit axe scan catches a dynamic [attr.aria-label] that evaluates to empty string. An E2E axe scan catches a dialog that traps focus because the close button is behind an overlay.
+
+The CI gate is non-negotiable. If any layer fails, the PR cannot merge. This prevents accessibility regressions from sneaking in through well-intentioned feature work. The developer fixes the violation before review, not after. Retrofitting accessibility is ten times harder than building it in.`,
+    relatedApp: 'about',
+  },
 ];

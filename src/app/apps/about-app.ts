@@ -45,7 +45,13 @@ export type AboutTab = 'overview' | 'skills' | 'experience';
             <div class="about-overview">
               <p>Full-stack software engineer building for the web.</p>
               <p>
-                <span class="about-thoughts-link" (click)="thoughtRequested.emit()">
+                <span
+                  class="about-thoughts-link"
+                  role="button"
+                  tabindex="0"
+                  (click)="thoughtRequested.emit()"
+                  (keydown.enter)="thoughtRequested.emit()"
+                >
                   Read my thoughts →
                 </span>
               </p>

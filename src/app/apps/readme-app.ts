@@ -28,9 +28,24 @@ import { Component } from '@angular/core';
         <li>SSR via &#64;angular/ssr</li>
       </ul>
 
+      <h2>Testing</h2>
+      <ul>
+        <li>229+ unit tests with Vitest (TDD red-green cycle)</li>
+        <li>
+          WCAG 2.1 AA accessibility scans via vitest-axe (unit) and &#64;axe-core/playwright (E2E)
+        </li>
+        <li>ESLint with angular-eslint template accessibility rules</li>
+        <li>Playwright E2E smoke tests and landmark checks</li>
+        <li>CI via GitHub Actions — lint, typecheck, unit tests, E2E + axe on every PR</li>
+      </ul>
+
       <h2>Shortcuts</h2>
       <ul>
         <li><kbd>⌘</kbd> + <kbd>Space</kbd> — Spotlight search</li>
+        <li><kbd>⌘</kbd> + <kbd>W</kbd> — Close window</li>
+        <li><kbd>⌘</kbd> + <kbd>Q</kbd> — Quit app</li>
+        <li><kbd>⌘</kbd> + <kbd>H</kbd> — Minimize window</li>
+        <li><kbd>⌘</kbd> + <kbd>Tab</kbd> — Cycle focus</li>
         <li>Double-click desktop icons to open apps</li>
         <li>Right-click the desktop for context menu</li>
       </ul>

@@ -61,6 +61,7 @@ interface SidebarItem {
                     <button
                       class="accent-color-swatch"
                       [style.background]="color"
+                      [attr.aria-label]="'Set accent color to ' + color"
                       (click)="settings.setAccentColor(color)"
                     ></button>
                   }

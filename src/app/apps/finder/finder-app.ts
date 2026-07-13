@@ -32,8 +32,11 @@ import { FileSystemService, FileEntry } from './file-system.service';
             @for (entry of currentEntries(); track entry.path) {
               <div
                 class="finder-entry"
+                role="button"
+                tabindex="0"
                 [class.selected]="selectedPath() === entry.path"
                 (click)="onEntryClick(entry)"
+                (keydown.enter)="onEntryClick(entry)"
               >
                 <span class="finder-entry-icon">{{ entry.icon }}</span>
                 <span class="finder-entry-name">{{ entry.name }}</span>
@@ -47,7 +50,13 @@ import { FileSystemService, FileEntry } from './file-system.service';
           @if (childEntries().length > 0) {
             <div class="finder-column">
               @for (entry of childEntries(); track entry.path) {
-                <div class="finder-entry" (click)="onEntryClick(entry)">
+                <div
+                  class="finder-entry"
+                  role="button"
+                  tabindex="0"
+                  (click)="onEntryClick(entry)"
+                  (keydown.enter)="onEntryClick(entry)"
+                >
                   <span class="finder-entry-icon">{{ entry.icon }}</span>
                   <span class="finder-entry-name">{{ entry.name }}</span>
                   @if (entry.type === 'folder') {
