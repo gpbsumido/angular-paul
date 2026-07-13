@@ -27,7 +27,9 @@
   }
 }
 
-<app-spotlight (resultSelected)="onSpotlightResult($event)" />
+@defer (on idle) {
+  <app-spotlight (resultSelected)="onSpotlightResult($event)" />
+}
 
 <app-dock />
 

@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.21
+
+- `WindowAnimationService` — TDD animation config logic for window open (scale-up from 0.8), close (fade/scale-out to 0.9), minimize (shrink to dock icon position)
+- View Transitions API feature detection via `supportsViewTransitions()`; graceful no-op fallback (`type: 'none'`, `duration: 0`) when unsupported
+- Incremental hydration: `withIncrementalHydration()` added to `provideClientHydration()` — shell (menu bar, dock, desktop icons) hydrates immediately, Spotlight deferred with `@defer (on idle)`
+- Event replay via `withEventReplay()` preserves clicks on server-rendered elements before hydration
+- 2 new thought entries: "View Transitions API in Angular" (native transitions, feature detection, migration from @angular/animations) and "Incremental Hydration vs Full Hydration" (SSR strategy, @defer triggers, bundle size impact, event replay)
+- 7 new tests (212 total), all passing
+
+## 2026-07-13 - version 0.2.20
+
+- `WindowAnimationService` — animation config logic for window open (scale-up), close (fade/scale-out), and minimize (shrink-to-dock with target position)
+- View Transitions API feature detection via `supportsViewTransitions()`; graceful no-op fallback when unsupported
+- New thought entry: "View Transitions API in Angular" — native browser transitions vs @angular/animations, feature detection patterns, performance benefits, migration path
+- 7 new tests (212 total), all passing
+
 ## 2026-07-13 - version 0.2.19
 
 - Spotlight overlay fix: `position: fixed` with `z-index: 2000` and dark backdrop so it renders above all content
