@@ -45,7 +45,6 @@ describe('Dock-Launcher Integration', () => {
       for (const app of pinnedApps) {
         const reg = launcher.getRegistration(app.id);
         expect(reg).toBeTruthy();
-        expect(reg!.component).toBeTruthy();
       }
     });
   });
@@ -60,19 +59,22 @@ describe('Dock-Launcher Integration', () => {
       expect(spy).toHaveBeenCalledWith('about');
     });
 
-    it('should create a window in WindowManagerService when launching from dock', () => {
+    it('should create a window in WindowManagerService when launching from dock', async () => {
       const initialCount = windowManager.windows().length;
       const icons = nativeEl.querySelectorAll('.dock-items:first-child .dock-icon');
       (icons[1] as HTMLElement).click();
+      // Flush the async lazy-load chain
+      await vi.dynamicImportSettled();
       fixture.detectChanges();
 
       expect(windowManager.windows().length).toBe(initialCount + 1);
     });
 
-    it('should set the opened window title to match the dock item label', () => {
+    it('should set the opened window title to match the dock item label', async () => {
       const icons = nativeEl.querySelectorAll('.dock-items:first-child .dock-icon');
       // Click "About" (index 1)
       (icons[1] as HTMLElement).click();
+      await vi.dynamicImportSettled();
       fixture.detectChanges();
 
       const windows = windowManager.windows();
@@ -83,9 +85,9 @@ describe('Dock-Launcher Integration', () => {
   });
 
   describe('close window integration', () => {
-    it('should remove the window from WindowManagerService when closed', () => {
+    it('should remove the window from WindowManagerService when closed', async () => {
       // Launch an app
-      const windowId = launcher.launch('about')!;
+      const windowId = (await launcher.launch('about'))!;
       expect(windowManager.getWindow(windowId)).toBeTruthy();
 
       // Close it
@@ -93,10 +95,10 @@ describe('Dock-Launcher Integration', () => {
       expect(windowManager.getWindow(windowId)).toBeUndefined();
     });
 
-    it('should update DockService running indicator when window is closed', () => {
+    it('should update DockService running indicator when window is closed', async () => {
       // Launch about via the full flow (launcher + dock service)
       const aboutApp = dockService.pinnedApps().find((a) => a.id === 'about')!;
-      const windowId = launcher.launch('about')!;
+      const windowId = (await launcher.launch('about'))!;
       dockService.launchApp(aboutApp);
       fixture.detectChanges();
 

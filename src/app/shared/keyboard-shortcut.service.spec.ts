@@ -42,8 +42,8 @@ describe('KeyboardShortcutService', () => {
   }
 
   describe('Cmd+W closes active window', () => {
-    it('should call WindowManagerService.closeWindow() for the active window', () => {
-      const windowId = launcher.launch('about')!;
+    it('should call WindowManagerService.closeWindow() for the active window', async () => {
+      const windowId = (await launcher.launch('about'))!;
       const spy = vi.spyOn(windowManager, 'closeWindow');
 
       const event = fireKeydown('w', 'KeyW');
@@ -54,9 +54,9 @@ describe('KeyboardShortcutService', () => {
   });
 
   describe('Cmd+Q quits active app', () => {
-    it('should close all windows for the active app', () => {
-      launcher.launch('about');
-      launcher.launch('about');
+    it('should close all windows for the active app', async () => {
+      await launcher.launch('about');
+      await launcher.launch('about');
       expect(launcher.launchedWindows().length).toBe(2);
 
       const event = fireKeydown('q', 'KeyQ');
@@ -67,8 +67,8 @@ describe('KeyboardShortcutService', () => {
   });
 
   describe('Cmd+H minimizes active window', () => {
-    it('should call WindowManagerService.minimizeWindow() for the active window', () => {
-      const windowId = launcher.launch('about')!;
+    it('should call WindowManagerService.minimizeWindow() for the active window', async () => {
+      const windowId = (await launcher.launch('about'))!;
       const spy = vi.spyOn(windowManager, 'minimizeWindow');
 
       const event = fireKeydown('h', 'KeyH');
@@ -93,7 +93,7 @@ describe('KeyboardShortcutService', () => {
   });
 
   describe('Cmd+Tab cycles focus', () => {
-    it('should cycle focus to the next running app', () => {
+    it('should cycle focus to the next running app', async () => {
       launcher.register({
         appId: 'terminal',
         title: 'Terminal',
@@ -101,8 +101,8 @@ describe('KeyboardShortcutService', () => {
         component: MockComponent,
       });
 
-      const win1 = launcher.launch('about')!;
-      const win2 = launcher.launch('terminal')!;
+      const win1 = (await launcher.launch('about'))!;
+      const win2 = (await launcher.launch('terminal'))!;
 
       // about launched first, terminal second — terminal is focused
       expect(windowManager.focusedWindowId()).toBe(win2);
@@ -133,8 +133,8 @@ describe('KeyboardShortcutService', () => {
   });
 
   describe('input focus guard', () => {
-    it('should not fire shortcuts when a text input is focused', () => {
-      const windowId = launcher.launch('about')!;
+    it('should not fire shortcuts when a text input is focused', async () => {
+      await launcher.launch('about');
       const spy = vi.spyOn(windowManager, 'closeWindow');
 
       const event = new KeyboardEvent('keydown', {
@@ -155,8 +155,8 @@ describe('KeyboardShortcutService', () => {
       document.body.removeChild(input);
     });
 
-    it('should not fire shortcuts when a textarea is focused', () => {
-      const windowId = launcher.launch('about')!;
+    it('should not fire shortcuts when a textarea is focused', async () => {
+      await launcher.launch('about');
       const spy = vi.spyOn(windowManager, 'closeWindow');
 
       const event = new KeyboardEvent('keydown', {

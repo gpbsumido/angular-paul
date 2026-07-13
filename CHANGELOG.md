@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.25
+
+- **Lazy-load all app components**: dock registrations now use dynamic `import()` via `AppLauncherService.registerLazy()` — about, contact, finder, projects, readme, settings, terminal, thoughts all split into separate chunks loaded on first launch
+- **Initial bundle reduced**: main chunk 109 kB → 41 kB; initial total 450 kB → 381 kB (108 kB transferred)
+- **`@defer` for non-critical UI**: context menu and Spotlight wrapped in `@defer (on idle)` with loading spinners; Spotlight also has `@loading` block with CSS spinner
+- **Zoneless verified**: no Zone.js in bundle; `provideZonelessChangeDetection()` confirmed working with 0 ms TBT contribution
+- **Bundle budgets tightened**: initial warning 500 kB → 400 kB, error 1 MB → 500 kB
+- **SEO fixes**: added meta description, page title, `robots.txt`; SSR `allowedHosts` updated for proper server-side rendering
+- **Lighthouse scores**: Performance 86, Accessibility 100, Best Practices 100, SEO 100
+- `AppLauncherService.launch()` and `openThought()` now async to support lazy component resolution with caching
+- 229 tests, all passing
+
 ## 2026-07-13 - version 0.2.24
 
 - Fix WCAG 2.1 AA color-contrast violations in About app: links (GitHub, LinkedIn) and "Read my thoughts →" span now use `#4da3ff` instead of `#007aff` for sufficient contrast ratio (≥4.5:1) against the dark window background
