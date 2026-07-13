@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.14
+
+- Wired all real app components to dock launcher — clicking dock icons now opens the actual apps instead of PlaceholderApp
+- App component mapping: Finder → `FinderApp`, About → `AboutApp`, Projects → `ProjectsApp`, Terminal → `TerminalApp`, Settings → `SystemPreferencesApp`, Contact → `ContactApp`; Thoughts remains `PlaceholderApp` pending dedicated app
+- `PlaceholderApp` retained as fallback for any unregistered app IDs
+- Updated dock-launcher integration test to assert component registration without coupling to a specific component type
+
 ## 2026-07-13 - version 0.2.13
 
 - `ContactApp` component (standalone) styled like macOS Mail compose — toolbar header, labeled fields, accent-colored send button
