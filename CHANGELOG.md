@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.24
+
+- Fix WCAG 2.1 AA color-contrast violations in About app: links (GitHub, LinkedIn) and "Read my thoughts →" span now use `#4da3ff` instead of `#007aff` for sufficient contrast ratio (≥4.5:1) against the dark window background
+- E2E axe scan now passes cleanly
+
 ## 2026-07-13 - version 0.2.23
 
 - 3-layer accessibility testing matching paul-explore setup:

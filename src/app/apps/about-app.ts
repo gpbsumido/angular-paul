@@ -118,7 +118,7 @@ export type AboutTab = 'overview' | 'skills' | 'experience';
 
     .about-social a {
       font-size: 12px;
-      color: var(--accent-color, #007aff);
+      color: var(--link-color, #4da3ff);
       text-decoration: none;
     }
 
@@ -164,7 +164,7 @@ export type AboutTab = 'overview' | 'skills' | 'experience';
     }
 
     .about-thoughts-link {
-      color: var(--accent-color, #007aff);
+      color: var(--link-color, #4da3ff);
       cursor: pointer;
     }
 
