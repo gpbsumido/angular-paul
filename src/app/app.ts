@@ -1,5 +1,5 @@
 import { NgComponentOutlet } from '@angular/common';
-import { Component, HostListener, inject, viewChild } from '@angular/core';
+import { Component, effect, HostListener, inject, viewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ContextMenuComponent, DEFAULT_DESKTOP_MENU_ITEMS } from './context-menu/context-menu';
 import { Desktop } from './desktop/desktop';
@@ -8,6 +8,7 @@ import { Dock } from './dock/dock';
 import { MenuBar } from './menu-bar/menu-bar';
 import { AppLauncherService } from './shared/app-launcher.service';
 import { DockService } from './shared/dock.service';
+import { KeyboardShortcutService } from './shared/keyboard-shortcut.service';
 import { Spotlight } from './spotlight/spotlight';
 import { THOUGHTS } from './thoughts-content/thoughts-data';
 import { Window } from './window-manager/window';
@@ -33,27 +34,34 @@ export class App {
   protected readonly launcher = inject(AppLauncherService);
   protected readonly windowManager = inject(WindowManagerService);
   private readonly dockService = inject(DockService);
+  private readonly shortcuts = inject(KeyboardShortcutService);
   protected readonly contextMenu = viewChild(ContextMenuComponent);
   protected readonly spotlight = viewChild(Spotlight);
   protected readonly desktopMenuItems = DEFAULT_DESKTOP_MENU_ITEMS;
 
+  constructor() {
+    effect(() => {
+      const open = this.shortcuts.spotlightOpen();
+      const sl = this.spotlight();
+      if (!sl) return;
+      if (open && !sl.isOpen()) {
+        sl.open();
+      } else if (!open && sl.isOpen()) {
+        sl.close();
+      }
+    });
+  }
+
   @HostListener('document:keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
+    this.shortcuts.handleKeydown(event);
     if (event.metaKey && event.code === 'Space') {
       event.preventDefault();
-      this.toggleSpotlight();
     }
   }
 
   toggleSpotlight(): void {
-    const sl = this.spotlight();
-    if (sl) {
-      if (sl.isOpen()) {
-        sl.close();
-      } else {
-        sl.open();
-      }
-    }
+    this.shortcuts.spotlightOpen.update((open) => !open);
   }
 
   onSpotlightResult(action: string): void {

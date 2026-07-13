@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.22
+
+- `KeyboardShortcutService` — macOS-convention keyboard shortcuts: `Cmd+W` close window, `Cmd+Q` quit app (closes all windows for active app), `Cmd+H` minimize, `Cmd+Space` toggle Spotlight, `Cmd+Tab` cycle focus to next window
+- Input focus guard: shortcuts are suppressed when `<input>`, `<textarea>`, or `<select>` is focused to prevent conflicts with text editing
+- Safe no-op when no windows are open (no errors thrown)
+- App component refactored: `@HostListener` delegates to `KeyboardShortcutService.handleKeydown()`; Spotlight state synced via `effect()` on `spotlightOpen` signal
+- 10 new tests (222 total), all passing
+
 ## 2026-07-13 - version 0.2.21
 
 - `WindowAnimationService` — TDD animation config logic for window open (scale-up from 0.8), close (fade/scale-out to 0.9), minimize (shrink to dock icon position)
