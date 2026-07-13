@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.13
+
+- `ContactApp` component (standalone) styled like macOS Mail compose — toolbar header, labeled fields, accent-colored send button
+- Reactive form via `FormBuilder.nonNullable.group()` with `Validators.required` and `Validators.email`
+- Validation errors shown per-field when touched: name required, valid email required, message required
+- Submit button disabled when form invalid or submission pending
+- `submissionStatus` signal cycling `idle → pending → success` with simulated async submission (500ms)
+- Loading indicator, success message, and error state rendered via `@if` on status signal
+- Form auto-resets after successful submission
+- 10 TDD tests: field rendering, disabled submit, 3 validation errors (name/email/message), enabled submit, submission trigger, loading state, success message, form reset
+
 ## 2026-07-13 - version 0.2.12
 
 - `FileSystemService` (providedIn root) — virtual file tree backed by `Map<string, FileEntry[]>` with `getChildren(path)` API
