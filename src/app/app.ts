@@ -2,6 +2,7 @@ import { NgComponentOutlet } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Desktop } from './desktop/desktop';
+import { DesktopIconsComponent } from './desktop-icons/desktop-icons';
 import { Dock } from './dock/dock';
 import { MenuBar } from './menu-bar/menu-bar';
 import { AppLauncherService } from './shared/app-launcher.service';
@@ -11,7 +12,7 @@ import { WindowManagerService } from './window-manager/window-manager.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Desktop, MenuBar, Dock, Window, NgComponentOutlet],
+  imports: [RouterOutlet, Desktop, DesktopIconsComponent, MenuBar, Dock, Window, NgComponentOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
