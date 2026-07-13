@@ -1,3 +1,10 @@
+// Design system tokens — provides --paul-* CSS custom properties
+@import '../node_modules/@paul/tokens/build/tokens.css';
+
+// Token bridge — maps --paul-* tokens to app-level variable names
+@use 'app/shared/token-bridge';
+
+// Desktop theme — app-specific tokens for macOS desktop simulation
 @use 'app/shared/desktop-theme';
 
 // Global reset

@@ -1,6 +1,6 @@
 {
   "name": "angular-paul",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -16,6 +16,7 @@
   "private": true,
   "packageManager": "npm@10.9.4",
   "dependencies": {
+    "@paul/tokens": "file:../paul-design-system/packages/tokens",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",

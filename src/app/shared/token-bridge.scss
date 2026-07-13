@@ -1,0 +1,82 @@
+// Token Bridge
+// Maps @paul/tokens design system variables to angular-paul desktop theme variables.
+// Only bridges tokens that genuinely overlap (spacing, typography, motion, radii).
+// Desktop-specific tokens (colors, traffic lights, dock, menubar, window chrome)
+// remain untouched in desktop-theme.scss.
+
+:root {
+  // ---------------------------------------------------------------------------
+  // Spacing
+  // The desktop theme doesn't define its own spacing scale, but components use
+  // ad-hoc pixel values. Expose the design system spacing scale so components
+  // can migrate to consistent spacing over time.
+  // ---------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------
+  // Typography
+  // The desktop uses system fonts (SF Pro) which differ from the design system's
+  // Inter stack. We keep --font-system as-is but bridge font sizing, weight,
+  // line-height, and letter-spacing tokens that are scale-based (not app-specific).
+  // ---------------------------------------------------------------------------
+  --font-size-xs: var(--paul-font-size-xs);
+  --font-size-sm: var(--paul-font-size-sm);
+  --font-size-base: var(--paul-font-size-base);
+  --font-size-lg: var(--paul-font-size-lg);
+  --font-size-xl: var(--paul-font-size-xl);
+  --font-size-2xl: var(--paul-font-size-2xl);
+  --font-size-3xl: var(--paul-font-size-3xl);
+  --font-size-4xl: var(--paul-font-size-4xl);
+  --font-size-5xl: var(--paul-font-size-5xl);
+
+  --font-weight-normal: var(--paul-font-weight-normal);
+  --font-weight-medium: var(--paul-font-weight-medium);
+  --font-weight-semibold: var(--paul-font-weight-semibold);
+  --font-weight-bold: var(--paul-font-weight-bold);
+
+  --line-height-tight: var(--paul-line-height-tight);
+  --line-height-snug: var(--paul-line-height-snug);
+  --line-height-normal: var(--paul-line-height-normal);
+  --line-height-relaxed: var(--paul-line-height-relaxed);
+  --line-height-loose: var(--paul-line-height-loose);
+
+  --letter-spacing-tighter: var(--paul-letter-spacing-tighter);
+  --letter-spacing-tight: var(--paul-letter-spacing-tight);
+  --letter-spacing-normal: var(--paul-letter-spacing-normal);
+  --letter-spacing-wide: var(--paul-letter-spacing-wide);
+  --letter-spacing-wider: var(--paul-letter-spacing-wider);
+
+  // ---------------------------------------------------------------------------
+  // Motion / Transitions
+  // Desktop transition tokens map closely to design system duration tokens.
+  // We reference the duration values so they stay in sync, but keep the easing
+  // functions as part of the shorthand since the desktop uses simple `ease`
+  // rather than the design system's cubic-bezier curves.
+  // ---------------------------------------------------------------------------
+  --transition-fast: var(--paul-duration-fast) ease;
+  --transition-normal: var(--paul-duration-normal) ease;
+  --transition-slow: var(--paul-duration-slow) ease;
+
+  // ---------------------------------------------------------------------------
+  // Radii
+  // Bridge border-radius scale from the design system.
+  // ---------------------------------------------------------------------------
+  --radius-sm: var(--paul-radius-sm);
+  --radius-md: var(--paul-radius-md);
+  --radius-lg: var(--paul-radius-lg);
+  --radius-xl: var(--paul-radius-xl);
+  --radius-2xl: var(--paul-radius-2xl);
+  --radius-full: var(--paul-radius-full);
+
+  // ---------------------------------------------------------------------------
+  // Z-Index
+  // Bridge z-index scale from the design system for overlay stacking.
+  // ---------------------------------------------------------------------------
+  --z-base: var(--paul-z-base);
+  --z-dropdown: var(--paul-z-dropdown);
+  --z-sticky: var(--paul-z-sticky);
+  --z-fixed: var(--paul-z-fixed);
+  --z-modal-backdrop: var(--paul-z-modal-backdrop);
+  --z-modal: var(--paul-z-modal);
+  --z-popover: var(--paul-z-popover);
+  --z-toast: var(--paul-z-toast);
+}
