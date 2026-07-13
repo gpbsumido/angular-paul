@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-12 - version 0.2.7
+
+- `AboutApp` component (standalone) styled like macOS "About This Mac" — centered layout, large avatar icon, name/title, tabbed content area
+- Profile: Paul Sumido, Software Engineer, with GitHub and LinkedIn links
+- Three tabs (Overview, Skills, Experience) switched via `@switch` on `activeTab` signal
+- Overview: intro text + "thoughts" link emitting `thoughtRequested` output
+- Skills: TypeScript/JavaScript, Angular/React, Node.js/Python, Cloud (AWS/GCP), System Design
+- Experience: placeholder entry for web application work
+- `view-transition-name` on tab content area for View Transitions API support
+- 9 TDD tests: name/title rendering, avatar, tab labels, default tab, tab switching (Skills/Experience), @switch exclusivity, thoughtRequested event, social link hrefs
+
 ## 2026-07-12 - version 0.2.6
 
 - `ContextMenuComponent` (standalone) with macOS-style translucent vibrancy panel, backdrop blur, rounded corners, subtle separators
