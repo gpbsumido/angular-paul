@@ -1,4 +1,5 @@
 import { inject, Injectable, signal, Type } from '@angular/core';
+import { THOUGHTS } from '../thoughts-content/thoughts-data';
 import { WindowManagerService } from '../window-manager/window-manager.service';
 
 export interface AppRegistration {
@@ -50,6 +51,34 @@ export class AppLauncherService {
       {
         windowId,
         appId: registration.appId,
+        component: registration.component,
+      },
+    ]);
+
+    return windowId;
+  }
+
+  openThought(slug: string): string | null {
+    const entry = THOUGHTS.find((t) => t.slug === slug);
+    if (!entry) {
+      return null;
+    }
+
+    const registration = this.registry.get('thoughts');
+    if (!registration) {
+      return null;
+    }
+
+    const windowId = this.windowManager.openWindow({
+      appId: 'thoughts',
+      title: entry.title,
+    });
+
+    this._launchedWindows.update((windows) => [
+      ...windows,
+      {
+        windowId,
+        appId: 'thoughts',
         component: registration.component,
       },
     ]);

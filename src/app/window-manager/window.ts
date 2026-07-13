@@ -1,4 +1,12 @@
-import { Component, ElementRef, inject, input, linkedSignal, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  ElementRef,
+  inject,
+  input,
+  linkedSignal,
+  output,
+} from '@angular/core';
 
 const MIN_WIDTH = 200;
 const MIN_HEIGHT = 150;
@@ -18,10 +26,14 @@ export class Window {
   readonly x = input(100);
   readonly y = input(100);
   readonly isActive = input(false);
+  readonly relatedThoughts = input<string[]>([]);
 
   readonly closed = output<void>();
   readonly minimized = output<void>();
   readonly maximized = output<void>();
+  readonly thoughtRequested = output<string>();
+
+  readonly hasRelatedThoughts = computed(() => this.relatedThoughts().length > 0);
 
   private elRef = inject(ElementRef);
 
@@ -50,6 +62,13 @@ export class Window {
 
   private boundOnPointerMove = this.onPointerMove.bind(this);
   private boundOnPointerUp = this.onPointerUp.bind(this);
+
+  onThoughtsClick(): void {
+    const slugs = this.relatedThoughts();
+    if (slugs.length > 0) {
+      this.thoughtRequested.emit(slugs[0]);
+    }
+  }
 
   onTitlebarPointerDown(event: PointerEvent): void {
     // Don't start drag if clicking on traffic lights or other interactive elements

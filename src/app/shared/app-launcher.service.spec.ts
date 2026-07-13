@@ -129,4 +129,35 @@ describe('AppLauncherService', () => {
       expect(service.launchedWindows().length).toBe(0);
     });
   });
+
+  describe('openThought', () => {
+    beforeEach(() => {
+      service.register({
+        appId: 'thoughts',
+        title: 'Thoughts',
+        icon: '💭',
+        component: MockTerminalComponent,
+      });
+    });
+
+    it('should launch a thoughts window navigated to the given slug', () => {
+      const windowId = service.openThought('signals');
+      expect(windowId).toBeTruthy();
+
+      const win = windowManager.getWindow(windowId!);
+      expect(win).toBeTruthy();
+      expect(win!.appId).toBe('thoughts');
+    });
+
+    it('should set the window title to the thought entry title', () => {
+      const windowId = service.openThought('signals');
+      const win = windowManager.getWindow(windowId!);
+      expect(win!.title).toContain('Signals');
+    });
+
+    it('should return null for an unknown slug', () => {
+      const result = service.openThought('nonexistent-slug');
+      expect(result).toBeNull();
+    });
+  });
 });
