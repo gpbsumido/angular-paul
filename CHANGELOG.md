@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.10
+
+- Fixed "Cannot GET /" error by adding empty-path root route (`path: '', pathMatch: 'full'`) to `app.routes.ts`
+- Changed `**` catch-all server route from `RenderMode.Prerender` to `RenderMode.Client` so the SSR engine serves the app shell for unmatched routes
+- `ThoughtsService` (providedIn root) with `getAll()` (sorted newest first), `getBySlug()`, `getByTag()` methods
+- Expanded `ThoughtEntry` interface with `tags`, `content`, and `relatedApp` fields; 3 full thought entries (signals, httpResource, TDD)
+- `ThoughtsListComponent` (standalone) rendering thought cards via `@for` with `track` — each card shows title, date, tag pills, and summary preview
+- Card click navigates to `/thoughts/:slug` via `Router`
+- `ThoughtDetailComponent` (standalone) rendering full thought content from route param, back button, tag pill badges, `@if` not-found state
+- Lazy-loaded routes in `app.routes.ts`: `/thoughts` (list), `/thoughts/:slug` (detail) via `loadComponent`
+- Server route config: parameterized `/thoughts/:slug` set to `RenderMode.Client` to avoid prerender param errors
+- 11 TDD tests: 5 service (sort order, slug lookup, unknown slug, tag filter, unknown tag), 3 list (card count, card content, navigation), 3 detail (content rendering, back navigation, tag badges)
+
 ## 2026-07-12 - version 0.2.9
 
 - `CommandParserService` (providedIn root) — pure-logic command parser with `parse()` returning `ParseResult` (output + optional clear flag)
