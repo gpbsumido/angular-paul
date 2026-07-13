@@ -67,8 +67,8 @@ describe('AppLauncherService', () => {
       });
     });
 
-    it('should create a new window via WindowManagerService and return the window ID', () => {
-      const windowId = service.launch('terminal');
+    it('should create a new window via WindowManagerService and return the window ID', async () => {
+      const windowId = await service.launch('terminal');
       expect(windowId).toBeTruthy();
 
       const win = windowManager.getWindow(windowId!);
@@ -76,24 +76,24 @@ describe('AppLauncherService', () => {
       expect(win!.appId).toBe('terminal');
     });
 
-    it('should pass the correct title from app metadata to the window', () => {
-      const windowId = service.launch('terminal');
+    it('should pass the correct title from app metadata to the window', async () => {
+      const windowId = await service.launch('terminal');
       const win = windowManager.getWindow(windowId!);
       expect(win!.title).toBe('Terminal');
     });
 
-    it('should launch the same app twice creating two separate window instances', () => {
-      const id1 = service.launch('terminal');
-      const id2 = service.launch('terminal');
+    it('should launch the same app twice creating two separate window instances', async () => {
+      const id1 = await service.launch('terminal');
+      const id2 = await service.launch('terminal');
 
       expect(id1).not.toBe(id2);
       expect(windowManager.windows().length).toBe(2);
       expect(windowManager.windows().every((w) => w.appId === 'terminal')).toBe(true);
     });
 
-    it('should pass the correct component type for the given app ID', () => {
-      service.launch('terminal');
-      service.launch('about');
+    it('should pass the correct component type for the given app ID', async () => {
+      await service.launch('terminal');
+      await service.launch('about');
 
       const launchedApps = service.launchedWindows();
       const terminalEntry = launchedApps.find((l) => l.appId === 'terminal');
@@ -103,26 +103,26 @@ describe('AppLauncherService', () => {
       expect(aboutEntry!.component).toBe(MockAboutComponent);
     });
 
-    it('should return null when launching an unknown app ID', () => {
-      const result = service.launch('nonexistent');
+    it('should return null when launching an unknown app ID', async () => {
+      const result = await service.launch('nonexistent');
       expect(result).toBeNull();
     });
 
-    it('should not create a window when launching an unknown app ID', () => {
-      service.launch('nonexistent');
+    it('should not create a window when launching an unknown app ID', async () => {
+      await service.launch('nonexistent');
       expect(windowManager.windows().length).toBe(0);
     });
 
-    it('should track launched windows with their component types', () => {
+    it('should track launched windows with their component types', async () => {
       expect(service.launchedWindows().length).toBe(0);
 
-      service.launch('terminal');
+      await service.launch('terminal');
       expect(service.launchedWindows().length).toBe(1);
       expect(service.launchedWindows()[0].appId).toBe('terminal');
     });
 
-    it('should remove from launched windows when the window is closed', () => {
-      const windowId = service.launch('terminal')!;
+    it('should remove from launched windows when the window is closed', async () => {
+      const windowId = (await service.launch('terminal'))!;
       expect(service.launchedWindows().length).toBe(1);
 
       service.closeLaunchedWindow(windowId);
@@ -140,8 +140,8 @@ describe('AppLauncherService', () => {
       });
     });
 
-    it('should launch a thoughts window navigated to the given slug', () => {
-      const windowId = service.openThought('signals');
+    it('should launch a thoughts window navigated to the given slug', async () => {
+      const windowId = await service.openThought('signals');
       expect(windowId).toBeTruthy();
 
       const win = windowManager.getWindow(windowId!);
@@ -149,14 +149,14 @@ describe('AppLauncherService', () => {
       expect(win!.appId).toBe('thoughts');
     });
 
-    it('should set the window title to the thought entry title', () => {
-      const windowId = service.openThought('signals');
+    it('should set the window title to the thought entry title', async () => {
+      const windowId = await service.openThought('signals');
       const win = windowManager.getWindow(windowId!);
       expect(win!.title).toContain('Signals');
     });
 
-    it('should return null for an unknown slug', () => {
-      const result = service.openThought('nonexistent-slug');
+    it('should return null for an unknown slug', async () => {
+      const result = await service.openThought('nonexistent-slug');
       expect(result).toBeNull();
     });
   });

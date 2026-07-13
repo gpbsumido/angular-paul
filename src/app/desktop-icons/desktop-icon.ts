@@ -5,9 +5,12 @@ import { Component, input, output, signal } from '@angular/core';
   template: `
     <div
       class="desktop-icon"
+      role="button"
+      tabindex="0"
       [class.selected]="selected()"
       (click)="select()"
       (dblclick)="launch()"
+      (keydown.enter)="launch()"
     >
       <span class="desktop-icon-image">{{ icon() }}</span>
       <span class="desktop-icon-label">{{ label() }}</span>

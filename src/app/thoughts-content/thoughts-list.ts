@@ -8,7 +8,13 @@ import { ThoughtsService } from './thoughts.service';
     <div class="thoughts-list">
       <h2 class="thoughts-list-heading">Thoughts</h2>
       @for (thought of thoughts; track thought.slug) {
-        <div class="thought-card" (click)="navigate(thought.slug)">
+        <div
+          class="thought-card"
+          role="button"
+          tabindex="0"
+          (click)="navigate(thought.slug)"
+          (keydown.enter)="navigate(thought.slug)"
+        >
           <div class="thought-card-title">{{ thought.title }}</div>
           <div class="thought-card-date">{{ thought.date }}</div>
           <div class="thought-card-tags">

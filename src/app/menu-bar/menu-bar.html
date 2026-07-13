@@ -16,6 +16,13 @@
   </div>
 
   <div class="menu-bar-right">
+    <button
+      class="menu-bar-item spotlight-trigger"
+      aria-label="Spotlight"
+      (click)="spotlightRequested.emit()"
+    >
+      🔍
+    </button>
     <span class="menu-bar-clock">{{ clock() }}</span>
   </div>
 </nav>

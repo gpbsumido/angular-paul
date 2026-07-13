@@ -16,7 +16,15 @@ export interface GitHubRepo {
     <div class="projects">
       <div class="projects-header">
         <h2>Projects</h2>
-        <span class="projects-thoughts-link" (click)="thoughtRequested.emit()"> Thoughts → </span>
+        <span
+          class="projects-thoughts-link"
+          role="button"
+          tabindex="0"
+          (click)="thoughtRequested.emit()"
+          (keydown.enter)="thoughtRequested.emit()"
+        >
+          Thoughts →
+        </span>
       </div>
 
       <div class="projects-search">

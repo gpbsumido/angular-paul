@@ -1,11 +1,4 @@
-import { Component, computed, inject, signal, Type } from '@angular/core';
-import { AboutApp } from '../apps/about-app';
-import { ContactApp } from '../apps/contact-app';
-import { FinderApp } from '../apps/finder/finder-app';
-import { PlaceholderApp } from '../apps/placeholder-app';
-import { ProjectsApp } from '../apps/projects-app';
-import { SystemPreferencesApp } from '../apps/settings/system-preferences';
-import { TerminalApp } from '../apps/terminal-app';
+import { Component, computed, inject, signal } from '@angular/core';
 import { AppLauncherService } from '../shared/app-launcher.service';
 import { DockItem, DockService } from '../shared/dock.service';
 
@@ -47,26 +40,39 @@ export class Dock {
     });
   });
 
-  private readonly appComponents: Record<string, Type<unknown>> = {
-    finder: FinderApp,
-    about: AboutApp,
-    projects: ProjectsApp,
-    terminal: TerminalApp,
-    thoughts: PlaceholderApp,
-    settings: SystemPreferencesApp,
-    contact: ContactApp,
+  private readonly appLoaders: Record<string, () => Promise<unknown>> = {
+    finder: () => import('../apps/finder/finder-app').then((m) => m.FinderApp),
+    about: () => import('../apps/about-app').then((m) => m.AboutApp),
+    projects: () => import('../apps/projects-app').then((m) => m.ProjectsApp),
+    terminal: () => import('../apps/terminal-app').then((m) => m.TerminalApp),
+    thoughts: () =>
+      import('../thoughts-content/thoughts-list').then((m) => m.ThoughtsListComponent),
+    settings: () =>
+      import('../apps/settings/system-preferences').then((m) => m.SystemPreferencesApp),
+    contact: () => import('../apps/contact-app').then((m) => m.ContactApp),
+    readme: () => import('../apps/readme-app').then((m) => m.ReadmeApp),
   };
 
   constructor() {
     for (const app of this.dockService.pinnedApps()) {
       if (!this.launcher.getRegistration(app.id)) {
-        this.launcher.register({
+        this.launcher.registerLazy({
           appId: app.id,
           title: app.label,
           icon: app.icon,
-          component: this.appComponents[app.id] ?? PlaceholderApp,
+          loader: this.appLoaders[app.id],
         });
       }
+    }
+
+    // Register desktop-only apps not in the dock
+    if (!this.launcher.getRegistration('readme')) {
+      this.launcher.registerLazy({
+        appId: 'readme',
+        title: 'README.md',
+        icon: '📄',
+        loader: this.appLoaders['readme'],
+      });
     }
   }
 

@@ -2,6 +2,85 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 1.0.0
+
+- **README.md rewrite**: project overview, Angular features table (16 features mapped to usage), architecture diagram, testing strategy, development/build commands, keyboard shortcuts, bundle stats
+- **New thought entry**: "Building an OS to Learn a Framework" — meta reflection on why complex projects teach framework judgment (not just syntax), what Angular 21 gets right (signals, zoneless, standalone, @defer, incremental hydration), and what could be better (@defer prefetch limits, NgComponentOutlet lazy gaps, testing wiring)
+- **README app updated**: added Angular features table, link to the meta thought entry at the bottom
+- 229 tests, all passing
+
+## 2026-07-13 - version 0.2.25
+
+- **Lazy-load all app components**: dock registrations now use dynamic `import()` via `AppLauncherService.registerLazy()` — about, contact, finder, projects, readme, settings, terminal, thoughts all split into separate chunks loaded on first launch
+- **Initial bundle reduced**: main chunk 109 kB → 41 kB; initial total 450 kB → 381 kB (108 kB transferred)
+- **`@defer` for non-critical UI**: context menu and Spotlight wrapped in `@defer (on idle)` with loading spinners; Spotlight also has `@loading` block with CSS spinner
+- **Zoneless verified**: no Zone.js in bundle; `provideZonelessChangeDetection()` confirmed working with 0 ms TBT contribution
+- **Bundle budgets tightened**: initial warning 500 kB → 400 kB, error 1 MB → 500 kB
+- **SEO fixes**: added meta description, page title, `robots.txt`; SSR `allowedHosts` updated for proper server-side rendering
+- **Lighthouse scores**: Performance 86, Accessibility 100, Best Practices 100, SEO 100
+- `AppLauncherService.launch()` and `openThought()` now async to support lazy component resolution with caching
+- 229 tests, all passing
+
+## 2026-07-13 - version 0.2.24
+
+- Fix WCAG 2.1 AA color-contrast violations in About app: links (GitHub, LinkedIn) and "Read my thoughts →" span now use `#4da3ff` instead of `#007aff` for sufficient contrast ratio (≥4.5:1) against the dark window background
+- E2E axe scan now passes cleanly
+
+## 2026-07-13 - version 0.2.23
+
+- 3-layer accessibility testing matching paul-explore setup:
+  - **Layer 1 — ESLint**: `angular-eslint` with `templateAccessibility` config (Angular equivalent of `jsx-a11y`); fixed 18 a11y violations (keyboard handlers, focusable elements, label associations, button content)
+  - **Layer 2 — Unit axe scans**: `vitest-axe` configured to WCAG 2.1 AA; 7 component scans (Dock, MenuBar, Spotlight, Window, DesktopIcon, ContextMenu)
+  - **Layer 3 — E2E axe scans**: `@axe-core/playwright` with smoke tests (desktop loads, dock opens windows) + axe page scans + landmark/ARIA checks
+- GitHub Actions CI (`.github/workflows/ci.yml`): `quality` job (lint → typecheck → unit tests) gates `e2e-accessibility` job (Playwright + axe); runs on every PR to master/develop
+- `npm run lint` script added; `npm run test:e2e` / `test:e2e:ui` / `test:e2e:report` scripts
+- README app updated with Testing section and full keyboard shortcuts
+- New thought entry: "Three-Layer Accessibility Testing" — lint vs unit-axe vs E2E-axe, why all three are needed, CI gating philosophy
+- 229 tests, all passing; zero ESLint errors
+
+## 2026-07-13 - version 0.2.22
+
+- `KeyboardShortcutService` — macOS-convention keyboard shortcuts: `Cmd+W` close window, `Cmd+Q` quit app (closes all windows for active app), `Cmd+H` minimize, `Cmd+Space` toggle Spotlight, `Cmd+Tab` cycle focus to next window
+- Input focus guard: shortcuts are suppressed when `<input>`, `<textarea>`, or `<select>` is focused to prevent conflicts with text editing
+- Safe no-op when no windows are open (no errors thrown)
+- App component refactored: `@HostListener` delegates to `KeyboardShortcutService.handleKeydown()`; Spotlight state synced via `effect()` on `spotlightOpen` signal
+- 10 new tests (222 total), all passing
+
+## 2026-07-13 - version 0.2.21
+
+- `WindowAnimationService` — TDD animation config logic for window open (scale-up from 0.8), close (fade/scale-out to 0.9), minimize (shrink to dock icon position)
+- View Transitions API feature detection via `supportsViewTransitions()`; graceful no-op fallback (`type: 'none'`, `duration: 0`) when unsupported
+- Incremental hydration: `withIncrementalHydration()` added to `provideClientHydration()` — shell (menu bar, dock, desktop icons) hydrates immediately, Spotlight deferred with `@defer (on idle)`
+- Event replay via `withEventReplay()` preserves clicks on server-rendered elements before hydration
+- 2 new thought entries: "View Transitions API in Angular" (native transitions, feature detection, migration from @angular/animations) and "Incremental Hydration vs Full Hydration" (SSR strategy, @defer triggers, bundle size impact, event replay)
+- 7 new tests (212 total), all passing
+
+## 2026-07-13 - version 0.2.20
+
+- `WindowAnimationService` — animation config logic for window open (scale-up), close (fade/scale-out), and minimize (shrink-to-dock with target position)
+- View Transitions API feature detection via `supportsViewTransitions()`; graceful no-op fallback when unsupported
+- New thought entry: "View Transitions API in Angular" — native browser transitions vs @angular/animations, feature detection patterns, performance benefits, migration path
+- 7 new tests (212 total), all passing
+
+## 2026-07-13 - version 0.2.19
+
+- Spotlight overlay fix: `position: fixed` with `z-index: 2000` and dark backdrop so it renders above all content
+- Click-outside-to-close: clicking the backdrop dismisses Spotlight via `onOverlayClick` mousedown handler
+- Desktop icons wired to `AppLauncherService` — double-click README.md, Projects, or Thoughts opens the real app
+- `ReadmeApp` component — project overview with tech stack, app descriptions, and keyboard shortcuts
+- Thoughts desktop icon now opens `ThoughtsListComponent` instead of `PlaceholderApp`
+- `readme` registered as a desktop-only app (not in dock) via `AppLauncherService`
+
+## 2026-07-13 - version 0.2.18
+
+- `SearchService` — filters across Applications (dock apps), Thoughts (title + tags), and Files (desktop items); case-insensitive partial matching; results grouped by category
+- `Spotlight` component styled like macOS Spotlight — centered floating translucent panel with `backdrop-filter: blur(40px)`, categorized result groups, empty state
+- Search input renders results panel only when matches exist; no-results state shows "No results found" message
+- Clicking a result emits `resultSelected` with the action string; Escape closes the overlay
+- App integration: `Cmd+Space` keyboard shortcut toggles Spotlight; menu bar magnifying glass 🔍 button triggers it
+- Spotlight result actions wire to `AppLauncherService.launch()` for apps and `openThought()` for thought entries
+- 13 new tests (205 total), all passing
+
 ## 2026-07-13 - version 0.2.17
 
 - TDD thought linking behavior across window, launcher, terminal, and Finder

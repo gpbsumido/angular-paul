@@ -244,4 +244,90 @@ One gotcha: NgComponentOutlet destroys and recreates the component when the clas
 The broader lesson is that Angular treats dynamic components as first-class citizens. They are not an escape hatch or an advanced pattern reserved for library authors. They are a normal tool for normal problems, and the framework supports them with the same DI, change detection, and lifecycle guarantees as static components.`,
     relatedApp: 'finder',
   },
+  {
+    slug: 'view-transitions-angular',
+    title: 'View Transitions API in Angular',
+    date: '2026-07-13',
+    summary:
+      'The View Transitions API gives browsers a native way to animate between DOM states — and Angular is finally making it practical to use.',
+    tags: ['view-transitions', 'animations', 'performance'],
+    content: `The View Transitions API lets you tell the browser "I am about to change the DOM — please animate smoothly between the old state and the new one." You call document.startViewTransition(), update the DOM inside the callback, and the browser captures before/after snapshots and crossfades them. No JavaScript animation library, no manually tracking element positions, no requestAnimationFrame loops.
+
+For Angular, this is a big deal. Traditional Angular animations (@angular/animations) work by declaring state machines in component metadata — enter, leave, transition triggers. They are powerful but verbose, tightly coupled to component lifecycle, and add bundle weight. The View Transitions API replaces most of that with a single browser primitive.
+
+The practical pattern in Angular is straightforward. When you open a window, you wrap the DOM mutation (adding the component, updating signals) inside document.startViewTransition(). The browser snapshots the before state (no window), you add the window, it snapshots the after state, and it crossfades. For closing, same thing in reverse. For minimize, you can set view-transition-name on the window element and the dock icon, and the browser will morph between them automatically.
+
+The catch is feature detection. Safari shipped View Transitions in 18.2, Chrome in 111, but Firefox is still behind a flag as of mid-2026. So you need a fallback. The cleanest approach is a service that checks document.startViewTransition existence once and returns either real animation configs or no-op configs. The rest of your code does not branch on browser support — it always asks the service for configs, and the service handles the fallback transparently.
+
+There are a few gotchas worth knowing. View Transitions capture the visual state as a bitmap, so they do not animate internal component changes — only the transition between two stable states. You need to make sure the DOM update is synchronous inside the callback, which works naturally with Angular signals (set the signal, change detection runs, DOM updates). Also, view-transition-name must be unique across the entire document — two elements with the same name will break the transition.
+
+The performance story is excellent. Because the browser handles the compositing, transitions run on the GPU compositor thread. They do not block the main thread, they do not cause layout thrashing, and they do not require JavaScript to run every frame. This is the same pipeline the browser uses for CSS transitions, so it is as fast as animations can get.
+
+The migration path from @angular/animations is gradual. You can keep existing Angular animations for complex multi-step sequences (staggered lists, keyframe chains) and use View Transitions for simple state changes (open, close, navigate). Over time, as browser support solidifies, you can replace more Angular animations with View Transitions and shrink your bundle.`,
+    relatedApp: 'settings',
+  },
+  {
+    slug: 'incremental-hydration',
+    title: 'Incremental Hydration vs Full Hydration',
+    date: '2026-07-13',
+    summary:
+      'Full hydration replays your entire app on the client. Incremental hydration lets you hydrate only what the user actually interacts with — and the UX difference is real.',
+    tags: ['ssr', 'hydration', 'performance'],
+    content: `Traditional SSR hydration works by rendering your app on the server, sending the HTML to the client, then re-executing the entire application on the client to make it interactive. The user sees content quickly (good), but nothing is clickable until the full JavaScript bundle downloads, parses, and re-renders every component (bad). For a complex app like a desktop environment with multiple potential windows, this is wasteful — why hydrate the Terminal component if the user never opens Terminal?
+
+Incremental hydration solves this by letting you mark parts of the app as "hydrate later." Angular's withIncrementalHydration() provider combined with @defer blocks gives you fine-grained control. The server renders everything into HTML, but the client only hydrates components when their defer trigger fires — on idle, on interaction, on viewport entry, or on timer.
+
+For a desktop OS app, the strategy is layered. The shell — menu bar, dock, desktop icons — hydrates immediately because the user interacts with it right away. App windows hydrate on demand because they only exist when launched. The Spotlight search index loads on idle because the user might hit Cmd+Space at any time, but it is not critical for initial render.
+
+The UX tradeoff is subtle but important. Full hydration gives you a single "everything works" moment — there is a brief period where nothing is interactive, then everything is. Incremental hydration gives you a gradual ramp-up — the shell is interactive immediately, but if you open an app in the first 100ms, there might be a brief delay while that specific component hydrates. In practice, users do not open apps in the first 100ms, so incremental hydration feels faster for real usage even though the total hydration work is the same.
+
+The implementation is straightforward. You add withIncrementalHydration() to your provideClientHydration() call, then wrap deferred content in @defer blocks with appropriate triggers. Angular's SSR engine renders the deferred content on the server (so it appears in the initial HTML), but the client skips hydrating it until the trigger fires. The server-rendered HTML stays visible and styled — it just is not interactive until hydration completes.
+
+One gotcha: event replay. If a user clicks a button inside a deferred block before it hydrates, Angular needs to capture that event and replay it after hydration. The withEventReplay() feature handles this — it records events on server-rendered elements and replays them once the component is live. Without it, early clicks are silently lost.
+
+The bundle size impact is real. With full hydration, the browser must download and parse every component upfront. With incremental hydration, lazy-loaded components stay in separate chunks that only download when needed. For this portfolio, that means the Terminal, Settings, and Finder chunks never load unless the user opens those apps.`,
+    relatedApp: 'terminal',
+  },
+  {
+    slug: 'three-layer-a11y-testing',
+    title: 'Three-Layer Accessibility Testing',
+    date: '2026-07-13',
+    summary:
+      'Lint catches the easy stuff. Unit axe scans catch rendered violations. E2E axe scans catch integration-level failures. You need all three.',
+    tags: ['accessibility', 'testing', 'wcag'],
+    content: `Accessibility testing that only runs one tool at one stage catches maybe 30% of issues. The approach that actually works uses three layers, each catching different classes of problems, gated on every pull request.
+
+Layer one is lint-time static analysis. For Angular, angular-eslint's template-accessibility config catches the obvious mistakes — click handlers without keyboard events, images without alt text, labels not associated with controls, empty buttons. These rules run instantly, surface in the editor, and block CI. They catch the low-hanging fruit that developers introduce by habit: a div with (click) that should be a button, a form label without a for attribute.
+
+Layer two is unit-level axe scanning with vitest-axe. You render a component in the test environment and run axe-core against the resulting DOM. This catches violations that only appear after Angular's template engine runs — conditional rendering, dynamic attributes, computed ARIA states. The key insight is configuring axe to WCAG 2.1 AA standards specifically (wcag2a, wcag2aa, wcag21a, wcag21aa tags), not running every rule. Running every rule produces false positives that erode trust in the tool.
+
+Layer three is E2E axe scanning with @axe-core/playwright. This runs axe against the real application in a real browser with real CSS applied. It catches violations that only manifest at integration level — z-index stacking that hides focusable elements, CSS that makes text unreadable, viewport-dependent layout issues, dynamic content loaded after user interaction. The E2E layer also tests semantic structure: landmarks, skip links, focus management.
+
+The three layers are complementary, not redundant. Lint catches patterns, unit axe catches rendered output, E2E axe catches the assembled application. A label-has-associated-control lint rule catches a missing for attribute. A unit axe scan catches a dynamic [attr.aria-label] that evaluates to empty string. An E2E axe scan catches a dialog that traps focus because the close button is behind an overlay.
+
+The CI gate is non-negotiable. If any layer fails, the PR cannot merge. This prevents accessibility regressions from sneaking in through well-intentioned feature work. The developer fixes the violation before review, not after. Retrofitting accessibility is ten times harder than building it in.`,
+    relatedApp: 'about',
+  },
+  {
+    slug: 'building-an-os-to-learn',
+    title: 'Building an OS to Learn a Framework',
+    date: '2026-07-13',
+    summary:
+      'Why building a complex, self-contained project is the fastest way to learn a framework — and what Angular 21 gets right.',
+    tags: ['angular', 'learning', 'architecture', 'meta'],
+    content: `The best way to learn a framework is to build something too complex for a tutorial. Tutorials teach syntax. Complex projects teach judgment — when to reach for a signal vs a computed, when lazy loading matters, when an abstraction earns its cost.
+
+Building a desktop OS in Angular forced decisions that no todo app ever would. A window manager needs z-index state shared across components. A dock needs to track which apps are running, focused, or minimized. Spotlight search needs to query across apps, files, and thought entries with a unified interface. A keyboard shortcut service needs to intercept global events without conflicting with text inputs. Each of these problems maps to a different Angular feature, and each feature reveals its design philosophy only under real pressure.
+
+Signals are the clearest example. In a simple component, signal() looks like a verbose version of a class property. In a window manager tracking focus across a dozen windows, computed() and effect() become essential — derived state stays consistent without manual synchronization, and side effects happen in controlled boundaries. The mental model shifts from "update everything on change" to "declare relationships and let the framework figure it out." You only internalize that shift by needing it.
+
+Zoneless change detection is another feature that only proves itself at scale. Removing Zone.js from a counter app saves a few kilobytes. Removing it from a desktop with windows, dock magnification, drag-and-resize, and context menus eliminates an entire category of debugging: no more "why did the whole tree re-render when I moved a window?" The 0 ms total blocking time in Lighthouse is not an accident — it is the direct result of fine-grained reactivity replacing global change detection.
+
+What Angular 21 gets right: standalone components killed NgModules without breaking anything. The new template syntax (@if, @for, @defer) reads like a template language rather than a DSL fighting HTML. Dependency injection with providedIn: 'root' makes shared state trivial. Incremental hydration means SSR does not have to be all-or-nothing. The signal-based input/output API is cleaner than decorators. The framework opinion on structure — services for state, components for views, clear separation — scales in ways that "freedom to choose" frameworks do not.
+
+What could be better: @defer is powerful but the prefetch API is limited — you cannot prefetch based on route proximity or viewport intersection of a trigger element. Dynamic component rendering via NgComponentOutlet works but lacks a first-class lazy variant that integrates with @defer. The testing story improved with vitest support, but configuring vitest-axe and Playwright axe requires manual wiring that could be built in. Error messages are excellent for template errors but still cryptic for dependency injection failures.
+
+The meta-lesson is that building something real — something with enough moving parts to break your assumptions — teaches framework thinking, not just framework syntax. Every feature I used in this project, I understood because I needed it, not because I read about it. That is the difference between knowing a framework and knowing how to use one.`,
+    relatedApp: 'about',
+  },
 ];

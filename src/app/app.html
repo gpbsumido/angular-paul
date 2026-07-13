@@ -1,7 +1,13 @@
 <app-desktop (contextmenu)="onDesktopContextMenu($event)" />
 <app-desktop-icons />
-<app-context-menu [items]="desktopMenuItems" (action)="onContextMenuAction($event)" />
-<app-menu-bar />
+
+@defer (on idle) {
+  <app-context-menu [items]="desktopMenuItems" (action)="onContextMenuAction($event)" />
+} @placeholder {
+  <span></span>
+}
+
+<app-menu-bar (spotlightRequested)="toggleSpotlight()" />
 
 @for (launched of launcher.launchedWindows(); track launched.windowId) {
   @let win = windowManager.getWindow(launched.windowId);
@@ -25,6 +31,14 @@
       <ng-container *ngComponentOutlet="launched.component" />
     </app-window>
   }
+}
+
+@defer (on idle) {
+  <app-spotlight (resultSelected)="onSpotlightResult($event)" />
+} @loading (minimum 150ms) {
+  <div class="defer-spinner" aria-label="Loading Spotlight"></div>
+} @placeholder {
+  <span></span>
 }
 
 <app-dock />

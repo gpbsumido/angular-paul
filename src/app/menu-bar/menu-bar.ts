@@ -1,4 +1,4 @@
-import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, output, signal } from '@angular/core';
 
 @Component({
   selector: 'app-menu-bar',
@@ -9,6 +9,7 @@ export class MenuBar {
   readonly clock = signal(this.formatTime());
   readonly activeApp = signal('Finder');
   readonly menuItems = signal(['File', 'Edit', 'View', 'Window', 'Help']);
+  readonly spotlightRequested = output<void>();
 
   private intervalId: ReturnType<typeof setInterval> | null = null;
   private destroyRef = inject(DestroyRef);

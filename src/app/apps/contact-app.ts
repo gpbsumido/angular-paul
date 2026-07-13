@@ -14,24 +14,29 @@ type SubmissionStatus = 'idle' | 'pending' | 'success' | 'error';
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contact-form">
         <div class="contact-field">
-          <label>Name</label>
-          <input formControlName="name" placeholder="Your name" />
+          <label for="contact-name">Name</label>
+          <input id="contact-name" formControlName="name" placeholder="Your name" />
           @if (form.controls.name.touched && form.controls.name.invalid) {
             <span class="contact-error contact-error-name">Name is required</span>
           }
         </div>
 
         <div class="contact-field">
-          <label>Email</label>
-          <input formControlName="email" placeholder="your@email.com" />
+          <label for="contact-email">Email</label>
+          <input id="contact-email" formControlName="email" placeholder="your@email.com" />
           @if (form.controls.email.touched && form.controls.email.invalid) {
             <span class="contact-error contact-error-email">Valid email is required</span>
           }
         </div>
 
         <div class="contact-field contact-field-message">
-          <label>Message</label>
-          <textarea formControlName="message" placeholder="Your message..." rows="6"></textarea>
+          <label for="contact-message">Message</label>
+          <textarea
+            id="contact-message"
+            formControlName="message"
+            placeholder="Your message..."
+            rows="6"
+          ></textarea>
           @if (form.controls.message.touched && form.controls.message.invalid) {
             <span class="contact-error contact-error-message">Message is required</span>
           }

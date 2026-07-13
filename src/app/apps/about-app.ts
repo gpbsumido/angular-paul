@@ -45,7 +45,13 @@ export type AboutTab = 'overview' | 'skills' | 'experience';
             <div class="about-overview">
               <p>Full-stack software engineer building for the web.</p>
               <p>
-                <span class="about-thoughts-link" (click)="thoughtRequested.emit()">
+                <span
+                  class="about-thoughts-link"
+                  role="button"
+                  tabindex="0"
+                  (click)="thoughtRequested.emit()"
+                  (keydown.enter)="thoughtRequested.emit()"
+                >
                   Read my thoughts →
                 </span>
               </p>
@@ -112,7 +118,7 @@ export type AboutTab = 'overview' | 'skills' | 'experience';
 
     .about-social a {
       font-size: 12px;
-      color: var(--accent-color, #007aff);
+      color: var(--link-color, #4da3ff);
       text-decoration: none;
     }
 
@@ -158,7 +164,7 @@ export type AboutTab = 'overview' | 'skills' | 'experience';
     }
 
     .about-thoughts-link {
-      color: var(--accent-color, #007aff);
+      color: var(--link-color, #4da3ff);
       cursor: pointer;
     }
 
