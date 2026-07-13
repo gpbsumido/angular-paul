@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.15
+
+- 3 new thought entries (300–420 words each, conversational + technical):
+  - "Why Signals Over RxJS" — signals vs RxJS tradeoffs, computed() vs combineLatest, when RxJS still wins for streams/retries/debouncing, the 80/20 migration rule. Tags: signals, computed, effect
+  - "Going Zoneless" — Zone.js monkey-patching costs (100KB, wasted CD, broken async/await), zoneless O(k) vs O(n) performance, gotchas with third-party libs and testing. Tags: zoneless, signals, performance
+  - "The New Template Syntax" — @if type narrowing, @for mandatory inline track + @empty, @switch exhaustive checking, automated migration schematic, compiled performance over directive overhead. Tags: control-flow, templates
+
 ## 2026-07-13 - version 0.2.14
 
 - Wired all real app components to dock launcher — clicking dock icons now opens the actual apps instead of PlaceholderApp
