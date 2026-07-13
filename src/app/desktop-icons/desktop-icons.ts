@@ -57,7 +57,7 @@ export class DesktopIconsComponent {
   ]);
 
   private readonly iconToApp: Record<string, string> = {
-    readme: 'about',
+    readme: 'readme',
     projects: 'projects',
     thoughts: 'thoughts',
   };

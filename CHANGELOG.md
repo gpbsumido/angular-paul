@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.19
+
+- Spotlight overlay fix: `position: fixed` with `z-index: 2000` and dark backdrop so it renders above all content
+- Click-outside-to-close: clicking the backdrop dismisses Spotlight via `onOverlayClick` mousedown handler
+- Desktop icons wired to `AppLauncherService` — double-click README.md, Projects, or Thoughts opens the real app
+- `ReadmeApp` component — project overview with tech stack, app descriptions, and keyboard shortcuts
+- Thoughts desktop icon now opens `ThoughtsListComponent` instead of `PlaceholderApp`
+- `readme` registered as a desktop-only app (not in dock) via `AppLauncherService`
+
 ## 2026-07-13 - version 0.2.18
 
 - `SearchService` — filters across Applications (dock apps), Thoughts (title + tags), and Files (desktop items); case-insensitive partial matching; results grouped by category
