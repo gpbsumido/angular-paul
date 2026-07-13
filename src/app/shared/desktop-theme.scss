@@ -1,0 +1,85 @@
+:root {
+  // System font stack (SF-style)
+  --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  --font-system-display:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
+
+  // Desktop background
+  --desktop-bg: #1c1c1e;
+  --desktop-bg-gradient: linear-gradient(145deg, #1c1c1e 0%, #2c2c2e 50%, #1a1a2e 100%);
+
+  // Menu bar
+  --menubar-bg: rgba(30, 30, 30, 0.8);
+  --menubar-bg-solid: #1e1e1e;
+  --menubar-text: rgba(255, 255, 255, 0.85);
+  --menubar-text-secondary: rgba(255, 255, 255, 0.55);
+  --menubar-border: rgba(255, 255, 255, 0.1);
+  --menubar-height: 25px;
+  --menubar-backdrop-blur: 20px;
+
+  // Dock
+  --dock-bg: rgba(40, 40, 40, 0.5);
+  --dock-border: rgba(255, 255, 255, 0.15);
+  --dock-icon-size: 48px;
+  --dock-padding: 4px 8px;
+  --dock-radius: 16px;
+  --dock-backdrop-blur: 30px;
+  --dock-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  --dock-indicator: #4a9eff;
+
+  // Window chrome
+  --window-bg: rgba(30, 30, 30, 0.95);
+  --window-bg-solid: #1e1e1e;
+  --window-titlebar-bg: rgba(40, 40, 40, 0.92);
+  --window-titlebar-text: rgba(255, 255, 255, 0.85);
+  --window-titlebar-height: 28px;
+  --window-border: rgba(255, 255, 255, 0.08);
+  --window-radius: 10px;
+  --window-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 2px 10px rgba(0, 0, 0, 0.3);
+  --window-shadow-focused: 0 15px 50px rgba(0, 0, 0, 0.6), 0 4px 15px rgba(0, 0, 0, 0.4);
+  --window-backdrop-blur: 40px;
+
+  // Traffic light buttons
+  --traffic-close: #ff5f57;
+  --traffic-minimize: #ffbd2e;
+  --traffic-maximize: #28c840;
+  --traffic-inactive: #4a4a4a;
+
+  // Text
+  --text-primary: rgba(255, 255, 255, 0.88);
+  --text-secondary: rgba(255, 255, 255, 0.55);
+  --text-tertiary: rgba(255, 255, 255, 0.35);
+  --text-disabled: rgba(255, 255, 255, 0.2);
+
+  // Accent colors
+  --accent: #0a84ff;
+  --accent-hover: #409cff;
+  --accent-active: #0070e0;
+  --accent-text: #ffffff;
+
+  // Borders & dividers
+  --border-primary: rgba(255, 255, 255, 0.1);
+  --border-secondary: rgba(255, 255, 255, 0.06);
+  --divider: rgba(255, 255, 255, 0.08);
+
+  // Surfaces & overlays
+  --surface-primary: rgba(44, 44, 46, 0.9);
+  --surface-secondary: rgba(58, 58, 60, 0.7);
+  --surface-tertiary: rgba(72, 72, 74, 0.5);
+  --overlay: rgba(0, 0, 0, 0.4);
+
+  // Selection & focus
+  --selection-bg: rgba(10, 132, 255, 0.3);
+  --focus-ring: 0 0 0 3px rgba(10, 132, 255, 0.5);
+
+  // Scrollbar
+  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
+  --scrollbar-width: 8px;
+
+  // Transitions
+  --transition-fast: 120ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 350ms ease;
+}

@@ -1,0 +1,75 @@
+:host {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: var(--menubar-height);
+}
+
+.menu-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 8px;
+  background: var(--menubar-bg);
+  backdrop-filter: blur(var(--menubar-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--menubar-backdrop-blur));
+  border-bottom: 0.5px solid var(--menubar-border);
+  font-family: var(--font-system);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--menubar-text);
+}
+
+.menu-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.menu-bar-right {
+  display: flex;
+  align-items: center;
+}
+
+.menu-bar-item {
+  display: flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--menubar-text);
+  transition: background var(--transition-fast);
+  line-height: var(--menubar-height);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  &:active {
+    background: var(--accent);
+  }
+}
+
+.apple-logo {
+  padding: 2px 12px 2px 4px;
+
+  svg {
+    opacity: 0.9;
+  }
+}
+
+.app-name {
+  font-weight: 600;
+}
+
+.menu-bar-clock {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  color: var(--menubar-text);
+  padding: 0 4px;
+}

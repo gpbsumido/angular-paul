@@ -1,5 +1,46 @@
-<main>
-  <p>angular-paul loading...</p>
-</main>
+<app-desktop (contextmenu)="onDesktopContextMenu($event)" />
+<app-desktop-icons />
+
+@defer (on idle) {
+  <app-context-menu [items]="desktopMenuItems" (action)="onContextMenuAction($event)" />
+} @placeholder {
+  <span></span>
+}
+
+<app-menu-bar (spotlightRequested)="toggleSpotlight()" />
+
+@for (launched of launcher.launchedWindows(); track launched.windowId) {
+  @let win = windowManager.getWindow(launched.windowId);
+  @if (win) {
+    <app-window
+      [title]="win.title"
+      [x]="win.x"
+      [y]="win.y"
+      [width]="win.width"
+      [height]="win.height"
+      [isActive]="windowManager.focusedWindowId() === win.id"
+      [relatedThoughts]="getRelatedThoughts(win.appId)"
+      [style.z-index]="win.zIndex"
+      [style.display]="win.minimized ? 'none' : 'block'"
+      (closed)="onWindowClosed(win.id, win.appId)"
+      (minimized)="onWindowMinimized(win.id, win.appId)"
+      (maximized)="onWindowMaximized(win.id)"
+      (thoughtRequested)="onThoughtRequested($event)"
+      (pointerdown)="onWindowFocused(win.id, win.appId)"
+    >
+      <ng-container *ngComponentOutlet="launched.component" />
+    </app-window>
+  }
+}
+
+@defer (on idle) {
+  <app-spotlight (resultSelected)="onSpotlightResult($event)" />
+} @loading (minimum 150ms) {
+  <div class="defer-spinner" aria-label="Loading Spotlight"></div>
+} @placeholder {
+  <span></span>
+}
+
+<app-dock />
 
 <router-outlet />
