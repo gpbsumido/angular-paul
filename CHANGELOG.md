@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-12 - version 0.2.8
+
+- `ProjectsApp` component (standalone) showcasing Angular 21's `httpResource()` reactive async primitive
+- `ProjectsService` with `httpResource` fetching GitHub repos via reactive URL driven by `search` signal
+- Loading, error, and empty states rendered via `@if` status checks on resource signals
+- Project cards rendered via `@for` with `track`, each showing name, description, star count, and language
+- Client-side search/filter input with local signal — filters fetched repos by name/description without re-fetching
+- `thoughtRequested` output for cross-app navigation
+- `provideHttpClient(withFetch())` added to `app.config.ts` for runtime HTTP support
+- 9 TDD tests: search input rendering, loading state, card rendering with mock data, card content (name/description/stars/language), error state, empty filter state, thoughts button event, service httpResource construction, service reactive search re-fetch
+
 ## 2026-07-12 - version 0.2.7
 
 - `AboutApp` component (standalone) styled like macOS "About This Mac" — centered layout, large avatar icon, name/title, tabbed content area
