@@ -1,4 +1,6 @@
-import { Component, signal, viewChildren } from '@angular/core';
+import { Component, inject, signal, viewChildren } from '@angular/core';
+import { AppLauncherService } from '../shared/app-launcher.service';
+import { DockService } from '../shared/dock.service';
 import { DesktopIconComponent } from './desktop-icon';
 
 export interface DesktopIconData {
@@ -45,11 +47,20 @@ export interface DesktopIconData {
   `,
 })
 export class DesktopIconsComponent {
+  private readonly launcher = inject(AppLauncherService);
+  private readonly dockService = inject(DockService);
+
   readonly icons = signal<DesktopIconData[]>([
     { id: 'readme', icon: '📄', label: 'README.md' },
     { id: 'projects', icon: '📁', label: 'Projects' },
     { id: 'thoughts', icon: '📁', label: 'Thoughts' },
   ]);
+
+  private readonly iconToApp: Record<string, string> = {
+    readme: 'about',
+    projects: 'projects',
+    thoughts: 'thoughts',
+  };
 
   private readonly iconComponents = viewChildren(DesktopIconComponent);
 
@@ -63,7 +74,12 @@ export class DesktopIconsComponent {
     }
   }
 
-  onLaunched(_appId: string) {
-    // Will integrate with AppLauncherService later
+  onLaunched(iconId: string) {
+    const appId = this.iconToApp[iconId];
+    if (appId) {
+      this.launcher.launch(appId);
+      const app = this.dockService.pinnedApps().find((a) => a.id === appId);
+      if (app) this.dockService.launchApp(app);
+    }
   }
 }
