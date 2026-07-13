@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.12
+
+- `FileSystemService` (providedIn root) — virtual file tree backed by `Map<string, FileEntry[]>` with `getChildren(path)` API
+- Root entries: `/Applications/`, `/Thoughts/`, `/Projects/`, `/Preferences/` (all folders)
+- `/Applications/` populated from all 7 dock apps; `/Thoughts/` populated dynamically from `THOUGHTS` data; `/Projects/` and `/Preferences/` with launcher shortcuts
+- Each `FileEntry` has name, type (file/folder), icon, path, and action metadata (e.g. `launch:terminal`, `thought:signals`)
+- `FinderApp` component (standalone) styled like macOS Finder — sidebar with Favorites, dual-column view, toolbar with back/forward navigation
+- Signal-based navigation history for back/forward; `computed` breadcrumb trail from current path
+- Sidebar click navigates to directory; folder click renders children in adjacent column; file click emits `openFile` output with action string
+- `@for` with `track` for entries and sidebar items; `@if` for conditional child column
+- 13 TDD tests: 6 service (root entries, folder type, app children, thought files, entry metadata, empty path), 7 component (sidebar, column rendering, navigation, folder expansion, breadcrumb, file event, toolbar buttons)
+
 ## 2026-07-13 - version 0.2.11
 
 - `SettingsService` (providedIn root) with signal-based state for theme, clockFormat, wallpaper, dockSize, accentColor
