@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-12 - version 0.2.9
+
+- `CommandParserService` (providedIn root) — pure-logic command parser with `parse()` returning `ParseResult` (output + optional clear flag)
+- Commands: `help` (lists all commands), `about` (developer info), `clear` (clear signal), `echo <text>`, `thoughts [slug]` (list or view entries), `ls` (directory listing), unknown command fallback
+- `ThoughtEntry` interface and `THOUGHTS` data in `thoughts-content/thoughts-data.ts` — 3 entries: signals, httpResource, TDD with slug/title/date/summary
+- `TerminalApp` component (standalone) styled like macOS Terminal.app — dark background (#1a1a1a), SF Mono/Menlo monospace font, green `$` prompt, signal-driven history
+- Command input with Enter submission, history rendered via `@for` (newest at bottom), `submitCommand()` public API
+- `clear` command resets history signal to empty array
+- 13 TDD tests: 9 for command parser (help/about/clear/echo/thoughts list/thoughts lookup/thoughts not found/ls/unknown), 4 for terminal (input rendering, Enter submission, history order, component structure)
+
 ## 2026-07-12 - version 0.2.8
 
 - `ProjectsApp` component (standalone) showcasing Angular 21's `httpResource()` reactive async primitive
