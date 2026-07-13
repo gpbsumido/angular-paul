@@ -308,4 +308,26 @@ The three layers are complementary, not redundant. Lint catches patterns, unit a
 The CI gate is non-negotiable. If any layer fails, the PR cannot merge. This prevents accessibility regressions from sneaking in through well-intentioned feature work. The developer fixes the violation before review, not after. Retrofitting accessibility is ten times harder than building it in.`,
     relatedApp: 'about',
   },
+  {
+    slug: 'building-an-os-to-learn',
+    title: 'Building an OS to Learn a Framework',
+    date: '2026-07-13',
+    summary:
+      'Why building a complex, self-contained project is the fastest way to learn a framework — and what Angular 21 gets right.',
+    tags: ['angular', 'learning', 'architecture', 'meta'],
+    content: `The best way to learn a framework is to build something too complex for a tutorial. Tutorials teach syntax. Complex projects teach judgment — when to reach for a signal vs a computed, when lazy loading matters, when an abstraction earns its cost.
+
+Building a desktop OS in Angular forced decisions that no todo app ever would. A window manager needs z-index state shared across components. A dock needs to track which apps are running, focused, or minimized. Spotlight search needs to query across apps, files, and thought entries with a unified interface. A keyboard shortcut service needs to intercept global events without conflicting with text inputs. Each of these problems maps to a different Angular feature, and each feature reveals its design philosophy only under real pressure.
+
+Signals are the clearest example. In a simple component, signal() looks like a verbose version of a class property. In a window manager tracking focus across a dozen windows, computed() and effect() become essential — derived state stays consistent without manual synchronization, and side effects happen in controlled boundaries. The mental model shifts from "update everything on change" to "declare relationships and let the framework figure it out." You only internalize that shift by needing it.
+
+Zoneless change detection is another feature that only proves itself at scale. Removing Zone.js from a counter app saves a few kilobytes. Removing it from a desktop with windows, dock magnification, drag-and-resize, and context menus eliminates an entire category of debugging: no more "why did the whole tree re-render when I moved a window?" The 0 ms total blocking time in Lighthouse is not an accident — it is the direct result of fine-grained reactivity replacing global change detection.
+
+What Angular 21 gets right: standalone components killed NgModules without breaking anything. The new template syntax (@if, @for, @defer) reads like a template language rather than a DSL fighting HTML. Dependency injection with providedIn: 'root' makes shared state trivial. Incremental hydration means SSR does not have to be all-or-nothing. The signal-based input/output API is cleaner than decorators. The framework opinion on structure — services for state, components for views, clear separation — scales in ways that "freedom to choose" frameworks do not.
+
+What could be better: @defer is powerful but the prefetch API is limited — you cannot prefetch based on route proximity or viewport intersection of a trigger element. Dynamic component rendering via NgComponentOutlet works but lacks a first-class lazy variant that integrates with @defer. The testing story improved with vitest support, but configuring vitest-axe and Playwright axe requires manual wiring that could be built in. Error messages are excellent for template errors but still cryptic for dependency injection failures.
+
+The meta-lesson is that building something real — something with enough moving parts to break your assumptions — teaches framework thinking, not just framework syntax. Every feature I used in this project, I understood because I needed it, not because I read about it. That is the difference between knowing a framework and knowing how to use one.`,
+    relatedApp: 'about',
+  },
 ];

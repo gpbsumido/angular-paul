@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 1.0.0
+
+- **README.md rewrite**: project overview, Angular features table (16 features mapped to usage), architecture diagram, testing strategy, development/build commands, keyboard shortcuts, bundle stats
+- **New thought entry**: "Building an OS to Learn a Framework" — meta reflection on why complex projects teach framework judgment (not just syntax), what Angular 21 gets right (signals, zoneless, standalone, @defer, incremental hydration), and what could be better (@defer prefetch limits, NgComponentOutlet lazy gaps, testing wiring)
+- **README app updated**: added Angular features table, link to the meta thought entry at the bottom
+- 229 tests, all passing
+
 ## 2026-07-13 - version 0.2.25
 
 - **Lazy-load all app components**: dock registrations now use dynamic `import()` via `AppLauncherService.registerLazy()` — about, contact, finder, projects, readme, settings, terminal, thoughts all split into separate chunks loaded on first launch
