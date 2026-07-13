@@ -1,5 +1,6 @@
-<app-desktop />
+<app-desktop (contextmenu)="onDesktopContextMenu($event)" />
 <app-desktop-icons />
+<app-context-menu [items]="desktopMenuItems" (action)="onContextMenuAction($event)" />
 <app-menu-bar />
 
 @for (launched of launcher.launchedWindows(); track launched.windowId) {

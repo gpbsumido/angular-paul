@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-12 - version 0.2.6
+
+- `ContextMenuComponent` (standalone) with macOS-style translucent vibrancy panel, backdrop blur, rounded corners, subtle separators
+- Signal-driven visibility and position (`open(x, y)` / `close()` API), `@if` toggle, `@for` item rendering
+- Menu items: New Folder (disabled), Get Info, Change Desktop Background..., View Thoughts, About This Mac — with separator groups
+- Disabled items rendered with muted style but don't emit click events
+- `action` output emits item ID on click, auto-closes after selection
+- Click-outside-to-dismiss via document `mousedown` listener with proper cleanup on destroy
+- `DEFAULT_DESKTOP_MENU_ITEMS` exported constant for reuse
+- Integration: right-click on `<app-desktop>` opens context menu at cursor; suppressed over desktop icons
+- "View Thoughts" and "About This Mac" actions wired to launch respective apps via `DockService.handleDockClick`
+- 10 TDD tests: visibility toggle, cursor positioning, item rendering via @for, action emission, close on click, close on outside click, disabled item behavior, desktop surface integration, icon exclusion, click-outside dismissal
+
+## 2026-07-12 - version 0.2.5
+
+- `DesktopIconComponent` (standalone) with signal inputs (`id`, `icon`, `label`), renders emoji icon + white text label with drop shadow
+- Single-click selection with rounded-rect highlight (`selected` CSS class), managed via `viewChildren` for mutual exclusivity
+- Double-click emits `launched` output with app ID
+- `DesktopIconsComponent` container rendering 3 icons (README.md, Projects, Thoughts) via `@for` with `track`
+- Icons arranged in a column-flex grid aligned top-right (macOS desktop file layout)
+- Wired into app shell between `<app-desktop>` and `<app-menu-bar>`
+- 7 TDD tests: icon/label rendering from inputs, single-click selection, deselection of previous, double-click launch event, @for rendering, grid layout assertion, icon content verification
+
 ## 2026-07-08 - version 0.2.4
 
 - `PlaceholderApp` component with signal inputs (`appId`, `icon`), renders "coming soon" message
