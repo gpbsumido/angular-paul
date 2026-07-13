@@ -10,9 +10,11 @@ import { Window } from './window';
     <app-window
       [title]="title()"
       [isActive]="isActive()"
+      [relatedThoughts]="relatedThoughts()"
       (closed)="onClosed()"
       (minimized)="onMinimized()"
       (maximized)="onMaximized()"
+      (thoughtRequested)="onThoughtRequested($event)"
     >
       <p class="test-content">Hello from projected content</p>
     </app-window>
@@ -21,9 +23,11 @@ import { Window } from './window';
 class TestHost {
   title = signal('Test Window');
   isActive = signal(true);
+  relatedThoughts = signal<string[]>([]);
   onClosed = vi.fn();
   onMinimized = vi.fn();
   onMaximized = vi.fn();
+  onThoughtRequested = vi.fn();
 }
 
 describe('Window', () => {
@@ -98,9 +102,42 @@ describe('Window', () => {
     expect(windowEl?.classList.contains('active')).toBe(false);
   });
 
-  it('should show the thoughts button in the title bar', () => {
+  it('should show the thoughts button in the title bar when relatedThoughts has entries', () => {
+    host.relatedThoughts.set(['signals']);
+    fixture.detectChanges();
     const thoughtsBtn = nativeEl.querySelector('.window-thoughts-btn');
     expect(thoughtsBtn).toBeTruthy();
     expect(thoughtsBtn?.textContent?.trim()).toContain('ⓘ');
+  });
+
+  describe('thought linking', () => {
+    it('should accept a relatedThoughts input (array of slugs)', () => {
+      host.relatedThoughts.set(['signals', 'httpresource']);
+      fixture.detectChanges();
+      const thoughtsBtn = nativeEl.querySelector('.window-thoughts-btn');
+      expect(thoughtsBtn).toBeTruthy();
+    });
+
+    it('should hide the ⓘ button when relatedThoughts is empty', () => {
+      host.relatedThoughts.set([]);
+      fixture.detectChanges();
+      const thoughtsBtn = nativeEl.querySelector('.window-thoughts-btn');
+      expect(thoughtsBtn).toBeNull();
+    });
+
+    it('should show the ⓘ button when relatedThoughts has entries', () => {
+      host.relatedThoughts.set(['signals']);
+      fixture.detectChanges();
+      const thoughtsBtn = nativeEl.querySelector('.window-thoughts-btn');
+      expect(thoughtsBtn).toBeTruthy();
+    });
+
+    it('should emit thoughtRequested with the first related slug when ⓘ is clicked', () => {
+      host.relatedThoughts.set(['signals', 'httpresource']);
+      fixture.detectChanges();
+      const thoughtsBtn = nativeEl.querySelector('.window-thoughts-btn') as HTMLElement;
+      thoughtsBtn.click();
+      expect(host.onThoughtRequested).toHaveBeenCalledWith('signals');
+    });
   });
 });

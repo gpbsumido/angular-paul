@@ -8,6 +8,7 @@ import { Dock } from './dock/dock';
 import { MenuBar } from './menu-bar/menu-bar';
 import { AppLauncherService } from './shared/app-launcher.service';
 import { DockService } from './shared/dock.service';
+import { THOUGHTS } from './thoughts-content/thoughts-data';
 import { Window } from './window-manager/window';
 import { WindowManagerService } from './window-manager/window-manager.service';
 
@@ -74,5 +75,13 @@ export class App {
   onWindowFocused(windowId: string, appId: string): void {
     this.windowManager.focusWindow(windowId);
     this.dockService.focusApp(appId);
+  }
+
+  getRelatedThoughts(appId: string): string[] {
+    return THOUGHTS.filter((t) => t.relatedApp === appId).map((t) => t.slug);
+  }
+
+  onThoughtRequested(slug: string): void {
+    this.launcher.openThought(slug);
   }
 }

@@ -66,4 +66,14 @@ describe('CommandParserService', () => {
     const result = service.parse('unknown-cmd');
     expect(result.output).toContain('command not found: unknown-cmd');
   });
+
+  it('parse("thoughts signals") should return an openThought action in the result', () => {
+    const result = service.parse('thoughts signals');
+    expect(result.action).toBe('openThought:signals');
+  });
+
+  it('parse("thoughts") listing should not include an action', () => {
+    const result = service.parse('thoughts');
+    expect(result.action).toBeUndefined();
+  });
 });

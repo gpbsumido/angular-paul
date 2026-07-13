@@ -4,6 +4,7 @@ import { THOUGHTS } from '../thoughts-content/thoughts-data';
 export interface ParseResult {
   output: string;
   clear?: boolean;
+  action?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -62,6 +63,7 @@ export class CommandParserService {
 
     return {
       output: [`${entry.title}`, `Date: ${entry.date}`, '', entry.summary].join('\n'),
+      action: `openThought:${slug}`,
     };
   }
 }

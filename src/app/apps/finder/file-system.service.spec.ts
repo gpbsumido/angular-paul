@@ -58,4 +58,12 @@ describe('FileSystemService', () => {
   it('getChildren("/nonexistent/") should return an empty array', () => {
     expect(service.getChildren('/nonexistent/')).toEqual([]);
   });
+
+  it('/Thoughts/ entries should have thought: action metadata that triggers thought opening', () => {
+    const thoughts = service.getChildren('/Thoughts/');
+    for (const entry of thoughts) {
+      expect(entry.action).toBeTruthy();
+      expect(entry.action).toMatch(/^thought:/);
+    }
+  });
 });

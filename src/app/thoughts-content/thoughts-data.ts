@@ -106,4 +106,142 @@ There is also a subtle performance benefit. The old structural directives were g
 One thing I appreciate about the rollout: Angular did not deprecate the old syntax overnight. Both work side by side, so you can migrate incrementally. But once you have used @if and @for in a few components, the old *ngIf syntax feels clunky. The new syntax is just how templates should have always worked.`,
     relatedApp: 'terminal',
   },
+  {
+    slug: 'lazy-loading-defer',
+    title: 'Lazy Loading with @defer',
+    date: '2026-07-11',
+    summary:
+      "Angular's @defer blocks bring component-level lazy loading with fine-grained triggers — a different beast from route-level code splitting.",
+    tags: ['defer', 'lazy-loading', 'performance'],
+    content: `Route-level lazy loading has been an Angular staple since the early days. You split your app at route boundaries, and the router loads each chunk on navigation. It works well, but it is coarse-grained. What about the heavy chart library that only renders when the user scrolls down? Or the rich text editor that should not load until someone clicks "Edit"?
+
+@defer solves this at the component level. You wrap any piece of template in @defer, and Angular splits it into a separate chunk at build time. The chunk only loads when a trigger condition is met. No manual dynamic imports, no ViewContainerRef gymnastics, no service to manage loading state. The framework handles all of it.
+
+The triggers are where it gets interesting. @defer (on viewport) loads when the placeholder scrolls into view — perfect for below-the-fold content. @defer (on interaction) waits for a click, focus, or keypress on the placeholder or a specific element — ideal for tools that activate on demand, like a terminal or editor. @defer (on idle) uses requestIdleCallback to load when the browser has spare cycles, which is great for preloading non-critical UI after the initial render settles. @defer (on hover) loads when the user hovers, giving you a head start before they click. @defer (on timer(500ms)) loads after a fixed delay, useful for staggering chunk downloads.
+
+You can combine triggers: @defer (on viewport; on timer(5s)) loads whichever happens first. And every @defer block supports three companion blocks. @placeholder shows content before loading starts. @loading shows content during the fetch, with optional minimum and after parameters to prevent flash-of-loading-state. @error shows fallback content if the chunk fails to load.
+
+The bundle size impact is measurable. In this portfolio app, wrapping the terminal component in @defer (on interaction) moved about 15KB out of the initial bundle. That is not transformative for a small app, but in a large enterprise application with dozens of feature components, deferring non-critical UI can cut initial load time significantly. The key insight is that @defer is cheap to add — the compiler does the code splitting automatically, so there is no architectural refactoring required.
+
+One nuance: @defer is not a replacement for route-level lazy loading. Routes split at navigation boundaries, @defer splits within a single view. Use routes for page-level chunks and @defer for component-level chunks within those pages. They compose naturally.`,
+    relatedApp: 'terminal',
+  },
+  {
+    slug: 'httpresource-reactive',
+    title: 'httpResource: Reactive Data Fetching',
+    date: '2026-07-12',
+    summary:
+      'httpResource replaces the subscribe-in-ngOnInit pattern with a declarative, signal-based approach to async data.',
+    tags: ['httpResource', 'resource', 'signals'],
+    content: `The old Angular pattern for fetching data was remarkably verbose. Inject HttpClient. Create a subject or signal for loading state. Create another for error state. Subscribe in ngOnInit. Pipe through takeUntilDestroyed. Set loading to true, then false on completion. Handle errors in the catchError operator. Repeat for every data source in every component.
+
+httpResource collapses all of that into a single declaration. You pass it a URL (or a function that returns a URL), and it gives you a resource object with signals for value, status, error, headers, and statusCode. The status signal is a union type — idle, loading, reloading, resolved, error, local — so you can drive your template with a single @switch instead of juggling multiple boolean flags.
+
+The reactive URL is the key feature. When you pass a function, httpResource tracks any signals read inside it. Change a signal, and the resource automatically cancels the in-flight request and fetches the new URL. This is how the Projects app in this portfolio works: the service has a search signal, and the httpResource re-fetches whenever it changes. No manual subscription management, no switchMap, no race condition bugs.
+
+If you have used React Query or SWR, the mental model is similar: declare what data you need as a function of your current state, and let the framework handle the fetching lifecycle. But Angular's version is more tightly integrated — httpResource is built on the same resource() primitive that underlies all async signals, and it works with Angular's dependency injection for HttpClient interceptors, testing, and SSR.
+
+For testing, httpResource works with HttpClientTesting just like regular HttpClient calls. You provide provideHttpClientTesting(), flush the expected request, and assert against the resource's value signal. The only gotcha in zoneless apps is that you need to flush effects or await fixture.whenStable() before the resource sends its first request, because there is no Zone.js to trigger the initial effect automatically.
+
+The pattern I have settled on is: httpResource in a service for the data layer, computed signals in the component for filtering and transformation, and @if / @switch in the template for rendering states. Each layer does one thing. The service owns the fetch. The component owns the view logic. The template owns the rendering. Clean separation, zero boilerplate.
+
+One thing httpResource does not do is caching or deduplication across components. If two components create httpResources pointing at the same URL, you get two requests. For shared data, put the resource in a service and inject it. This is a deliberate design choice — implicit caching creates subtle bugs, and Angular prefers explicit over magic.`,
+    relatedApp: 'projects',
+  },
+  {
+    slug: 'angular-forms',
+    title: 'Forms in Angular: Still the Best',
+    date: '2026-07-13',
+    summary:
+      "Angular's reactive forms remain a genuine competitive advantage — and model() makes simple cases even simpler.",
+    tags: ['forms', 'model', 'two-way-binding'],
+    content: `Every framework handles forms. Most handle them poorly. Angular's reactive forms are, genuinely, one of the best form systems in any frontend framework — and they have only gotten better with recent additions like typed forms and the model() signal.
+
+Reactive forms give you a FormGroup as a programmatic object. You can validate, transform, watch, and test it without touching the DOM. The form is a data structure, not a side effect of template bindings. This matters enormously for complex forms — multi-step wizards, dynamic field arrays, conditional validation, cross-field validators. Try building a form where field B's validation depends on field A's value in a framework without reactive forms, and you will appreciate what Angular gives you for free.
+
+Typed forms, introduced in Angular 14, made this even better. FormBuilder.nonNullable.group() gives you compile-time type safety on form values. Access form.controls.email and TypeScript knows the type. Call form.value and the shape is inferred. No more casting, no more runtime surprises.
+
+But reactive forms are heavy machinery for simple cases. A settings toggle, a search input, a single-field filter — wiring up a FormControl for these feels like overkill. This is where model() comes in. It creates a two-way bindable signal: the parent passes a value in, the child can update it, and the change flows back automatically. In the template, you bind with [(value)]="signal", and it just works. No Output + Input boilerplate, no event emitter, no ngModelChange handler.
+
+The mental model I use: if the form is the feature (a contact form, a registration page, an admin editor), use reactive forms. If the form control is incidental to the feature (a filter, a toggle, a slider in a settings pane), use model() or plain signals with event bindings.
+
+Template-driven forms still exist, and they are fine for prototyping. But I would not use them in production code. They hide too much — validation state lives in the template, testing requires DOM queries, and complex logic becomes template soup. Reactive forms keep logic in TypeScript where it belongs.
+
+One underrated feature: reactive forms compose. You can nest FormGroups, build FormArrays dynamically, and create reusable form fragments as components that accept a FormGroup input. The parent owns the form structure, child components own the UI for their section. This pattern scales to arbitrarily complex forms without becoming unmaintainable.
+
+The contact form in this portfolio is a simple example — three fields, required and email validators, submission state managed by a signal. But the same patterns scale to enterprise forms with hundreds of fields. That is the point: Angular forms do not force you to choose between simple and powerful.`,
+    relatedApp: 'contact',
+  },
+  {
+    slug: 'dependency-injection',
+    title: 'Dependency Injection Done Right',
+    date: '2026-07-06',
+    summary:
+      "Angular's DI system is one of its strongest differentiators — and the inject() function made it even better.",
+    tags: ['dependency-injection', 'architecture'],
+    content: `React developers prop-drill or reach for context. Vue developers use provide/inject with limited typing. Angular developers just ask for what they need, and the framework hands it over.
+
+Angular's dependency injection is a hierarchical injector system baked into the framework from day one. Every component, directive, and service can declare its dependencies, and Angular resolves them automatically through the injector tree. This is not a library bolted on top — it is a first-class architectural feature that shapes how you design applications.
+
+The inject() function, introduced as a replacement for constructor-based injection, is where things got cleaner. Instead of a constructor with six parameters — constructor(private http: HttpClient, private router: Router, private store: Store, ...) — you write inject(HttpClient) at the field level. It is more readable, works in functions outside of classes, and enables patterns that were awkward with constructor injection, like injecting into factory functions or utility composables.
+
+The providedIn: 'root' pattern is the default for services, and it is the right default. A root-provided service is a singleton, tree-shaken if unused, and requires zero configuration in any module or component. You write @Injectable({ providedIn: 'root' }) and the service exists everywhere. This eliminated an entire category of bugs where developers forgot to add a service to a module's providers array.
+
+But component-level providing is where DI gets powerful. Provide a service at the component level and each instance of that component gets its own service instance. This is how you build isolated, reusable feature components. A data table component with its own sorting service. A form wizard with its own step-tracking service. Each instance is independent, with no shared state leaking between them.
+
+The injector hierarchy also enables elegant overriding. Need a mock logger in tests? Provide it at the test module level. Need a different HTTP interceptor in one feature area? Provide it at that component's level. The child injector shadows the parent, and the consuming code never knows the difference.
+
+One pattern I use frequently is injection tokens with factory providers. You define an InjectionToken<Config>, provide it with a useFactory that reads from environment or computes at runtime, and inject it wherever needed. This decouples configuration from implementation cleanly — the component asks for Config, not for "the thing that reads environment variables."
+
+Compare this to React, where sharing a service-like object means either prop drilling, wrapping in a context provider, or reaching for a third-party state management library. Angular's DI is built-in, typed, hierarchical, and testable. It is one of those features that you do not appreciate until you work without it.`,
+    relatedApp: 'about',
+  },
+  {
+    slug: 'standalone-everything',
+    title: 'Standalone Everything',
+    date: '2026-07-03',
+    summary:
+      "NgModules are Angular's past. Standalone components, directives, and pipes are its future — and the mental model is dramatically simpler.",
+    tags: ['standalone', 'architecture', 'modules'],
+    content: `NgModules were Angular's answer to organizing code. They grouped components, declared dependencies, and configured providers. They also confused nearly every developer who ever touched Angular for the first time.
+
+The problem was not that modules were bad in theory. The problem was that they created an indirection layer between "I wrote a component" and "I can use this component." You had to declare the component in a module, export it from that module, import that module into another module, and only then could you use the component in a template. Forget any step, and you got an unhelpful error. Circular module dependencies were common. Shared modules became dumping grounds. Feature modules accumulated providers that leaked into the global injector.
+
+Standalone components eliminated all of this. A standalone component declares its own dependencies in its imports array. It does not need a module. It does not need to be declared anywhere. You import the component directly where you use it. The dependency graph is explicit and local — you can look at a single file and know exactly what it depends on.
+
+This is how every component in this portfolio works. The Dock component imports nothing except the services it injects. The Window component is self-contained. The AboutApp, TerminalApp, ContactApp — each one is a standalone component that declares exactly what it needs. No shared module, no feature module, no core module. Just components.
+
+The migration from NgModules to standalone was surprisingly smooth. Angular provides a schematic that converts module-based components to standalone automatically. It moves declarations to imports, removes the module file, and updates references. For most apps, the mechanical conversion takes minutes. The harder part is untangling shared modules that accumulated unrelated components — but that is a design problem, not a migration problem.
+
+Standalone also changed how lazy loading works. Instead of loadChildren pointing to a module, you use loadComponent pointing directly to a component. The router does not need a module as an entry point anymore. This reduced the boilerplate for adding a new lazy route from "create a component, create a module, configure the module's routes, reference the module in the parent router" to "create a component, add a loadComponent route." One step instead of four.
+
+Pipes and directives are standalone too. A standalone pipe can be imported directly into a component's imports array. No more declaring it in a shared module just so three components can use it. The dependency is explicit, local, and tree-shakeable.
+
+The mental model shift is the real win. With modules, you thought in terms of "which module owns this?" With standalone, you think in terms of "what does this component need?" The second question is simpler, more local, and produces better-organized code.`,
+    relatedApp: 'settings',
+  },
+  {
+    slug: 'dynamic-components',
+    title: 'Dynamic Components in Angular 21',
+    date: '2026-07-09',
+    summary:
+      "Angular's createComponent API and NgComponentOutlet make dynamic rendering clean — this entire OS window system is built on it.",
+    tags: ['createComponent', 'dynamic-components'],
+    content: `Most Angular apps render components statically — you write <app-header> in a template and Angular creates the component at that spot. But some use cases need to render components determined at runtime. A plugin system. A dashboard with configurable widgets. Or, in this case, a desktop OS where clicking a dock icon opens a window containing an arbitrary app component.
+
+Angular offers two main approaches for dynamic components. NgComponentOutlet is the template-driven option: you pass it a component class, and it renders that component inline. This is what the window manager in this portfolio uses. The root template iterates over launched windows with @for, and each window contains <ng-container *ngComponentOutlet="launched.component" />. The component class comes from the AppLauncherService registry — when you click "Terminal" in the dock, the service looks up TerminalApp and passes it to NgComponentOutlet.
+
+The programmatic alternative is createComponent(), available through ViewContainerRef or the environment injector. You call viewContainerRef.createComponent(SomeComponent), and Angular instantiates it, runs its lifecycle, and inserts it into the DOM. This gives you more control — you can set inputs programmatically, subscribe to outputs, and destroy the component explicitly. It is the right choice when you need fine-grained lifecycle management.
+
+Angular 21 made both approaches cleaner. Input binding on dynamically created components now works through the setInput() method on ComponentRef, which triggers the same signal-based input flow as static template bindings. You can set inputs after creation, and the component reacts exactly as if the input changed in a parent template. Before this improvement, passing data to dynamic components required injectors or services — now it is a single method call.
+
+The architecture of this portfolio's window system shows the pattern in practice. The AppLauncherService maintains a registry mapping app IDs to component types. When an app is launched, it creates a LaunchedWindow record with the component class and a window ID. The root component iterates over these records, rendering each one inside an <app-window> wrapper with NgComponentOutlet. The window provides chrome — title bar, resize handles, close button — while the dynamic component provides content.
+
+This separation works because Angular's DI hierarchy makes the dynamic component a natural child of the window. The dynamic component can inject services, respond to signals, and participate in change detection exactly like a static component. There is no special lifecycle, no manual bootstrapping, no loss of framework features.
+
+One gotcha: NgComponentOutlet destroys and recreates the component when the class reference changes. If you swap the component type, the old instance is destroyed and a new one is created — state is not preserved. For this window system, that is fine because each window has a stable component class. But if you are building a tab system where tabs swap components, you may want to cache instances manually.
+
+The broader lesson is that Angular treats dynamic components as first-class citizens. They are not an escape hatch or an advanced pattern reserved for library authors. They are a normal tool for normal problems, and the framework supports them with the same DI, change detection, and lifecycle guarantees as static components.`,
+    relatedApp: 'finder',
+  },
 ];

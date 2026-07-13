@@ -13,11 +13,13 @@
       [width]="win.width"
       [height]="win.height"
       [isActive]="windowManager.focusedWindowId() === win.id"
+      [relatedThoughts]="getRelatedThoughts(win.appId)"
       [style.z-index]="win.zIndex"
       [style.display]="win.minimized ? 'none' : 'block'"
       (closed)="onWindowClosed(win.id, win.appId)"
       (minimized)="onWindowMinimized(win.id, win.appId)"
       (maximized)="onWindowMaximized(win.id)"
+      (thoughtRequested)="onThoughtRequested($event)"
       (pointerdown)="onWindowFocused(win.id, win.appId)"
     >
       <ng-container *ngComponentOutlet="launched.component" />

@@ -1,6 +1,6 @@
 {
   "name": "angular-paul",
-  "version": "0.2.15",
+  "version": "0.2.17",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

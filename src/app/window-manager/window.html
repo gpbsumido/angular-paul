@@ -28,9 +28,13 @@
 
     <span class="window-title">{{ title() }}</span>
 
-    <div class="window-titlebar-right">
-      <button class="window-thoughts-btn" aria-label="Thoughts">ⓘ</button>
-    </div>
+    @if (hasRelatedThoughts()) {
+      <div class="window-titlebar-right">
+        <button class="window-thoughts-btn" aria-label="Thoughts" (click)="onThoughtsClick()">
+          ⓘ
+        </button>
+      </div>
+    }
   </div>
 
   <div class="window-body">

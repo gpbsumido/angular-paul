@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 0.2.17
+
+- TDD thought linking behavior across window, launcher, terminal, and Finder
+- `Window` component: `relatedThoughts` signal input (string[]) and `thoughtRequested` output; ⓘ button conditionally shown only when related thoughts exist, emits first slug on click
+- `AppLauncherService.openThought(slug)` looks up thought by slug, launches a thoughts window with the entry's title
+- `CommandParserService`: `ParseResult` gains optional `action` field; `thoughts <slug>` returns `openThought:<slug>` action for terminal integration
+- `FileSystemService` `/Thoughts/` entries already carry `thought:<slug>` action metadata (verified with new test)
+- App template wires `relatedThoughts` per window via `THOUGHTS.relatedApp` mapping, forwards `thoughtRequested` to launcher
+- 10 new tests (192 total), all passing
+
+## 2026-07-13 - version 0.2.16
+
+- 3 new thought entries (300–420 words each, conversational + technical):
+  - "Dependency Injection Done Right" — hierarchical injector tree, providedIn root vs component-level, InjectionToken for non-class deps, inject() vs constructor injection, testing with TestBed.overrideProvider. Tags: dependency-injection, services, testing
+  - "Standalone Everything" — dropping NgModules, standalone: true default in Angular 21, importProvidersFrom for migration, tree-shaking benefits, route-level providers as module replacements. Tags: standalone, modules, architecture
+  - "Dynamic Components in Angular 21" — createComponent API vs NgComponentOutlet, ViewContainerRef.createComponent, passing inputs/outputs programmatically, cleanup with DestroyRef, real-world window manager use case. Tags: dynamic-components, ViewContainerRef, NgComponentOutlet
+
 ## 2026-07-13 - version 0.2.15
 
 - 3 new thought entries (300–420 words each, conversational + technical):
