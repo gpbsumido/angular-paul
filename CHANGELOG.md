@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-13 - version 1.0.2
+
+- **docs**: expanded design system thoughts entry with @theme circular reference gotcha and CSS layer conflict lessons from React integration
+- bumped version to 1.0.2
+
 ## 2026-07-13 - version 1.0.0
 
 - **README.md rewrite**: project overview, Angular features table (16 features mapped to usage), architecture diagram, testing strategy, development/build commands, keyboard shortcuts, bundle stats

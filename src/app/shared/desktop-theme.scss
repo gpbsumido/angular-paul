@@ -1,5 +1,12 @@
 :root {
-  // System font stack (SF-style)
+  // ---------------------------------------------------------------------------
+  // Desktop-specific tokens
+  // These are macOS desktop simulator tokens that do NOT come from the design
+  // system. They are unique to this app's visual identity.
+  // ---------------------------------------------------------------------------
+
+  // System font stack (SF-style) — desktop uses macOS system fonts, not the
+  // design system's Inter stack
   --font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
   --font-system-display:
     -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
@@ -46,24 +53,24 @@
   --traffic-maximize: #28c840;
   --traffic-inactive: #4a4a4a;
 
-  // Text
+  // Text — desktop-specific alpha-based text colors for dark mode
   --text-primary: rgba(255, 255, 255, 0.88);
   --text-secondary: rgba(255, 255, 255, 0.55);
   --text-tertiary: rgba(255, 255, 255, 0.35);
   --text-disabled: rgba(255, 255, 255, 0.2);
 
-  // Accent colors
+  // Accent colors — macOS-style blue accent
   --accent: #0a84ff;
   --accent-hover: #409cff;
   --accent-active: #0070e0;
   --accent-text: #ffffff;
 
-  // Borders & dividers
+  // Borders & dividers — desktop-specific alpha-based borders
   --border-primary: rgba(255, 255, 255, 0.1);
   --border-secondary: rgba(255, 255, 255, 0.06);
   --divider: rgba(255, 255, 255, 0.08);
 
-  // Surfaces & overlays
+  // Surfaces & overlays — desktop-specific translucent surfaces
   --surface-primary: rgba(44, 44, 46, 0.9);
   --surface-secondary: rgba(58, 58, 60, 0.7);
   --surface-tertiary: rgba(72, 72, 74, 0.5);
@@ -76,10 +83,15 @@
   // Scrollbar
   --scrollbar-thumb: rgba(255, 255, 255, 0.15);
   --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
-  --scrollbar-width: 8px;
+  --scrollbar-width: var(--paul-spacing-2); // 8px — synced with design system spacing
 
-  // Transitions
-  --transition-fast: 120ms ease;
-  --transition-normal: 200ms ease;
-  --transition-slow: 350ms ease;
+  // ---------------------------------------------------------------------------
+  // Tokens bridged from @paul/tokens
+  // The following tokens reference design system values via the token bridge
+  // (token-bridge.scss) so they stay in sync with the design system.
+  // See token-bridge.scss for the full mapping.
+  // ---------------------------------------------------------------------------
+
+  // Transitions — duration values come from @paul/tokens, easing stays as `ease`
+  // --transition-fast, --transition-normal, --transition-slow are set in token-bridge.scss
 }
