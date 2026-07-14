@@ -34,7 +34,7 @@
 }
 
 @defer (on idle) {
-  <app-spotlight (resultSelected)="onSpotlightResult($event)" />
+  <app-spotlight (resultSelected)="onSpotlightResult($event)" (closed)="onSpotlightClosed()" />
 } @loading (minimum 150ms) {
   <div class="defer-spinner" aria-label="Loading Spotlight"></div>
 } @placeholder {
