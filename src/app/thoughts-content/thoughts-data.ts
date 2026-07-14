@@ -330,4 +330,24 @@ What could be better: @defer is powerful but the prefetch API is limited — you
 The meta-lesson is that building something real — something with enough moving parts to break your assumptions — teaches framework thinking, not just framework syntax. Every feature I used in this project, I understood because I needed it, not because I read about it. That is the difference between knowing a framework and knowing how to use one.`,
     relatedApp: 'about',
   },
+  {
+    slug: 'shared-design-system',
+    title: 'Shared Design System: Token Bridging',
+    date: '2026-07-13',
+    summary:
+      'How a shared design system feeds tokens into a macOS desktop simulator without replacing its visual identity.',
+    tags: ['tokens', 'design-system', 'scss', 'architecture'],
+    content: `This app is a macOS desktop simulator. It has traffic light window buttons, a dock with magnification, translucent window chrome, and a menubar. None of that looks like a generic design system. But it shares concepts with the React portfolio app — typography scales, motion durations, border radii, z-index layers, spacing. Those shared concepts are where the design system earns its keep.
+
+The design system publishes tokens as CSS custom properties under the --paul-* prefix via @paul-portfolio/tokens on npm. Every color, spacing step, font size, shadow, animation duration, border radius, and z-index layer is a single custom property. The build produces CSS, SCSS, and JSON outputs from one JavaScript definition.
+
+Integration is a token bridge, not a full adoption. A token-bridge.scss file maps design system tokens to the variable names this app already uses. Typography scales map to the desktop font sizes. Motion durations map to transition speeds. Border radii map to window corner rounding. Z-index layers map to the window manager stacking order. The mapping is explicit and one-directional — the desktop theme owns the variable names, the bridge just sources their values from the design system.
+
+What stays local: everything that makes this app look like macOS. The color palette (grays tuned for dark mode, translucent whites for window chrome, traffic light red/amber/green), the dock gradients, the menubar blur, the window shadow stack. These are desktop-specific design decisions that should not be abstracted into a shared system. If the design system changed its primary blue, the desktop dock should not turn blue.
+
+The SCSS import order matters. @use rules for token-bridge and desktop-theme must come before the @import of the token CSS file because SCSS requires @use before @import. The token CSS file provides the raw --paul-* custom properties that the bridge reads via var(). The desktop theme layer then overrides or extends with app-specific values.
+
+The practical benefit: when the design system updates a motion duration or adds a new spacing step, this app picks it up through the bridge. The shared concepts stay in sync. The desktop identity stays independent. It is the right level of coupling — shared foundations, independent surfaces.`,
+    relatedApp: 'about',
+  },
 ];
