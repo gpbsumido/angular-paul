@@ -16,7 +16,7 @@
   "private": true,
   "packageManager": "npm@10.9.4",
   "dependencies": {
-    "@paul/tokens": "file:../paul-design-system/packages/tokens",
+    "@paul-portfolio/tokens": "^0.1.3",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",
