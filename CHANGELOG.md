@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-14 - version 1.0.3
+
+- **fix**: Spotlight click-outside-to-close now syncs state back to `KeyboardShortcutService.spotlightOpen` — previously clicking outside set local `isOpen` to false but left the parent signal stale, preventing re-open via Cmd+Space
+- Spotlight emits `closed` output on self-close (overlay click or Escape); App component handles it with `onSpotlightClosed()`
+
+## 2026-07-13 - version 1.0.2
+
+- **docs**: expanded design system thoughts entry with @theme circular reference gotcha and CSS layer conflict lessons from React integration
+- bumped version to 1.0.2
+
 ## 2026-07-13 - version 1.0.0
 
 - **README.md rewrite**: project overview, Angular features table (16 features mapped to usage), architecture diagram, testing strategy, development/build commands, keyboard shortcuts, bundle stats

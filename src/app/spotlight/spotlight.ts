@@ -13,6 +13,7 @@ export class Spotlight {
   readonly results = signal<SearchResultGroup[]>([]);
   readonly isOpen = signal(false);
   readonly resultSelected = output<string>();
+  readonly closed = output<void>();
 
   open(): void {
     this.isOpen.set(true);
@@ -21,9 +22,11 @@ export class Spotlight {
   }
 
   close(): void {
+    if (!this.isOpen()) return;
     this.isOpen.set(false);
     this.query.set('');
     this.results.set([]);
+    this.closed.emit();
   }
 
   onInput(event: Event): void {
