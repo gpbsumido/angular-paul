@@ -347,7 +347,9 @@ What stays local: everything that makes this app look like macOS. The color pale
 
 The SCSS import order matters. @use rules for token-bridge and desktop-theme must come before the @import of the token CSS file because SCSS requires @use before @import. The token CSS file provides the raw --paul-* custom properties that the bridge reads via var(). The desktop theme layer then overrides or extends with app-specific values.
 
-The practical benefit: when the design system updates a motion duration or adds a new spacing step, this app picks it up through the bridge. The shared concepts stay in sync. The desktop identity stays independent. It is the right level of coupling — shared foundations, independent surfaces.`,
+The practical benefit: when the design system updates a motion duration or adds a new spacing step, this app picks it up through the bridge. The shared concepts stay in sync. The desktop identity stays independent. It is the right level of coupling — shared foundations, independent surfaces.
+
+One gotcha worth noting: the design system initially generated spacing tokens with dots in the CSS custom property names (--paul-spacing-0.5). Some browsers tolerate this, but strict CSS parsers like SWC in Next.js treat the dot as a number literal and crash. Angular's SCSS compiler shows it as a warning but doesn't fail. The fix was replacing dots with underscores (--paul-spacing-0_5) in the token build script. The lesson: always validate generated CSS against the strictest parser in your consumer stack, not just the most permissive one.`,
     relatedApp: 'about',
   },
 ];
