@@ -64,6 +64,10 @@ export class App {
     this.shortcuts.spotlightOpen.update((open) => !open);
   }
 
+  onSpotlightClosed(): void {
+    this.shortcuts.spotlightOpen.set(false);
+  }
+
   onSpotlightResult(action: string): void {
     if (action.startsWith('launch:')) {
       const appId = action.replace('launch:', '');
