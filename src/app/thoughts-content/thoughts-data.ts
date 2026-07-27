@@ -356,4 +356,30 @@ A subtler gotcha showed up in the React app's Tailwind v4 integration. Tailwind'
 Another lesson from the React side: the design system's CSS package bundles a reset, base typography, heading sizes, and all component CSS behind @layer declarations. Importing the full CSS package into a Tailwind v4 app created competing @layer orderings and style conflicts — spacing, heading sizes, and button styles all shifted. The solution was importing only the tokens package for the raw --paul-* custom properties, since the React components handle their own CSS classes. This matters for Angular too: if this app ever moves to a utility-CSS framework, import only the tokens layer, not the full CSS package.`,
     relatedApp: 'about',
   },
+  {
+    slug: 'mac-menu-bar',
+    title: 'The macOS Menu Bar as Derived State',
+    date: '2026-07-16',
+    summary:
+      'Building an interactive macOS menu bar where the entire menu model is a computed signal derived from window and dock state — not hand-maintained UI.',
+    tags: ['signals', 'computed', 'state', 'architecture'],
+    content: `The menu bar is the strip across the top of macOS: the Apple menu, the active app's name, and File / Edit / View / Window / Help. It looks like chrome, but getting it right forced the most interesting state-modelling decision in the whole desktop simulator. The rule I set was that the menu bar owns no state of its own. Everything it shows is derived.
+
+The active app name is a computed signal. It reads the focused window from the window manager, looks up which dock app owns that window, and returns that app's label. No focused window means no active app, so it falls back to "Finder" — exactly like the real thing when you click the desktop. There is no activeApp field to keep in sync; the name is a pure function of window and dock state, recomputed only when one of them changes.
+
+The whole menu model is a second computed signal. MenuBarService.menus() returns the seven top-level menus, and it rebuilds them from the same inputs: the active app name, the list of open windows, and whether any window is focused. That last flag drives the disabled states. "Minimize," "Zoom," "Close Window," "Hide," and "Quit" are all disabled when hasWindow is false — you cannot close a window that is not there. "Cycle Through Windows" is disabled until at least two windows are open, because cycling through one window does nothing.
+
+The Window menu shows off why derived state is the right model. Its items are static up to a point — Minimize, Zoom, Cycle — and then it appends one item per open window, each labelled with that window's title and carrying a focus:<id> action. Open a third window and the menu grows a third entry automatically, because the menu is a projection of windowManager.windows(), not a list someone maintains by hand. Close that window and the entry disappears on the next recompute. There is no add-to-menu / remove-from-menu code anywhere.
+
+Actions run through a single dispatcher. Every menu item has a string id, and clicking one calls execute(id). The dispatcher checks one dynamic prefix first — ids beginning with focus: route straight to windowManager.focusWindow with the id sliced off — and then a flat switch handles the fixed commands: open the About or Settings app, trigger Spotlight through the keyboard-shortcut service, open a new window for the active app, close / minimize / zoom / quit the focused window, cycle windows. First match wins, and the dynamic prefix is checked before the switch so a hundred open windows do not need a hundred case labels. Adding a menu item is adding a data object plus one case; the rendering, the disabled logic, and the keyboard-shortcut hint all come for free from the model.
+
+Some behaviours needed real coordination across services rather than a one-liner. Closing a window closes its launched-window record, and only if that was the app's last window does it also tell the dock to mark the app as no longer running. Quitting collects every launched window for the active app, closes them all, then closes the app in the dock. Minimizing updates both the window manager and the dock's running-state map so the dock shows the minimized indicator. These are the places where "derived state" meets "imperative side effects," and keeping the side effects inside the service — behind named private methods — kept the computed signals pure and the component dumb.
+
+The build was test-first, and the git history shows it: a failing spec for the menu model and actions came before MenuBarService existed, then failing specs for the interactive dropdowns came before the component was wired up. Testing a derived menu is a pleasure precisely because it is derived — you set up window and dock state, read menus(), and assert on the structure. No DOM, no clicks, no async. The interaction specs then cover the parts that do touch the DOM: opening a dropdown, keyboard focus, and dispatching the right action id.
+
+Two gotchas were worth the trouble. First, dropdowns needed to be focusable to receive keyboard events — a menu you can open with the mouse but not drive with the keyboard is only half a menu, and on a portfolio piece that is exactly the kind of detail people notice. Second, the disabled states have to be honest. It is tempting to always render every item enabled and just no-op the handler, but a greyed-out "Quit" when nothing is running is part of what makes the simulator read as real. Deriving disabled from hasWindow and window count meant that honesty was automatic — the same signal that builds the menu also greys out the impossible actions.
+
+The meta-lesson mirrors the rest of this app: model the source of truth once, derive everything else. The menu bar has no reducers, no event bus, no manual synchronisation. It is a pure view over window and dock state, and every interaction is just a data lookup plus a dispatch. That is the version of this feature I would want to maintain a year from now.`,
+    relatedApp: 'about',
+  },
 ];
