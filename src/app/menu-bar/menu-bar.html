@@ -31,6 +31,7 @@
           <div
             class="menu-dropdown"
             role="menu"
+            tabindex="-1"
             [attr.aria-label]="menu.isApple ? 'Apple menu' : menu.label"
             (keydown)="onDropdownKeydown($event)"
           >
