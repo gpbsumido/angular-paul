@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-07-27 - version 1.1.0
+
+- **Interactive menu bar dropdowns**: menu bar items (File, Edit, View, Window, Help) now open functional dropdown menus instead of being static labels
+- `MenuBarService` (providedIn root) — menu model and active-app name exposed as `computed` signals derived from `WindowManagerService` and `DockService` state
+- Menu item disabled states derived from the same window/dock source (e.g. window actions disabled when no window is open)
+- Window menu is a live projection of currently open windows — grows and shrinks as windows open and close
+- Single `execute(id)` dispatcher routes every menu action through one entry point
+- Dropdown menus are focusable for keyboard event handling; menus close on Escape and click-outside
+- New thought entry: macOS menu bar write-up — menu model and active-app name as computed signals, disabled states from a single source of truth, the Window menu as a projection of open windows, and the `execute(id)` dispatcher pattern
+- TDD: failing specs for the menu model/actions and interactive dropdowns written first, then implemented to green
+
 ## 2026-07-14 - version 1.0.3
 
 - **fix**: Spotlight click-outside-to-close now syncs state back to `KeyboardShortcutService.spotlightOpen` — previously clicking outside set local `isOpen` to false but left the parent signal stale, preventing re-open via Cmd+Space
