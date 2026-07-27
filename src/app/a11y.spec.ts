@@ -40,6 +40,14 @@ describe('Accessibility (WCAG 2.1 AA)', () => {
       const results = await axe(fixture.nativeElement);
       expect(results).toHaveNoViolations();
     });
+
+    it('should have no axe violations with a menu open', async () => {
+      fixture.componentInstance.openMenu('window');
+      fixture.detectChanges();
+
+      const results = await axe(fixture.nativeElement);
+      expect(results).toHaveNoViolations();
+    });
   });
 
   describe('Spotlight', () => {
