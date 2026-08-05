@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { SeoService } from '../shared/seo.service';
 import { ThoughtsService } from './thoughts.service';
 
 @Component({
@@ -99,8 +100,13 @@ import { ThoughtsService } from './thoughts.service';
 export class ThoughtsListComponent {
   private readonly service = inject(ThoughtsService);
   private readonly router = inject(Router);
+  private readonly seo = inject(SeoService);
 
   readonly thoughts = this.service.getAll();
+
+  constructor() {
+    this.seo.setListMeta();
+  }
 
   navigate(slug: string) {
     this.router.navigate(['/thoughts', slug]);
