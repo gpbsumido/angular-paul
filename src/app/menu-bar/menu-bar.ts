@@ -1,17 +1,30 @@
-import { DOCUMENT } from '@angular/common';
-import { Component, DestroyRef, effect, ElementRef, inject, output, signal } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  output,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
 import { MenuBarItem, MenuBarService } from './menu-bar.service';
 
 @Component({
   selector: 'app-menu-bar',
   templateUrl: './menu-bar.html',
   styleUrl: './menu-bar.scss',
+  // The live clock differs between server render and client bootstrap; skip
+  // hydration for this subtree so it re-renders cleanly in the browser.
+  host: { ngSkipHydration: 'true' },
 })
 export class MenuBar {
   private readonly menuBarService = inject(MenuBarService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly platformId = inject(PLATFORM_ID);
 
   readonly menus = this.menuBarService.menus;
   readonly activeAppName = this.menuBarService.activeAppName;
@@ -24,6 +37,7 @@ export class MenuBar {
 
   constructor() {
     effect(() => {
+      if (!isPlatformBrowser(this.platformId)) return;
       this.intervalId = setInterval(() => {
         this.clock.set(this.formatTime());
       }, 1000);
