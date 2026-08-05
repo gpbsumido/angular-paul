@@ -57,4 +57,8 @@ describe('ThoughtDetailComponent', () => {
     expect(tagTexts).toContain('signals');
     expect(tagTexts).toContain('angular');
   });
+
+  it('should set SEO metadata for the thought', () => {
+    expect(document.title).toContain('Why Angular Signals Changed Everything');
+  });
 });
