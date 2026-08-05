@@ -107,9 +107,10 @@ Build log: `Prerendered 20 static routes.`
     <Test name="serverRoutes prerender every thought slug" status="green" />
   </Tests>
 
-Full suite: **266 passed** (35 files). Lint clean. Build succeeds with one
-pre-existing budget warning (initial 416.97 kB vs 400 kB soft warning; 500 kB
-hard error not hit).
+Full suite: **266 passed** (35 files). Lint clean. Build succeeds with a budget
+warning: initial bundle 416.97 kB against the 400 kB soft warning (the 500 kB
+hard error is not hit). The new thought content string and SeoService add a few
+kB to whatever initial-chunk pulls in `THOUGHTS`; trimming is a follow-up.
 
 </Section>
 
@@ -117,7 +118,7 @@ hard error not hit).
 
 - `SITE_ORIGIN` is a constant pointing at `https://angular.paulsumido.com`; one edit if the domain changes.
 - Root `/` desktop remains client-rendered by design (open question q1 resolved: hybrid is the point).
-- Initial-bundle budget is 17 kB over the soft warning — pre-existing tightness, left as an honest signal rather than raising the threshold.
+- Initial-bundle budget is ~17 kB over the 400 kB soft warning (500 kB hard error not hit) — left as an honest signal rather than raising the threshold; moving the long thought bodies into a lazy data chunk is the real fix.
 
 </Section>
 
