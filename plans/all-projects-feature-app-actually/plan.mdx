@@ -1,0 +1,113 @@
+export const meta = {
+  title: "Hybrid rendering: server-render the Thoughts content, client-render the desktop",
+  goal: "A crawler or social scraper fetching /thoughts/:slug gets full HTML — content, title, Open Graph, and JSON-LD — with no JavaScript, while the interactive desktop shell stays client-rendered.",
+};
+
+<Section id="why" title="Why">
+
+Every route in `src/app/app.routes.server.ts` is `RenderMode.Client`. The SSR
+server never renders the component tree, so `curl /thoughts/signals` returns an
+empty `<app-root>` shell. The Thoughts pages carry the app's only shareable,
+indexable content, and today it is invisible to bots. That is SSR configured to
+do nothing.
+
+This is the enterprise proof: **per-route render modes**. Prerender (SSG) the
+content routes that need SEO and fast first paint; keep the heavyweight
+interactive desktop client-rendered. One app, two rendering strategies, chosen
+per route — exactly what Angular's render modes exist for.
+
+</Section>
+
+<Section id="architecture" title="Architecture">
+  <Mermaid>{`flowchart LR
+    Build[ng build] -->|getPrerenderParams enumerates THOUGHTS| SSG[static /thoughts/&lt;slug&gt;/index.html]
+    SSG -->|full HTML + meta + JSON-LD| Crawler[crawler / social scraper]
+    SSG -->|hydrates| Shell[interactive desktop shell]
+    Root["/ (**)"] -->|RenderMode.Client| Shell`}</Mermaid>
+</Section>
+
+<Section id="render-modes" title="Render modes (app.routes.server.ts)">
+
+| Route | Before | After | Why | Detail |
+|---|---|---|---|---|
+| `thoughts` | Client | **Prerender** | List is static, SEO-relevant | Emitted as `dist/.../browser/thoughts/index.html` at build |
+| `thoughts/:slug` | Client | **Prerender + getPrerenderParams** | Each entry is known at build time | `getPrerenderParams()` returns `THOUGHTS.map(t => ({ slug: t.slug }))` — one HTML file per thought |
+| `**` (root/desktop) | Client | Client | Interactive OS shell, not SEO surface | Hybrid strategy — deliberately client-rendered |
+
+</Section>
+
+<Section id="seo" title="SeoService — src/app/shared/seo.service.ts (new)">
+
+Reuses Angular's `Title` and `Meta` (from `@angular/platform-browser`) and the
+injected `DOCUMENT`. A normal `providedIn: 'root'` service, like the other
+services in `shared/`.
+
+| Method | Sets | Detail |
+|---|---|---|
+| `setThoughtMeta(thought)` | title, description, keywords, og:*, twitter:*, canonical, JSON-LD | `<title>{title} — Paul Sumido</title>`, `og:type=article`, canonical + `og:url` = `${SITE_ORIGIN}/thoughts/${slug}`, JSON-LD `BlogPosting` with headline/description/datePublished/author |
+| `setListMeta()` | title, description, og:*, canonical | `og:type=website`; removes any stale JSON-LD |
+
+Wired into `ThoughtDetailComponent` (calls `setThoughtMeta` when the thought
+resolves) and `ThoughtsListComponent` (calls `setListMeta`). `SITE_ORIGIN` is an
+exported constant — a config value to point at the production domain.
+
+</Section>
+
+<Section id="hydration" title="Hydration correctness">
+
+The shell now renders on the server for the first time, so time-varying UI must
+not break hydration.
+
+| Change | File | Why |
+|---|---|---|
+| Guard clock `setInterval` with `isPlatformBrowser` | `menu-bar/menu-bar.ts` | The interval must never start on the server |
+| `ngSkipHydration` on the menu bar | `menu-bar/menu-bar.ts` host | Server-rendered clock time ≠ client bootstrap time; a deliberate hydration boundary rather than a mismatch |
+
+</Section>
+
+<Section id="content" title="New in-app thought entry">
+
+Add one `THOUGHTS` entry documenting the render-mode strategy — thematically on
+point, and it becomes another prerendered SEO page. Data-only change in
+`thoughts-content/thoughts-data.ts`.
+
+</Section>
+
+<Section id="tests" title="Tests, RED first">
+  <Tests>
+    <Test name="SeoService.setThoughtMeta sets a title with the thought name and site">document.title includes thought.title and "Paul Sumido"</Test>
+    <Test name="SeoService.setThoughtMeta sets description + keywords meta">meta[name=description] === summary; keywords from tags</Test>
+    <Test name="SeoService.setThoughtMeta sets Open Graph + canonical">og:type=article, og:url + canonical contain /thoughts/&lt;slug&gt;</Test>
+    <Test name="SeoService.setThoughtMeta injects BlogPosting JSON-LD">script[type=application/ld+json] with @type BlogPosting, headline, datePublished</Test>
+    <Test name="SeoService.setListMeta sets list title and clears JSON-LD">title "Thoughts — Paul Sumido"; no ld+json script</Test>
+    <Test name="ThoughtDetailComponent sets SEO meta for its thought">document.title includes the thought title after init</Test>
+    <Test name="ThoughtsListComponent sets list SEO meta">document.title includes "Thoughts"</Test>
+    <Test name="serverRoutes prerender thoughts/:slug for every thought">renderMode Prerender; getPrerenderParams() covers all THOUGHTS slugs</Test>
+  </Tests>
+</Section>
+
+<Section id="proof" title="Measurable proof">
+
+`ng build` runs the prerender step. The build output is grepped as the contract:
+
+- `dist/angular-paul/browser/thoughts/signals/index.html` exists
+- contains the thought body text (server-rendered content, no JS)
+- contains `<title>…Paul Sumido`, `og:title`, and `application/ld+json`
+
+</Section>
+
+<Section id="open-questions" title="Open questions">
+  <Question id="q0" text="Production origin for canonical/og:url?" options={["https://paulsumido.dev (default, editable constant)"]}
+    defaultNote="Proceeding with a SITE_ORIGIN constant defaulting to https://paulsumido.dev; it's one edit to change." />
+  <Question id="q1" text="Should the root desktop route also be server-rendered?" options={["No — keep Client", "Yes — Server"]}
+    defaultNote="Proceeding with Client. The desktop is an interactive app, not an SEO surface; hybrid rendering is the point." />
+</Section>
+
+<Section id="risks" title="Risks">
+
+- Server now renders the full shell — browser-only APIs must be guarded (clock interval handled; `@defer` blocks render as placeholders server-side; no windows open on fresh render).
+- Hydration mismatch on time-varying UI — handled with `ngSkipHydration` on the menu bar.
+
+</Section>
+
+<Verdict kind="plan" />
