@@ -1,0 +1,14 @@
+{
+  "slug": "all-projects-feature-app-actually",
+  "kind": "plan",
+  "verdict": "changes",
+  "checks": {},
+  "questions": {
+    "q0": "it should be https://angular.paulsumido.com",
+    "q1": "No — keep Client — keep client"
+  },
+  "sections": {
+    "open-questions": "it should be https://angular.paulsumido.com"
+  },
+  "savedAt": "2026-08-05T23:33:11.755Z"
+}
