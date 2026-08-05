@@ -382,4 +382,22 @@ Two gotchas were worth the trouble. First, dropdowns needed to be focusable to r
 The meta-lesson mirrors the rest of this app: model the source of truth once, derive everything else. The menu bar has no reducers, no event bus, no manual synchronisation. It is a pure view over window and dock state, and every interaction is just a data lookup plus a dispatch. That is the version of this feature I would want to maintain a year from now.`,
     relatedApp: 'about',
   },
+  {
+    slug: 'hybrid-rendering',
+    title: 'Hybrid Rendering: SSG the Content, CSR the App',
+    date: '2026-08-05',
+    summary:
+      'One Angular app, two rendering strategies chosen per route: prerender the SEO-critical Thoughts pages to static HTML, keep the interactive desktop client-rendered.',
+    tags: ['ssr', 'prerender', 'seo', 'hydration'],
+    content: `For most of this project the SSR server did nothing. Every server route was RenderMode.Client, which means the server shipped an empty app-root shell and the browser rendered everything. That is fine for the desktop itself — it is an interactive OS simulation, not a page a crawler cares about — but it was quietly wrong for the one part of the app that is real content: the Thoughts pages. Curl /thoughts/signals and you got a blank shell. Every essay I had written was invisible to search engines and to the scraper that builds a social preview card. SSR was configured, and it was configured to accomplish nothing.
+
+The fix is not "turn SSR on everywhere." It is to pick the right rendering mode per route, which is exactly what Angular's render modes are for. The desktop shell stays RenderMode.Client. The content routes — /thoughts and /thoughts/:slug — become RenderMode.Prerender. That is static-site generation: at build time Angular renders each page to a complete HTML file and writes it to disk. The list route needs no parameters. The detail route does, so it exports getPrerenderParams, which returns one entry per thought slug straight from the same THOUGHTS array the app renders from. Add a thought, and its static page is generated on the next build with zero extra wiring. Enumerate the known set, prerender the known set.
+
+Static HTML is only half of good SEO — the other half is the head. A page that renders its body but leaves a generic title and no description is a page that shows up in search results as a bare URL. So the content components drive a small SeoService that sets the title, the meta description and keywords, the Open Graph and Twitter tags a social card reads, a canonical link, and JSON-LD structured data describing each essay as a schema.org BlogPosting. All of it is written through Angular's Title and Meta services and the injected DOCUMENT, so it renders into the server HTML rather than being patched in later by JavaScript. The proof is a build artifact you can grep: dist/.../thoughts/signals/index.html contains the essay text, the real title, the og: tags, and the application/ld+json block — before a single byte of JavaScript runs.
+
+Rendering the shell on the server for the first time surfaced the classic hydration trap. The menu bar has a live clock, and the time captured when the page was prerendered at build is never the time when someone's browser boots it up. Hydrate a server-rendered "3:47" against a client that thinks it is "9:12" and you get a mismatch. Two guards handle it. The clock's setInterval is wrapped in an isPlatformBrowser check so the timer never starts on the server, and the menu bar is marked ngSkipHydration so Angular treats that subtree as a deliberate hydration boundary and re-renders it fresh in the browser instead of trying to reconcile it. ngSkipHydration is not a hack to paper over a bug; it is the sanctioned way to tell the framework "this element is intentionally different on the client."
+
+What makes this an enterprise pattern rather than a demo is that nothing here is bespoke. There is no custom prerender script, no hand-maintained route manifest, no separate SEO build step. It is Angular's own render modes, its own Title and Meta services, its own hydration escape hatch — composed so that the pages that need to be fast and indexable are static HTML, and the parts that are pure interaction stay a client app. That is the judgement SSR actually asks of you: not on or off, but which mode each route deserves.`,
+    relatedApp: 'readme',
+  },
 ];
