@@ -17,3 +17,46 @@
     transform: translate(-50%, -50%) rotate(360deg);
   }
 }
+
+/* Routed thoughts render into this panel, layered above the fixed desktop. */
+.thoughts-reader {
+  display: none;
+}
+
+.thoughts-reader--open {
+  display: block;
+  position: fixed;
+  inset: var(--menubar-height, 28px) 0 0 0;
+  z-index: 1500;
+  background: var(--surface-primary, #1e1e1e);
+  overflow-y: auto;
+}
+
+.thoughts-reader-close {
+  position: fixed;
+  top: calc(var(--menubar-height, 28px) + 12px);
+  right: 16px;
+  z-index: 1501;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary, #fff);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.thoughts-reader-close:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.thoughts-reader-close:focus-visible {
+  outline: 2px solid var(--accent, #4da3ff);
+  outline-offset: 2px;
+}

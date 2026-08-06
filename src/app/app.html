@@ -43,4 +43,21 @@
 
 <app-dock />
 
-<router-outlet />
+<div
+  class="thoughts-reader"
+  [class.thoughts-reader--open]="onThoughtsRoute()"
+  role="region"
+  aria-label="Thoughts reader"
+>
+  @if (onThoughtsRoute()) {
+    <button
+      type="button"
+      class="thoughts-reader-close"
+      (click)="closeThoughts()"
+      aria-label="Close thoughts"
+    >
+      ✕
+    </button>
+  }
+  <router-outlet />
+</div>
