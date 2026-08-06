@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-06 - version 1.3.2
+
+- **fix**: System Preferences did nothing — the settings were stored (and persisted to localStorage) but never applied. `AppearanceService` now applies them to the document: theme via `[data-theme]`, accent color via `--accent-color`/`--accent`, and dock size via `--dock-icon-size`. A light-mode palette (`[data-theme='light']`) was added, and the menu-bar clock now respects the 12h/24h `clockFormat` preference
+- **fix**: dock magnification — the tile (box) and emoji were driven by a single `transform: scale()` on the button, so magnified icons overlapped their neighbours and the glyph read as mismatched. Both now scale from a shared `--icon-scale` custom property (tile `width`/`height` and emoji `font-size`), so the box and icon grow as one unit and the dock reflows instead of overlapping; the magnification falloff tracks the dock-size preference
+- TDD: specs for the appearance service (accent/dock-size/theme applied to the root), the clock-format preference, and the shared-scale dock magnification
+
 ## 2026-08-06 - version 1.3.1
 
 - **fix**: routed thoughts were invisible to a human. The desktop shell is all `position: fixed`, so the `<router-outlet>` content (the `/thoughts` and `/thoughts/:slug` pages) painted *underneath* it — a direct visit to a prerendered thought link showed the desktop with the article hidden, and clicking a thought card navigated into that hidden outlet so nothing appeared
