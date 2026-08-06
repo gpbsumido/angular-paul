@@ -46,9 +46,9 @@ export class MenuBarService {
     const hasWindow = this.windowManager.focusedWindowId() !== null;
 
     const windowItems: MenuBarItem[] = [
-      { id: 'minimize', label: 'Minimize', shortcut: '⌘H', disabled: !hasWindow },
+      { id: 'minimize', label: 'Minimize', shortcut: '⌃⌥H', disabled: !hasWindow },
       { id: 'zoom', label: 'Zoom', disabled: !hasWindow },
-      { id: 'cycle', label: 'Cycle Through Windows', shortcut: '⌘Tab', disabled: windows.length < 2 },
+      { id: 'cycle', label: 'Cycle Through Windows', shortcut: '⌃⌥Tab', disabled: windows.length < 2 },
     ];
     if (windows.length > 0) {
       windowItems.push(SEPARATOR('window-sep'));
@@ -82,8 +82,8 @@ export class MenuBarService {
           SEPARATOR('app-sep-1'),
           { id: 'system-preferences', label: 'Preferences…', shortcut: '⌘,' },
           SEPARATOR('app-sep-2'),
-          { id: 'minimize', label: `Hide ${appName}`, shortcut: '⌘H', disabled: !hasWindow },
-          { id: 'quit', label: `Quit ${appName}`, shortcut: '⌘Q', disabled: !hasWindow },
+          { id: 'minimize', label: `Hide ${appName}`, shortcut: '⌃⌥H', disabled: !hasWindow },
+          { id: 'quit', label: `Quit ${appName}`, shortcut: '⌃⌥Q', disabled: !hasWindow },
         ],
       },
       {
@@ -92,7 +92,7 @@ export class MenuBarService {
         items: [
           { id: 'new-window', label: 'New Window', shortcut: '⌘N', disabled: !hasWindow },
           SEPARATOR('file-sep-1'),
-          { id: 'close-window', label: 'Close Window', shortcut: '⌘W', disabled: !hasWindow },
+          { id: 'close-window', label: 'Close Window', shortcut: '⌃⌥W', disabled: !hasWindow },
         ],
       },
       {
@@ -125,7 +125,7 @@ export class MenuBarService {
         id: 'help',
         label: 'Help',
         items: [
-          { id: 'spotlight', label: 'Search…', shortcut: '⌘Space' },
+          { id: 'spotlight', label: 'Search…', shortcut: '⌃⌥Space' },
           SEPARATOR('help-sep-1'),
           { id: 'open-readme', label: 'angular-paul Help' },
         ],

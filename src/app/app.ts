@@ -55,9 +55,6 @@ export class App {
   @HostListener('document:keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
     this.shortcuts.handleKeydown(event);
-    if (event.metaKey && event.code === 'Space') {
-      event.preventDefault();
-    }
   }
 
   toggleSpotlight(): void {
