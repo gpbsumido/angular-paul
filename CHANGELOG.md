@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-06 - version 1.2.1
+
+- **fix**: make the production SSR server work behind a reverse proxy (Railway). Angular 21's SSR server is secure-by-default and was returning `400 Bad Request` ("host is not allowed") for the deployed hostnames
+- `angular.json` `security.allowedHosts` now lists `*.paulsumido.com` and `*.up.railway.app` alongside `localhost`, so both `develop.angular.paulsumido.com` and `angular.paulsumido.com` (and Railway-generated domains) are authorized
+- `AngularNodeAppEngine` is constructed with `trustProxyHeaders: true` so Angular trusts Railway's `X-Forwarded-*` headers and reconstructs the original request URL instead of the internal one
+- Config-guard test (`src/app/ssr-security.spec.ts`) pins both settings so a future edit can't silently break the live deploy; `tsconfig.spec.json` gains `node` types for filesystem reads in specs
+
 ## 2026-08-05 - version 1.2.0
 
 - **Hybrid rendering**: the SEO-critical Thoughts routes now server-render as static HTML while the interactive desktop shell stays client-rendered — per-route render modes, chosen for what each route actually needs
