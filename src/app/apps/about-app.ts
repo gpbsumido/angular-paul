@@ -8,7 +8,7 @@ export type AboutTab = 'overview' | 'skills' | 'experience';
     <div class="about">
       <div class="about-avatar">👤</div>
       <h1 class="about-name">Paul Sumido</h1>
-      <p class="about-title">Software Engineer</p>
+      <p class="about-title">Lead Frontend Developer</p>
 
       <div class="about-social">
         <a href="https://github.com/gpbsumido" target="_blank" rel="noopener">GitHub</a>
@@ -68,8 +68,37 @@ export type AboutTab = 'overview' | 'skills' | 'experience';
           }
           @case ('experience') {
             <ul class="experience-list">
-              <li>Software Engineer — Building web applications</li>
+              <li class="experience-item">
+                <div class="experience-role">Senior Software Developer · Frontend Lead</div>
+                <div class="experience-company">Helika · 2023–2026</div>
+                <p class="experience-blurb">
+                  Frontend lead on a Web3 gaming-analytics SaaS. Designed and shipped Helika AI, a
+                  conversational analytics assistant rendering live charts and dashboards inline in
+                  chat, and built the drag-and-drop dashboard designer and a 15-component charting
+                  library serving studios including Nexon.
+                </p>
+              </li>
+              <li class="experience-item">
+                <div class="experience-role">Frontend Developer</div>
+                <div class="experience-company">Refmint · 2022–2023</div>
+                <p class="experience-blurb">
+                  Built data-heavy React applications and a shared UI component library, cutting page
+                  load times ~40% with lazy loading and caching.
+                </p>
+              </li>
+              <li class="experience-item">
+                <div class="experience-role">Front-End Developer, Analytics</div>
+                <div class="experience-company">PeopleInsight · 2017–2022</div>
+                <p class="experience-blurb">
+                  Built interactive dashboards for enterprise HR analytics in React and
+                  survey-driven data-collection workflows with validation and automated testing.
+                </p>
+              </li>
             </ul>
+
+            <a class="about-resume" href="/paul-sumido-resume.pdf" target="_blank" rel="noopener">
+              Résumé (PDF) ↗
+            </a>
           }
         }
       </div>
@@ -78,9 +107,10 @@ export type AboutTab = 'overview' | 'skills' | 'experience';
   styles: `
     :host {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       height: 100%;
+      overflow-y: auto;
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       color: var(--text-primary, #fff);
     }
@@ -179,15 +209,61 @@ export type AboutTab = 'overview' | 'skills' | 'experience';
       margin: 0;
     }
 
-    .skills-list li,
-    .experience-list li {
+    .skills-list li {
       padding: 6px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .skills-list li:last-child,
-    .experience-list li:last-child {
+    .skills-list li:last-child {
       border-bottom: none;
+    }
+
+    .experience-item {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .experience-item:last-child {
+      border-bottom: none;
+    }
+
+    .experience-role {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary, #fff);
+    }
+
+    .experience-company {
+      font-size: 11px;
+      color: var(--text-tertiary, rgba(255, 255, 255, 0.5));
+      margin-bottom: 4px;
+    }
+
+    .experience-blurb {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .about-resume {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 14px;
+      border: 1px solid var(--accent-color, #4da3ff);
+      border-radius: 6px;
+      color: var(--accent-color, #4da3ff);
+      font-size: 12px;
+      text-decoration: none;
+      transition:
+        background 0.15s,
+        color 0.15s;
+    }
+
+    .about-resume:hover,
+    .about-resume:focus-visible {
+      background: var(--accent-color, #4da3ff);
+      color: #fff;
+      outline: none;
     }
   `,
 })

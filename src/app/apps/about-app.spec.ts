@@ -22,7 +22,7 @@ describe('AboutApp', () => {
     const title = nativeEl.querySelector('.about-title');
 
     expect(name?.textContent?.trim()).toBe('Paul Sumido');
-    expect(title?.textContent?.trim()).toBe('Software Engineer');
+    expect(title?.textContent?.trim()).toBe('Lead Frontend Developer');
   });
 
   it('should render a profile icon/avatar at the top', () => {
@@ -67,6 +67,26 @@ describe('AboutApp', () => {
 
     const content = nativeEl.querySelector('.about-tab-content');
     expect(content?.querySelector('.experience-list')).toBeTruthy();
+  });
+
+  it('should list the real roles from the résumé', () => {
+    component.activeTab.set('experience');
+    fixture.detectChanges();
+
+    const text = nativeEl.querySelector('.experience-list')?.textContent ?? '';
+    expect(text).toContain('Helika');
+    expect(text).toContain('Refmint');
+    expect(text).toContain('PeopleInsight');
+  });
+
+  it('should offer the résumé as a downloadable PDF link', () => {
+    component.activeTab.set('experience');
+    fixture.detectChanges();
+
+    const link = nativeEl.querySelector('.about-resume') as HTMLAnchorElement;
+    expect(link).toBeTruthy();
+    expect(link.getAttribute('href')).toContain('paul-sumido-resume.pdf');
+    expect(link.getAttribute('target')).toBe('_blank');
   });
 
   it('should use @switch to render correct content for each active tab', () => {
