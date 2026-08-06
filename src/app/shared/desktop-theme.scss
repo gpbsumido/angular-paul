@@ -95,3 +95,46 @@
   // Transitions — duration values come from @paul/tokens, easing stays as `ease`
   // --transition-fast, --transition-normal, --transition-slow are set in token-bridge.scss
 }
+
+// ---------------------------------------------------------------------------
+// Light mode — applied when AppearanceService sets [data-theme='light'] on the
+// document root from the Appearance preference. Overrides the chrome/text/
+// surface tokens; the accent stays whatever the user picked (set inline).
+// ---------------------------------------------------------------------------
+:root[data-theme='light'] {
+  --desktop-bg: #e5e5ea;
+  --desktop-bg-gradient: linear-gradient(145deg, #f2f2f7 0%, #e5e5ea 50%, #dcdce1 100%);
+
+  --menubar-bg: rgba(255, 255, 255, 0.8);
+  --menubar-bg-solid: #f5f5f7;
+  --menubar-text: rgba(0, 0, 0, 0.85);
+  --menubar-text-secondary: rgba(0, 0, 0, 0.55);
+  --menubar-border: rgba(0, 0, 0, 0.1);
+
+  --dock-bg: rgba(255, 255, 255, 0.5);
+  --dock-border: rgba(0, 0, 0, 0.12);
+  --dock-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+
+  --window-bg: rgba(246, 246, 248, 0.96);
+  --window-bg-solid: #f6f6f8;
+  --window-titlebar-bg: rgba(236, 236, 238, 0.92);
+  --window-titlebar-text: rgba(0, 0, 0, 0.85);
+  --window-border: rgba(0, 0, 0, 0.08);
+
+  --text-primary: rgba(0, 0, 0, 0.88);
+  --text-secondary: rgba(0, 0, 0, 0.55);
+  --text-tertiary: rgba(0, 0, 0, 0.35);
+  --text-disabled: rgba(0, 0, 0, 0.25);
+
+  --border-primary: rgba(0, 0, 0, 0.1);
+  --border-secondary: rgba(0, 0, 0, 0.06);
+  --divider: rgba(0, 0, 0, 0.08);
+
+  --surface-primary: rgba(255, 255, 255, 0.92);
+  --surface-secondary: rgba(242, 242, 245, 0.82);
+  --surface-tertiary: rgba(230, 230, 233, 0.6);
+  --overlay: rgba(0, 0, 0, 0.2);
+
+  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.35);
+}
