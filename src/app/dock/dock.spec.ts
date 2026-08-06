@@ -39,6 +39,24 @@ describe('Dock', () => {
     expect(label?.textContent?.trim()).toBe('Finder');
   });
 
+  it('drives magnification through a shared --icon-scale so the box and emoji grow together', () => {
+    const firstButton = nativeEl.querySelector<HTMLElement>('.dock-items:first-child .dock-icon')!;
+
+    // At rest every icon sits at scale 1.
+    expect(component.iconScales().every((s) => s === 1)).toBe(true);
+    expect(firstButton.style.getPropertyValue('--icon-scale')).toBe('1');
+
+    // Hovering right over the first icon magnifies it above 1.
+    component.onDockMouseMove({
+      currentTarget: { getBoundingClientRect: () => ({ left: 0 }) },
+      clientX: 28,
+    } as unknown as MouseEvent);
+    fixture.detectChanges();
+
+    expect(component.iconScales()[0]).toBeGreaterThan(1);
+    expect(Number(firstButton.style.getPropertyValue('--icon-scale'))).toBeGreaterThan(1);
+  });
+
   it('should call dockService.handleDockClick when a dock item is clicked', () => {
     const spy = vi.spyOn(dockService, 'handleDockClick');
     const firstIcon = nativeEl.querySelector('.dock-icon') as HTMLElement;

@@ -3,8 +3,7 @@
     @for (app of apps(); track app.id; let i = $index) {
       <button
         class="dock-icon"
-        [style.transform]="'scale(' + iconScales()[i] + ')'"
-        [style.transform-origin]="'bottom center'"
+        [style.--icon-scale]="iconScales()[i]"
         [attr.aria-label]="app.label"
         (click)="onIconClick(app)"
       >

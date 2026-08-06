@@ -1,4 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
+import { SettingsService } from '../apps/settings/settings.service';
 import { AppLauncherService } from '../shared/app-launcher.service';
 import { DockItem, DockService } from '../shared/dock.service';
 
@@ -10,6 +11,7 @@ import { DockItem, DockService } from '../shared/dock.service';
 export class Dock {
   private dockService = inject(DockService);
   private launcher = inject(AppLauncherService);
+  private settings = inject(SettingsService);
 
   readonly apps = this.dockService.pinnedApps;
   readonly transientApps = this.dockService.transientApps;
@@ -27,7 +29,9 @@ export class Dock {
       return items.map(() => 1);
     }
 
-    const iconFullSize = 56;
+    // Icon pitch = tile size plus button padding and inter-icon gap, so the
+    // falloff tracks the dock's actual size (and the dock-size preference).
+    const iconFullSize = this.settings.dockSize() + 8;
     return items.map((_, i) => {
       const iconCenter = i * iconFullSize + iconFullSize / 2;
       const distance = Math.abs(mx - iconCenter);

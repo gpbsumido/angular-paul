@@ -47,13 +47,17 @@
   flex-direction: column;
   align-items: center;
   padding: 2px 3px 4px;
-  transition: transform 0.15s ease-out;
   position: relative;
 }
 
 .dock-icon-tile {
-  width: var(--dock-icon-size);
-  height: var(--dock-icon-size);
+  // Tile and emoji both scale from --icon-scale so the box and glyph grow as one
+  // unit; sizing (not transform) means neighbours reflow instead of overlapping.
+  width: calc(var(--dock-icon-size) * var(--icon-scale, 1));
+  height: calc(var(--dock-icon-size) * var(--icon-scale, 1));
+  transition:
+    width 0.13s ease-out,
+    height 0.13s ease-out;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -83,9 +87,10 @@
 }
 
 .dock-icon-emoji {
-  font-size: 26px;
+  font-size: calc(var(--dock-icon-size) * 0.54 * var(--icon-scale, 1));
   line-height: 1;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+  transition: font-size 0.13s ease-out;
 }
 
 .dock-icon-label {
