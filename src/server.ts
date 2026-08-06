@@ -10,7 +10,9 @@ import { join } from 'node:path';
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+// Behind Railway's reverse proxy: trust X-Forwarded-* so Angular reconstructs
+// the original request URL (host/proto) instead of the internal one.
+const angularApp = new AngularNodeAppEngine({ trustProxyHeaders: true });
 
 /**
  * Example Express Rest API endpoints can be defined here.
