@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-06 - version 1.3.0
+
+- **New thought entry**: "Shipping Angular SSR to Production" — a first-person retrospective on deploying the prerendered Thoughts pages to a live domain: why Railway over a serverless adapter for a long-lived Node server, staging-first across two services (`develop.angular.paulsumido.com` → `angular.paulsumido.com`), config-as-code for the start command, Angular 21's secure-by-default SSR (`allowedHosts` + `trustProxyHeaders` behind a proxy), the Cloudflare two-level-subdomain TLS gotcha (DNS-only vs proxied), and the deliberate tradeoffs (canonical pinned to prod, bundle-budget call, config-guard tests)
+- The entry prerenders to its own static SEO page like the rest
+- TDD: `deploying-ssr.spec.ts` pins the slug, tags, and that the content documents the real decisions, written before the entry
+
 ## 2026-08-06 - version 1.2.1
 
 - **fix**: make the production SSR server work behind a reverse proxy (Railway). Angular 21's SSR server is secure-by-default and was returning `400 Bad Request` ("host is not allowed") for the deployed hostnames
