@@ -8,6 +8,7 @@ import { Desktop } from './desktop/desktop';
 import { DesktopIconsComponent } from './desktop-icons/desktop-icons';
 import { Dock } from './dock/dock';
 import { MenuBar } from './menu-bar/menu-bar';
+import { AppearanceService } from './apps/settings/appearance.service';
 import { AppLauncherService } from './shared/app-launcher.service';
 import { DockService } from './shared/dock.service';
 import { KeyboardShortcutService } from './shared/keyboard-shortcut.service';
@@ -38,6 +39,8 @@ export class App {
   private readonly dockService = inject(DockService);
   private readonly shortcuts = inject(KeyboardShortcutService);
   private readonly router = inject(Router);
+  // Instantiated so its effect applies user settings (theme, accent, dock size) to the DOM.
+  private readonly appearance = inject(AppearanceService);
   protected readonly contextMenu = viewChild(ContextMenuComponent);
   protected readonly spotlight = viewChild(Spotlight);
   protected readonly desktopMenuItems = DEFAULT_DESKTOP_MENU_ITEMS;
