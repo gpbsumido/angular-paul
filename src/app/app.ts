@@ -1,6 +1,8 @@
 import { NgComponentOutlet } from '@angular/common';
 import { Component, effect, HostListener, inject, viewChild } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, map } from 'rxjs';
 import { ContextMenuComponent, DEFAULT_DESKTOP_MENU_ITEMS } from './context-menu/context-menu';
 import { Desktop } from './desktop/desktop';
 import { DesktopIconsComponent } from './desktop-icons/desktop-icons';
@@ -35,9 +37,28 @@ export class App {
   protected readonly windowManager = inject(WindowManagerService);
   private readonly dockService = inject(DockService);
   private readonly shortcuts = inject(KeyboardShortcutService);
+  private readonly router = inject(Router);
   protected readonly contextMenu = viewChild(ContextMenuComponent);
   protected readonly spotlight = viewChild(Spotlight);
   protected readonly desktopMenuItems = DEFAULT_DESKTOP_MENU_ITEMS;
+
+  // Routed thoughts (the shareable, prerendered pages) render into a reader
+  // overlay above the desktop, since the desktop chrome is all position: fixed.
+  protected readonly onThoughtsRoute = toSignal(
+    this.router.events.pipe(
+      filter((e) => e instanceof NavigationEnd),
+      map(() => this.isThoughtsUrl(this.router.url)),
+    ),
+    { initialValue: this.isThoughtsUrl(this.router.url) },
+  );
+
+  private isThoughtsUrl(url: string): boolean {
+    return url === '/thoughts' || url.startsWith('/thoughts/');
+  }
+
+  closeThoughts(): void {
+    this.router.navigate(['/']);
+  }
 
   constructor() {
     effect(() => {
@@ -54,6 +75,10 @@ export class App {
 
   @HostListener('document:keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && this.onThoughtsRoute()) {
+      this.closeThoughts();
+      return;
+    }
     this.shortcuts.handleKeydown(event);
     if (event.metaKey && event.code === 'Space') {
       event.preventDefault();

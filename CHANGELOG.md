@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-06 - version 1.3.1
+
+- **fix**: routed thoughts were invisible to a human. The desktop shell is all `position: fixed`, so the `<router-outlet>` content (the `/thoughts` and `/thoughts/:slug` pages) painted *underneath* it — a direct visit to a prerendered thought link showed the desktop with the article hidden, and clicking a thought card navigated into that hidden outlet so nothing appeared
+- Routed thoughts now render into a `.thoughts-reader` panel layered above the desktop (fixed, below the menu bar), with a close button and `Escape` to return to the desktop
+- Fixes both the shareable SSR deep-links (a person now sees the article) and in-app card clicks, with one rendering path; the window-based Thoughts list is unchanged
+- TDD: `app.spec.ts` asserts the reader opens on a thoughts route and closes back to `/`
+
 ## 2026-08-06 - version 1.3.0
 
 - **New thought entry**: "Shipping Angular SSR to Production" — a first-person retrospective on deploying the prerendered Thoughts pages to a live domain: why Railway over a serverless adapter for a long-lived Node server, staging-first across two services (`develop.angular.paulsumido.com` → `angular.paulsumido.com`), config-as-code for the start command, Angular 21's secure-by-default SSR (`allowedHosts` + `trustProxyHeaders` behind a proxy), the Cloudflare two-level-subdomain TLS gotcha (DNS-only vs proxied), and the deliberate tradeoffs (canonical pinned to prod, bundle-budget call, config-guard tests)
