@@ -29,6 +29,9 @@ yarn-error.log
 !.vscode/mcp.json
 .history/*
 
+# Local-only visual plans and recaps
+/plans
+
 # Miscellaneous
 /.angular/cache
 .sass-cache/

@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SeoService } from '../shared/seo.service';
 import { ThoughtsService } from './thoughts.service';
 
 @Component({
@@ -95,8 +96,15 @@ export class ThoughtDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly service = inject(ThoughtsService);
+  private readonly seo = inject(SeoService);
 
   readonly thought = this.service.getBySlug(this.route.snapshot.paramMap.get('slug') ?? '');
+
+  constructor() {
+    if (this.thought) {
+      this.seo.setThoughtMeta(this.thought);
+    }
+  }
 
   goBack() {
     this.router.navigate(['/thoughts']);

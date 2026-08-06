@@ -47,4 +47,8 @@ describe('ThoughtsListComponent', () => {
 
     expect(router.url).toMatch(/\/thoughts\/.+/);
   });
+
+  it('should set SEO metadata for the thoughts list', () => {
+    expect(document.title).toContain('Thoughts');
+  });
 });

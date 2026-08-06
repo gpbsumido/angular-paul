@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-06 - version 1.2.1
+
+- **fix**: make the production SSR server work behind a reverse proxy (Railway). Angular 21's SSR server is secure-by-default and was returning `400 Bad Request` ("host is not allowed") for the deployed hostnames
+- `angular.json` `security.allowedHosts` now lists `*.paulsumido.com` and `*.up.railway.app` alongside `localhost`, so both `develop.angular.paulsumido.com` and `angular.paulsumido.com` (and Railway-generated domains) are authorized
+- `AngularNodeAppEngine` is constructed with `trustProxyHeaders: true` so Angular trusts Railway's `X-Forwarded-*` headers and reconstructs the original request URL instead of the internal one
+- Config-guard test (`src/app/ssr-security.spec.ts`) pins both settings so a future edit can't silently break the live deploy; `tsconfig.spec.json` gains `node` types for filesystem reads in specs
+
+## 2026-08-05 - version 1.2.0
+
+- **Hybrid rendering**: the SEO-critical Thoughts routes now server-render as static HTML while the interactive desktop shell stays client-rendered — per-route render modes, chosen for what each route actually needs
+- `app.routes.server.ts`: `/thoughts` and `/thoughts/:slug` switch from `RenderMode.Client` to `RenderMode.Prerender`; `getPrerenderParams()` enumerates every slug from `THOUGHTS`, so one static HTML file is emitted per thought at build time
+- `SeoService` (providedIn root) — per-page `<title>`, meta description + keywords, Open Graph, Twitter card, canonical link, and JSON-LD `BlogPosting` structured data, written through Angular's `Title`/`Meta` and the injected `DOCUMENT` so it lands in the server HTML; wired into the thoughts list and detail components
+- Hydration correctness now that the shell server-renders: the menu-bar clock `setInterval` is guarded with `isPlatformBrowser`, and the time-varying menu bar is marked `ngSkipHydration` as a deliberate hydration boundary
+- ESLint now ignores `dist/` and `.angular/` so `npm run lint` is correct regardless of build state
+- New thought entry: "Hybrid Rendering: SSG the Content, CSR the App" — render modes per route, `getPrerenderParams` from a known set, SEO in the head, and `ngSkipHydration` as the sanctioned hydration escape hatch
+- Verified against the build output: `ng build` prerenders 20 static routes; `dist/.../thoughts/<slug>/index.html` contains the essay text, real title, `og:` tags, canonical URL, and `application/ld+json` before any JavaScript runs
+- TDD: failing specs for `SeoService`, the prerender route config, and the components' SEO wiring written first, then implemented to green; 266 tests passing
+
 ## 2026-07-27 - version 1.1.0
 
 - **Interactive menu bar dropdowns**: menu bar items (File, Edit, View, Window, Help) now open functional dropdown menus instead of being static labels
