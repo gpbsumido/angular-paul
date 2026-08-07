@@ -12,7 +12,10 @@ export class KeyboardShortcutService {
   readonly spotlightOpen = signal(false);
 
   handleKeydown(event: KeyboardEvent, target?: Element): void {
-    if (!event.metaKey) return;
+    // ⌘ chords are reserved by macOS/the browser (⌘W closes the real tab,
+    // ⌘Space is real Spotlight) and mostly aren't preventable, so the desktop
+    // listens on ⌃⌥ instead — the VM convention for guest-OS chords.
+    if (!event.ctrlKey || !event.altKey || event.metaKey) return;
 
     const activeElement = target ?? document.activeElement;
     if (activeElement && INPUT_TAGS.has(activeElement.tagName)) {
@@ -21,18 +24,23 @@ export class KeyboardShortcutService {
 
     switch (event.code) {
       case 'KeyW':
+        event.preventDefault();
         this.closeActiveWindow();
         break;
       case 'KeyQ':
+        event.preventDefault();
         this.quitActiveApp();
         break;
       case 'KeyH':
+        event.preventDefault();
         this.minimizeActiveWindow();
         break;
       case 'Space':
+        event.preventDefault();
         this.spotlightOpen.update((open) => !open);
         break;
       case 'Tab':
+        event.preventDefault();
         this.cycleFocus();
         break;
     }

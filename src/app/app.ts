@@ -86,6 +86,7 @@ export class App {
     if (event.metaKey && event.code === 'Space') {
       event.preventDefault();
     }
+    this.shortcuts.handleKeydown(event);
   }
 
   toggleSpotlight(): void {
