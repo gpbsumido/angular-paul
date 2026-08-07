@@ -1,6 +1,7 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
   Component,
+  computed,
   DestroyRef,
   effect,
   ElementRef,
@@ -9,6 +10,7 @@ import {
   PLATFORM_ID,
   signal,
 } from '@angular/core';
+import { SettingsService } from '../apps/settings/settings.service';
 import { MenuBarItem, MenuBarService } from './menu-bar.service';
 
 @Component({
@@ -25,10 +27,12 @@ export class MenuBar {
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly settings = inject(SettingsService);
 
   readonly menus = this.menuBarService.menus;
   readonly activeAppName = this.menuBarService.activeAppName;
-  readonly clock = signal(this.formatTime());
+  private readonly now = signal(new Date());
+  readonly clock = computed(() => this.formatTime(this.now()));
   readonly openMenuId = signal<string | null>(null);
   readonly spotlightRequested = output<void>();
 
@@ -39,7 +43,7 @@ export class MenuBar {
     effect(() => {
       if (!isPlatformBrowser(this.platformId)) return;
       this.intervalId = setInterval(() => {
-        this.clock.set(this.formatTime());
+        this.now.set(new Date());
       }, 1000);
     });
 
@@ -152,14 +156,14 @@ export class MenuBar {
     );
   }
 
-  private formatTime(): string {
-    return new Date().toLocaleTimeString('en-US', {
+  private formatTime(date: Date): string {
+    return date.toLocaleTimeString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
       hour: 'numeric',
       minute: '2-digit',
-      hour12: true,
+      hour12: this.settings.clockFormat() === '12h',
     });
   }
 
