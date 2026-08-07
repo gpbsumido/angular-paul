@@ -78,11 +78,11 @@ import { AppLauncherService } from '../shared/app-launcher.service';
 
       <h2>Shortcuts</h2>
       <ul>
-        <li><kbd>⌘</kbd> + <kbd>Space</kbd> — Spotlight search</li>
-        <li><kbd>⌘</kbd> + <kbd>W</kbd> — Close window</li>
-        <li><kbd>⌘</kbd> + <kbd>Q</kbd> — Quit app</li>
-        <li><kbd>⌘</kbd> + <kbd>H</kbd> — Minimize window</li>
-        <li><kbd>⌘</kbd> + <kbd>Tab</kbd> — Cycle focus</li>
+        <li><kbd>⌃</kbd> + <kbd>⌥</kbd> + <kbd>Space</kbd> — Spotlight search</li>
+        <li><kbd>⌃</kbd> + <kbd>⌥</kbd> + <kbd>W</kbd> — Close window</li>
+        <li><kbd>⌃</kbd> + <kbd>⌥</kbd> + <kbd>Q</kbd> — Quit app</li>
+        <li><kbd>⌃</kbd> + <kbd>⌥</kbd> + <kbd>H</kbd> — Minimize window</li>
+        <li><kbd>⌃</kbd> + <kbd>⌥</kbd> + <kbd>Tab</kbd> — Cycle focus</li>
         <li>Double-click desktop icons to open apps</li>
         <li>Right-click the desktop for context menu</li>
       </ul>

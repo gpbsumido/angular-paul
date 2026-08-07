@@ -140,4 +140,28 @@ describe('MenuBarService', () => {
       expect(() => service.execute('close-window')).not.toThrow();
     });
   });
+
+  describe('advertised shortcuts', () => {
+    it('shows ⌃⌥ hints for the five live shortcuts so the labels match the real bindings', () => {
+      const items = service.menus().flatMap((m) => m.items);
+      const byId = (id: string) => items.filter((i) => i.id === id && i.shortcut);
+
+      for (const item of byId('minimize')) {
+        expect(item.shortcut).toBe('⌃⌥H');
+      }
+      expect(byId('quit')[0].shortcut).toBe('⌃⌥Q');
+      expect(byId('close-window')[0].shortcut).toBe('⌃⌥W');
+      expect(byId('cycle')[0].shortcut).toBe('⌃⌥Tab');
+      expect(byId('spotlight')[0].shortcut).toBe('⌃⌥Space');
+    });
+
+    it('keeps the decorative disabled items on their authentic ⌘ glyphs', () => {
+      const items = service.menus().flatMap((m) => m.items);
+      const shortcutOf = (id: string) => items.find((i) => i.id === id && i.shortcut)?.shortcut;
+
+      expect(shortcutOf('copy')).toBe('⌘C');
+      expect(shortcutOf('paste')).toBe('⌘V');
+      expect(shortcutOf('new-window')).toBe('⌘N');
+    });
+  });
 });

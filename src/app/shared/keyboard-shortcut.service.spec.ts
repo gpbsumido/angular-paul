@@ -31,68 +31,83 @@ describe('KeyboardShortcutService', () => {
     });
   });
 
-  function fireKeydown(key: string, code: string, meta = true): KeyboardEvent {
+  /** Fire a ⌃⌥ chord — the modifier the desktop shortcuts listen for. */
+  function fireChord(key: string, code: string): KeyboardEvent {
     const event = new KeyboardEvent('keydown', {
       key,
       code,
-      metaKey: meta,
+      ctrlKey: true,
+      altKey: true,
       bubbles: true,
+      cancelable: true,
     });
     return event;
   }
 
-  describe('Cmd+W closes active window', () => {
+  /** Fire a ⌘ chord — reserved by macOS/the browser, must be left alone. */
+  function fireMetaChord(key: string, code: string): KeyboardEvent {
+    const event = new KeyboardEvent('keydown', {
+      key,
+      code,
+      metaKey: true,
+      bubbles: true,
+      cancelable: true,
+    });
+    return event;
+  }
+
+  describe('⌃⌥W closes active window', () => {
     it('should call WindowManagerService.closeWindow() for the active window', async () => {
       const windowId = (await launcher.launch('about'))!;
       const spy = vi.spyOn(windowManager, 'closeWindow');
 
-      const event = fireKeydown('w', 'KeyW');
+      const event = fireChord('w', 'KeyW');
       service.handleKeydown(event);
 
       expect(spy).toHaveBeenCalledWith(windowId);
     });
   });
 
-  describe('Cmd+Q quits active app', () => {
+  describe('⌃⌥Q quits active app', () => {
     it('should close all windows for the active app', async () => {
       await launcher.launch('about');
       await launcher.launch('about');
       expect(launcher.launchedWindows().length).toBe(2);
 
-      const event = fireKeydown('q', 'KeyQ');
+      const event = fireChord('q', 'KeyQ');
       service.handleKeydown(event);
 
       expect(launcher.launchedWindows().length).toBe(0);
     });
   });
 
-  describe('Cmd+H minimizes active window', () => {
+  describe('⌃⌥H minimizes active window', () => {
     it('should call WindowManagerService.minimizeWindow() for the active window', async () => {
       const windowId = (await launcher.launch('about'))!;
       const spy = vi.spyOn(windowManager, 'minimizeWindow');
 
-      const event = fireKeydown('h', 'KeyH');
+      const event = fireChord('h', 'KeyH');
       service.handleKeydown(event);
 
       expect(spy).toHaveBeenCalledWith(windowId);
     });
   });
 
-  describe('Cmd+Space toggles Spotlight', () => {
+  describe('⌃⌥Space toggles Spotlight', () => {
     it('should toggle the spotlight signal', () => {
       expect(service.spotlightOpen()).toBe(false);
 
-      const event = fireKeydown(' ', 'Space');
+      const event = fireChord(' ', 'Space');
       service.handleKeydown(event);
 
       expect(service.spotlightOpen()).toBe(true);
 
-      service.handleKeydown(event);
+      service.handleKeydown(fireChord(' ', 'Space'));
       expect(service.spotlightOpen()).toBe(false);
     });
   });
 
-  describe('Cmd+Tab cycles focus', () => {
+  describe('⌃⌥Tab cycles focus', () => {
     it('should cycle focus to the next running app', async () => {
       launcher.register({
         appId: 'terminal',
@@ -107,7 +122,7 @@ describe('KeyboardShortcutService', () => {
       // about launched first, terminal second — terminal is focused
       expect(windowManager.focusedWindowId()).toBe(win2);
 
-      const event = fireKeydown('Tab', 'Tab');
+      const event = fireChord('Tab', 'Tab');
       service.handleKeydown(event);
 
       // Should cycle back to about
@@ -115,19 +130,77 @@ describe('KeyboardShortcutService', () => {
     });
   });
 
+  describe('reserved ⌘ chords are left to the OS/browser', () => {
+    it('should ignore ⌘W — the browser owns it and would close the real tab', async () => {
+      await launcher.launch('about');
+      const spy = vi.spyOn(windowManager, 'closeWindow');
+
+      service.handleKeydown(fireMetaChord('w', 'KeyW'));
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should ignore ⌘H and ⌘Space', async () => {
+      await launcher.launch('about');
+      const minimizeSpy = vi.spyOn(windowManager, 'minimizeWindow');
+
+      service.handleKeydown(fireMetaChord('h', 'KeyH'));
+      service.handleKeydown(fireMetaChord(' ', 'Space'));
+
+      expect(minimizeSpy).not.toHaveBeenCalled();
+      expect(service.spotlightOpen()).toBe(false);
+    });
+
+    it('should not preventDefault on ⌘ chords', async () => {
+      await launcher.launch('about');
+      const event = fireMetaChord('w', 'KeyW');
+
+      service.handleKeydown(event);
+
+      expect(event.defaultPrevented).toBe(false);
+    });
+  });
+
+  describe('handled chords are consumed', () => {
+    it('should preventDefault on ⌃⌥W', async () => {
+      await launcher.launch('about');
+      const event = fireChord('w', 'KeyW');
+
+      service.handleKeydown(event);
+
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('should preventDefault on ⌃⌥Space', () => {
+      const event = fireChord(' ', 'Space');
+
+      service.handleKeydown(event);
+
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('should not preventDefault on an unhandled ⌃⌥ chord', () => {
+      const event = fireChord('z', 'KeyZ');
+
+      service.handleKeydown(event);
+
+      expect(event.defaultPrevented).toBe(false);
+    });
+  });
+
   describe('safety when no windows are open', () => {
-    it('should not throw when Cmd+W is pressed with no windows', () => {
-      const event = fireKeydown('w', 'KeyW');
+    it('should not throw when ⌃⌥W is pressed with no windows', () => {
+      const event = fireChord('w', 'KeyW');
       expect(() => service.handleKeydown(event)).not.toThrow();
     });
 
-    it('should not throw when Cmd+Q is pressed with no windows', () => {
-      const event = fireKeydown('q', 'KeyQ');
+    it('should not throw when ⌃⌥Q is pressed with no windows', () => {
+      const event = fireChord('q', 'KeyQ');
       expect(() => service.handleKeydown(event)).not.toThrow();
     });
 
-    it('should not throw when Cmd+H is pressed with no windows', () => {
-      const event = fireKeydown('h', 'KeyH');
+    it('should not throw when ⌃⌥H is pressed with no windows', () => {
+      const event = fireChord('h', 'KeyH');
       expect(() => service.handleKeydown(event)).not.toThrow();
     });
   });
@@ -137,12 +210,7 @@ describe('KeyboardShortcutService', () => {
       await launcher.launch('about');
       const spy = vi.spyOn(windowManager, 'closeWindow');
 
-      const event = new KeyboardEvent('keydown', {
-        key: 'w',
-        code: 'KeyW',
-        metaKey: true,
-        bubbles: true,
-      });
+      const event = fireChord('w', 'KeyW');
 
       // Simulate event coming from an input element
       const input = document.createElement('input');
@@ -159,13 +227,7 @@ describe('KeyboardShortcutService', () => {
       await launcher.launch('about');
       const spy = vi.spyOn(windowManager, 'closeWindow');
 
-      const event = new KeyboardEvent('keydown', {
-        key: 'w',
-        code: 'KeyW',
-        metaKey: true,
-        bubbles: true,
-      });
-
+      const event = fireChord('w', 'KeyW');
       const textarea = document.createElement('textarea');
       service.handleKeydown(event, textarea);
 
