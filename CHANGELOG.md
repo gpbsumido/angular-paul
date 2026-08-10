@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-06 - version 1.3.3
+
+- **About app**: real Experience tab from the résumé — Helika (Senior Software Developer / Frontend Lead), Refmint (Frontend Developer), PeopleInsight (Front-End Developer, Analytics), each with role, dates, and a short blurb, replacing the placeholder line; title updated to "Lead Frontend Developer"
+- Downloadable résumé — `public/paul-sumido-resume.pdf` served at `/paul-sumido-resume.pdf`, linked from the Experience tab (opens in a new tab to view or download)
+- About panel is now scrollable so the longer content and the résumé link stay reachable at any window size
+- TDD: specs assert the real roles render and the résumé link points at the PDF
+
 ## 2026-08-06 - version 1.3.2
 
 - **fix**: System Preferences did nothing — the settings were stored (and persisted to localStorage) but never applied. `AppearanceService` now applies them to the document: theme via `[data-theme]`, accent color via `--accent-color`/`--accent`, and dock size via `--dock-icon-size`. A light-mode palette (`[data-theme='light']`) was added, and the menu-bar clock now respects the 12h/24h `clockFormat` preference
