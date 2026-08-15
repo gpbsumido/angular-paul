@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-15 - version 1.3.4
+
+- **Design tokens**: `@paul-portfolio/tokens` `^0.1.3` → `^0.3.0`, picking up the "Verdigris & Ember" design language — teal-green primary (`#219b84`), ember secondary (`#d97e1f`), warm ink-on-paper neutrals, warm semantic surfaces, a new `violet` ramp, `--paul-font-family-display`, and the AA contrast fixes
+- The span crosses the spacing-token rename (`--paul-spacing-0.5` → `--paul-spacing-0_5`), which is the only hard break in it. Nothing here referenced the dotted names in CSS — the only mentions are in the Thoughts entry that documents the gotcha — so no call sites moved
+- All 43 `--paul-*` tokens this app consumes still exist in 0.3.0, and only one changed value: `--paul-color-background` (`#ffffff` → `#fbfaf7`), which nothing references in CSS. The desktop chrome deliberately keeps its own palette in `desktop-theme.scss`, so the recolour is inert here by design — the token bridge only maps typography, motion, radii and z-index
+- Verified the desktop renders identically: same three views (desktop, Thoughts list, Thought detail) in light and dark, before and after, are pixel-identical below the menu bar — the only differing pixels are the clock
+
 ## 2026-08-06 - version 1.3.3
 
 - **About app**: real Experience tab from the résumé — Helika (Senior Software Developer / Frontend Lead), Refmint (Frontend Developer), PeopleInsight (Front-End Developer, Analytics), each with role, dates, and a short blurb, replacing the placeholder line; title updated to "Lead Frontend Developer"
