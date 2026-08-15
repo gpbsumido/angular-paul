@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-15 - version 1.3.5
+
+- **Initial bundle back under budget**: 428.83 kB → **373.24 kB** raw (120.41 kB → 103.41 kB transfer), against the 400 kB warning budget in `angular.json`. The budget itself is unchanged — I did not want to raise the number and call it fixed
+- The cause was `thoughts-content/thoughts-data.ts`: 62 kB of prose that the esbuild metafile showed contributing **60.12 kB to the initial chunk**, the third-largest input in it after `@angular/core` and `@angular/router`, and 7x the next-largest app file. `app.ts`, `search.service.ts` and `app-launcher.service.ts` all import it eagerly for slugs, titles and tags, and none of them ever read `content` — so every first-paint visitor was downloading all 20 write-ups to render a desktop that shows none of them
+- Prose now lives in `thoughts-content/thoughts-bodies.ts` as `THOUGHT_BODIES`, imported only by `ThoughtsService`, which is reached solely from the lazy `/thoughts` routes. It lands in a 58.26 kB lazy chunk that loads when someone actually opens a thought. `thoughts-data.ts` keeps `ThoughtEntry` and `THOUGHTS` as metadata only
+- The join stays synchronous, so the 21 prerendered routes still prerender and the reader needed no async plumbing
+- TDD: a spec asserts no `THOUGHTS` entry carries a `content` key, so prose cannot drift back into the eager module, and another asserts every slug still resolves to a non-empty body. The existing `deploying-ssr` and `mac-menu-bar` specs assert real substrings of the prose and kept the move honest
+- **Ignore Playwright output**: `test-results/`, `playwright-report/` and `playwright/.cache/` were being written into the repo untracked. Nothing from them had ever been committed, so gitignore entries were enough
+
 ## 2026-08-15 - version 1.3.4
 
 - **Design tokens**: `@paul-portfolio/tokens` `^0.1.3` → `^0.3.0`, picking up the "Verdigris & Ember" design language — teal-green primary (`#219b84`), ember secondary (`#d97e1f`), warm ink-on-paper neutrals, warm semantic surfaces, a new `violet` ramp, `--paul-font-family-display`, and the AA contrast fixes
