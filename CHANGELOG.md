@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-16 - version 1.3.6
+
+- **Design tokens**: `@paul-portfolio/tokens` `^0.3.0` → `^0.4.0`. Below 1.0 the caret is minor-locked, so `^0.3.0` could never resolve 0.4.0 — the range had to move for the new version to install at all
+- 0.4.0 adds seven `--paul-color-on-*` semantic label tokens (`on-primary`, `on-primary-tint`, `on-success-tint`, `on-warning-tint`, `on-error`, `on-error-tint`, `on-inverse`) for foreground text on filled surfaces. The release is purely additive: 168 token declarations → 175, with nothing removed and no existing value changed
+- All 44 `--paul-*` tokens this app consumes still exist in 0.4.0. I checked for dropped names specifically, because a token that disappears out of a `var()` fails silently in CSS rather than erroring
+- Visually inert, as expected: `token-bridge.scss` bridges typography, motion, radii, spacing and z-index and no colours, since the desktop keeps its own macOS-simulation palette in `desktop-theme.scss`. Nothing references the new `--paul-color-on-*` names, so they compile in as dead custom properties. The whole diff in the built `styles.css` is 14 added declarations — 7 in `:root`, 7 in `[data-theme='dark']` — with zero removed and zero changed
+- Proved it rather than assuming it: the same three views (desktop, Thoughts list, Thought detail) in light and dark at 1440×900, served before and after, are **pixel-identical across all six pairs — 0 differing pixels, full frame including the menu bar**. Freezing the clock and disabling animations made the capture deterministic; a same-build control also scored 0, and a light-vs-dark pair scored 45,685, so the detector was proven able to see a real difference
+- Initial bundle 373.24 kB → **373.74 kB** raw (103.41 kB → 103.45 kB transfer), the half-kilobyte being the seven new declarations. Still well under the unchanged 400 kB budget in `angular.json`, with no budget warning in the build
+
 ## 2026-08-15 - version 1.3.5
 
 - **Initial bundle back under budget**: 428.83 kB → **373.24 kB** raw (120.41 kB → 103.41 kB transfer), against the 400 kB warning budget in `angular.json`. The budget itself is unchanged — I did not want to raise the number and call it fixed
