@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-16 - version 1.3.6
+
+- **Design tokens**: `@paul-portfolio/tokens` `^0.3.0` → `^0.4.0`. Below 1.0 the caret is minor-locked, so `^0.3.0` could never resolve 0.4.0 — the range had to move for the new version to install at all
+- 0.4.0 adds seven `--paul-color-on-*` semantic label tokens (`on-primary`, `on-primary-tint`, `on-success-tint`, `on-warning-tint`, `on-error`, `on-error-tint`, `on-inverse`) for foreground text on filled surfaces. The release is purely additive: 168 token declarations → 175, with nothing removed and no existing value changed
+- All 44 `--paul-*` tokens this app consumes still exist in 0.4.0. I checked for dropped names specifically, because a token that disappears out of a `var()` fails silently in CSS rather than erroring
+- Visually inert, as expected: `token-bridge.scss` bridges typography, motion, radii, spacing and z-index and no colours, since the desktop keeps its own macOS-simulation palette in `desktop-theme.scss`. Nothing references the new `--paul-color-on-*` names, so they compile in as dead custom properties. The whole diff in the built `styles.css` is 14 added declarations — 7 in `:root`, 7 in `[data-theme='dark']` — with zero removed and zero changed
+- Proved it rather than assuming it: the same three views (desktop, Thoughts list, Thought detail) in light and dark at 1440×900, served before and after, are **pixel-identical across all six pairs — 0 differing pixels, full frame including the menu bar**. Freezing the clock and disabling animations made the capture deterministic; a same-build control also scored 0, and a light-vs-dark pair scored 45,685, so the detector was proven able to see a real difference
+- Initial bundle 373.24 kB → **373.74 kB** raw (103.41 kB → 103.45 kB transfer), the half-kilobyte being the seven new declarations. Still well under the unchanged 400 kB budget in `angular.json`, with no budget warning in the build
+
+## 2026-08-15 - version 1.3.5
+
+- **Initial bundle back under budget**: 428.83 kB → **373.24 kB** raw (120.41 kB → 103.41 kB transfer), against the 400 kB warning budget in `angular.json`. The budget itself is unchanged — I did not want to raise the number and call it fixed
+- The cause was `thoughts-content/thoughts-data.ts`: 62 kB of prose that the esbuild metafile showed contributing **60.12 kB to the initial chunk**, the third-largest input in it after `@angular/core` and `@angular/router`, and 7x the next-largest app file. `app.ts`, `search.service.ts` and `app-launcher.service.ts` all import it eagerly for slugs, titles and tags, and none of them ever read `content` — so every first-paint visitor was downloading all 20 write-ups to render a desktop that shows none of them
+- Prose now lives in `thoughts-content/thoughts-bodies.ts` as `THOUGHT_BODIES`, imported only by `ThoughtsService`, which is reached solely from the lazy `/thoughts` routes. It lands in a 58.26 kB lazy chunk that loads when someone actually opens a thought. `thoughts-data.ts` keeps `ThoughtEntry` and `THOUGHTS` as metadata only
+- The join stays synchronous, so the 21 prerendered routes still prerender and the reader needed no async plumbing
+- TDD: a spec asserts no `THOUGHTS` entry carries a `content` key, so prose cannot drift back into the eager module, and another asserts every slug still resolves to a non-empty body. The existing `deploying-ssr` and `mac-menu-bar` specs assert real substrings of the prose and kept the move honest
+- **Ignore Playwright output**: `test-results/`, `playwright-report/` and `playwright/.cache/` were being written into the repo untracked. Nothing from them had ever been committed, so gitignore entries were enough
+
+## 2026-08-15 - version 1.3.4
+
+- **Design tokens**: `@paul-portfolio/tokens` `^0.1.3` → `^0.3.0`, picking up the "Verdigris & Ember" design language — teal-green primary (`#219b84`), ember secondary (`#d97e1f`), warm ink-on-paper neutrals, warm semantic surfaces, a new `violet` ramp, `--paul-font-family-display`, and the AA contrast fixes
+- The span crosses the spacing-token rename (`--paul-spacing-0.5` → `--paul-spacing-0_5`), which is the only hard break in it. Nothing here referenced the dotted names in CSS — the only mentions are in the Thoughts entry that documents the gotcha — so no call sites moved
+- All 43 `--paul-*` tokens this app consumes still exist in 0.3.0, and only one changed value: `--paul-color-background` (`#ffffff` → `#fbfaf7`), which nothing references in CSS. The desktop chrome deliberately keeps its own palette in `desktop-theme.scss`, so the recolour is inert here by design — the token bridge only maps typography, motion, radii and z-index
+- Verified the desktop renders identically: same three views (desktop, Thoughts list, Thought detail) in light and dark, before and after, are pixel-identical below the menu bar — the only differing pixels are the clock
+
+## 2026-08-06 - version 1.3.3
+
+- **About app**: real Experience tab from the résumé — Helika (Senior Software Developer / Frontend Lead), Refmint (Frontend Developer), PeopleInsight (Front-End Developer, Analytics), each with role, dates, and a short blurb, replacing the placeholder line; title updated to "Lead Frontend Developer"
+- Downloadable résumé — `public/paul-sumido-resume.pdf` served at `/paul-sumido-resume.pdf`, linked from the Experience tab (opens in a new tab to view or download)
+- About panel is now scrollable so the longer content and the résumé link stay reachable at any window size
+- TDD: specs assert the real roles render and the résumé link points at the PDF
+
+## 2026-08-06 - version 1.3.2
+
+- **fix**: System Preferences did nothing — the settings were stored (and persisted to localStorage) but never applied. `AppearanceService` now applies them to the document: theme via `[data-theme]`, accent color via `--accent-color`/`--accent`, and dock size via `--dock-icon-size`. A light-mode palette (`[data-theme='light']`) was added, and the menu-bar clock now respects the 12h/24h `clockFormat` preference
+- **fix**: dock magnification — the tile (box) and emoji were driven by a single `transform: scale()` on the button, so magnified icons overlapped their neighbours and the glyph read as mismatched. Both now scale from a shared `--icon-scale` custom property (tile `width`/`height` and emoji `font-size`), so the box and icon grow as one unit and the dock reflows instead of overlapping; the magnification falloff tracks the dock-size preference
+- TDD: specs for the appearance service (accent/dock-size/theme applied to the root), the clock-format preference, and the shared-scale dock magnification
+
+## 2026-08-06 - version 1.3.1
+
+- **fix**: routed thoughts were invisible to a human. The desktop shell is all `position: fixed`, so the `<router-outlet>` content (the `/thoughts` and `/thoughts/:slug` pages) painted *underneath* it — a direct visit to a prerendered thought link showed the desktop with the article hidden, and clicking a thought card navigated into that hidden outlet so nothing appeared
+- Routed thoughts now render into a `.thoughts-reader` panel layered above the desktop (fixed, below the menu bar), with a close button and `Escape` to return to the desktop
+- Fixes both the shareable SSR deep-links (a person now sees the article) and in-app card clicks, with one rendering path; the window-based Thoughts list is unchanged
+- TDD: `app.spec.ts` asserts the reader opens on a thoughts route and closes back to `/`
+
 ## 2026-08-06 - version 1.3.0
 
 - **New thought entry**: "Shipping Angular SSR to Production" — a first-person retrospective on deploying the prerendered Thoughts pages to a live domain: why Railway over a serverless adapter for a long-lived Node server, staging-first across two services (`develop.angular.paulsumido.com` → `angular.paulsumido.com`), config-as-code for the start command, Angular 21's secure-by-default SSR (`allowedHosts` + `trustProxyHeaders` behind a proxy), the Cloudflare two-level-subdomain TLS gotcha (DNS-only vs proxied), and the deliberate tradeoffs (canonical pinned to prod, bundle-budget call, config-guard tests)

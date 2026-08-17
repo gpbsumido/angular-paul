@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
+import { SettingsService } from '../apps/settings/settings.service';
 import { MenuBar } from './menu-bar';
 import { MenuBarService } from './menu-bar.service';
 
@@ -42,6 +43,22 @@ describe('MenuBar', () => {
   it('should render the active app name in the menu bar', () => {
     const appName = nativeEl.querySelector('.app-name');
     expect(appName?.textContent?.trim()).toBe('Finder');
+  });
+
+  it('should respect the clock format preference', () => {
+    const settings = TestBed.inject(SettingsService);
+
+    settings.setClockFormat('12h');
+    fixture.detectChanges();
+    const twelveHour = component.clock();
+
+    settings.setClockFormat('24h');
+    fixture.detectChanges();
+    const twentyFourHour = component.clock();
+
+    // 12-hour carries an AM/PM marker; 24-hour does not.
+    expect(twelveHour).toMatch(/AM|PM/);
+    expect(twentyFourHour).not.toMatch(/AM|PM/);
   });
 
   it('should render menu items (File, Edit, View, Window, Help)', () => {

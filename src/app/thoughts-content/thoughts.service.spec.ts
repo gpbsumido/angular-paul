@@ -1,5 +1,14 @@
 import { TestBed } from '@angular/core/testing';
+import { THOUGHTS } from './thoughts-data';
 import { ThoughtsService } from './thoughts.service';
+
+describe('thought metadata', () => {
+  it('carries no prose, so the eager bundle stays lean', () => {
+    for (const entry of THOUGHTS) {
+      expect(Object.keys(entry)).not.toContain('content');
+    }
+  });
+});
 
 describe('ThoughtsService', () => {
   let service: ThoughtsService;
@@ -27,6 +36,14 @@ describe('ThoughtsService', () => {
     expect(thought).toBeDefined();
     expect(thought?.slug).toBe('signals');
     expect(thought?.title).toBe('Why Angular Signals Changed Everything');
+  });
+
+  it('joins a body onto every thought it knows about', () => {
+    for (const entry of THOUGHTS) {
+      const thought = service.getBySlug(entry.slug);
+
+      expect(thought?.content.length).toBeGreaterThan(0);
+    }
   });
 
   it('getBySlug returns undefined for a non-existent slug', () => {

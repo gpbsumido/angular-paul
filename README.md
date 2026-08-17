@@ -55,7 +55,8 @@ src/app/
 │   ├── settings/               System preferences (theme, accent color, dock size)
 │   └── terminal-app            Command-line interface
 └── thoughts-content/           Technical writing system (15 entries)
-    ├── thoughts-data.ts        Thought entries with slug, tags, content
+    ├── thoughts-data.ts        Thought metadata: slug, title, date, tags (eager)
+    ├── thoughts-bodies.ts      The prose, keyed by slug (lazy, keeps it out of the initial bundle)
     ├── thoughts-list.ts        Filterable list view
     └── thought-detail.ts       Full thought reader
 ```
