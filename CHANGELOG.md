@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-16 - version 1.3.7
+
+- **Changelog guard**: `src/changelog.spec.ts` asserts the top entry is the version `package.json` is on, that it has bullets under it, that no version gets two headings, that versions and dates both run newest first, and that every `## ` heading parses as `YYYY-MM-DD - version X.Y.Z`. Ported from the `changelogEntry.test.ts` in `paul-explore` and `portfolio_api`, which have had this for a while — this repo was the one without it
+- All 46 existing entries already satisfied every assertion, so nothing had to be rewritten to go green. The parser is exercised against known input too, so a rotted regex fails rather than quietly matching nothing and passing
+- The gap that prompted it: the shortcut remap shipped in 1.3.4 with no changelog entry, and nothing failed. I caught it writing the 1.3.6 release note from commits instead of from the changelog, which is the wrong direction to read it in
+- Being straight about what this does not catch: the remap bumped neither the version nor the changelog, which leaves the two agreeing with each other, and a top-entry-matches-`package.json` assertion passes on that. It catches a version that moves without its note. Catching a behaviour change that moves neither needs the PR diff, so it belongs in `ci.yml` rather than in a spec, and that check would need `fetch-depth: 0` on the checkout
+- **Backfill**: the 1.3.4 entry now documents the shortcut remap it actually shipped, alongside the design-token bump it already described
+
 ## 2026-08-16 - version 1.3.6
 
 - **Design tokens**: `@paul-portfolio/tokens` `^0.3.0` → `^0.4.0`. Below 1.0 the caret is minor-locked, so `^0.3.0` could never resolve 0.4.0 — the range had to move for the new version to install at all
