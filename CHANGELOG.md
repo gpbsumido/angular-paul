@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-16 - version 1.3.7
+
+- **Changelog guard**: `src/changelog.spec.ts` asserts the top entry is the version `package.json` is on, that it has bullets under it, that no version gets two headings, that versions and dates both run newest first, and that every `## ` heading parses as `YYYY-MM-DD - version X.Y.Z`. Ported from the `changelogEntry.test.ts` in `paul-explore` and `portfolio_api`, which have had this for a while — this repo was the one without it
+- All 46 existing entries already satisfied every assertion, so nothing had to be rewritten to go green. The parser is exercised against known input too, so a rotted regex fails rather than quietly matching nothing and passing
+- The gap that prompted it: the shortcut remap shipped in 1.3.4 with no changelog entry, and nothing failed. I caught it writing the 1.3.6 release note from commits instead of from the changelog, which is the wrong direction to read it in
+- Being straight about what this does not catch: the remap bumped neither the version nor the changelog, which leaves the two agreeing with each other, and a top-entry-matches-`package.json` assertion passes on that. It catches a version that moves without its note. Catching a behaviour change that moves neither needs the PR diff, so it belongs in `ci.yml` rather than in a spec, and that check would need `fetch-depth: 0` on the checkout
+- **Backfill**: the 1.3.4 entry now documents the shortcut remap it actually shipped, alongside the design-token bump it already described
+
 ## 2026-08-16 - version 1.3.6
 
 - **Design tokens**: `@paul-portfolio/tokens` `^0.3.0` → `^0.4.0`. Below 1.0 the caret is minor-locked, so `^0.3.0` could never resolve 0.4.0 — the range had to move for the new version to install at all
@@ -22,6 +30,12 @@ All notable changes to this project will be documented in this file.
 
 ## 2026-08-15 - version 1.3.4
 
+- **Desktop shortcuts are reachable again**: the five live chords moved from ⌘ to ⌃⌥ — close window (⌘W → ⌃⌥W), quit app (⌘Q → ⌃⌥Q), minimize (⌘H → ⌃⌥H), Spotlight (⌘Space → ⌃⌥Space) and cycle windows (⌘Tab → ⌃⌥Tab). The browser and macOS reserve those ⌘ chords and will not hand them over, so `preventDefault()` on them does nothing and the simulation silently did nothing either
+- `keyboard-shortcut.service.ts` gates on `ctrlKey && altKey && !metaKey` instead of `metaKey`, and each handled case calls `preventDefault()` for itself rather than relying on the one ad-hoc call for ⌘Space that used to sit in `app.ts`
+- The other ⌘ glyphs left in the menus are decoration — nothing ever listened for those chords — so they stay as macOS chrome. Only the five that actually fire were remapped
+- The menu-bar hints and the Shortcuts list in the README app were updated to the real chords, so the UI stops advertising bindings that never worked
+- TDD: specs assert each ⌃⌥ chord fires, and that the reserved ⌘ chords are ignored and left un-`preventDefault()`ed for the browser to handle
+- Backfilled after the fact. This shipped in 1.3.4 without an entry, which is what prompted the changelog guard in 1.3.7
 - **Design tokens**: `@paul-portfolio/tokens` `^0.1.3` → `^0.3.0`, picking up the "Verdigris & Ember" design language — teal-green primary (`#219b84`), ember secondary (`#d97e1f`), warm ink-on-paper neutrals, warm semantic surfaces, a new `violet` ramp, `--paul-font-family-display`, and the AA contrast fixes
 - The span crosses the spacing-token rename (`--paul-spacing-0.5` → `--paul-spacing-0_5`), which is the only hard break in it. Nothing here referenced the dotted names in CSS — the only mentions are in the Thoughts entry that documents the gotcha — so no call sites moved
 - All 43 `--paul-*` tokens this app consumes still exist in 0.3.0, and only one changed value: `--paul-color-background` (`#ffffff` → `#fbfaf7`), which nothing references in CSS. The desktop chrome deliberately keeps its own palette in `desktop-theme.scss`, so the recolour is inert here by design — the token bridge only maps typography, motion, radii and z-index
