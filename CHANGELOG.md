@@ -30,6 +30,12 @@ All notable changes to this project will be documented in this file.
 
 ## 2026-08-15 - version 1.3.4
 
+- **Desktop shortcuts are reachable again**: the five live chords moved from ⌘ to ⌃⌥ — close window (⌘W → ⌃⌥W), quit app (⌘Q → ⌃⌥Q), minimize (⌘H → ⌃⌥H), Spotlight (⌘Space → ⌃⌥Space) and cycle windows (⌘Tab → ⌃⌥Tab). The browser and macOS reserve those ⌘ chords and will not hand them over, so `preventDefault()` on them does nothing and the simulation silently did nothing either
+- `keyboard-shortcut.service.ts` gates on `ctrlKey && altKey && !metaKey` instead of `metaKey`, and each handled case calls `preventDefault()` for itself rather than relying on the one ad-hoc call for ⌘Space that used to sit in `app.ts`
+- The other ⌘ glyphs left in the menus are decoration — nothing ever listened for those chords — so they stay as macOS chrome. Only the five that actually fire were remapped
+- The menu-bar hints and the Shortcuts list in the README app were updated to the real chords, so the UI stops advertising bindings that never worked
+- TDD: specs assert each ⌃⌥ chord fires, and that the reserved ⌘ chords are ignored and left un-`preventDefault()`ed for the browser to handle
+- Backfilled after the fact. This shipped in 1.3.4 without an entry, which is what prompted the changelog guard in 1.3.7
 - **Design tokens**: `@paul-portfolio/tokens` `^0.1.3` → `^0.3.0`, picking up the "Verdigris & Ember" design language — teal-green primary (`#219b84`), ember secondary (`#d97e1f`), warm ink-on-paper neutrals, warm semantic surfaces, a new `violet` ramp, `--paul-font-family-display`, and the AA contrast fixes
 - The span crosses the spacing-token rename (`--paul-spacing-0.5` → `--paul-spacing-0_5`), which is the only hard break in it. Nothing here referenced the dotted names in CSS — the only mentions are in the Thoughts entry that documents the gotcha — so no call sites moved
 - All 43 `--paul-*` tokens this app consumes still exist in 0.3.0, and only one changed value: `--paul-color-background` (`#ffffff` → `#fbfaf7`), which nothing references in CSS. The desktop chrome deliberately keeps its own palette in `desktop-theme.scss`, so the recolour is inert here by design — the token bridge only maps typography, motion, radii and z-index
