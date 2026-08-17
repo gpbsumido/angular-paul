@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-08-16 - version 1.3.6
+
+- **Design tokens**: `@paul-portfolio/tokens` `^0.3.0` → `^0.4.0`. Below 1.0 the caret is minor-locked, so `^0.3.0` could never resolve 0.4.0 — the range had to move for the new version to install at all
+- 0.4.0 adds seven `--paul-color-on-*` semantic label tokens (`on-primary`, `on-primary-tint`, `on-success-tint`, `on-warning-tint`, `on-error`, `on-error-tint`, `on-inverse`) for foreground text on filled surfaces. The release is purely additive: 168 token declarations → 175, with nothing removed and no existing value changed
+- All 44 `--paul-*` tokens this app consumes still exist in 0.4.0. I checked for dropped names specifically, because a token that disappears out of a `var()` fails silently in CSS rather than erroring
+- Visually inert, as expected: `token-bridge.scss` bridges typography, motion, radii, spacing and z-index and no colours, since the desktop keeps its own macOS-simulation palette in `desktop-theme.scss`. Nothing references the new `--paul-color-on-*` names, so they compile in as dead custom properties. The whole diff in the built `styles.css` is 14 added declarations — 7 in `:root`, 7 in `[data-theme='dark']` — with zero removed and zero changed
+- Proved it rather than assuming it: the same three views (desktop, Thoughts list, Thought detail) in light and dark at 1440×900, served before and after, are **pixel-identical across all six pairs — 0 differing pixels, full frame including the menu bar**. Freezing the clock and disabling animations made the capture deterministic; a same-build control also scored 0, and a light-vs-dark pair scored 45,685, so the detector was proven able to see a real difference
+- Initial bundle 373.24 kB → **373.74 kB** raw (103.41 kB → 103.45 kB transfer), the half-kilobyte being the seven new declarations. Still well under the unchanged 400 kB budget in `angular.json`, with no budget warning in the build
+
+## 2026-08-15 - version 1.3.5
+
+- **Initial bundle back under budget**: 428.83 kB → **373.24 kB** raw (120.41 kB → 103.41 kB transfer), against the 400 kB warning budget in `angular.json`. The budget itself is unchanged — I did not want to raise the number and call it fixed
+- The cause was `thoughts-content/thoughts-data.ts`: 62 kB of prose that the esbuild metafile showed contributing **60.12 kB to the initial chunk**, the third-largest input in it after `@angular/core` and `@angular/router`, and 7x the next-largest app file. `app.ts`, `search.service.ts` and `app-launcher.service.ts` all import it eagerly for slugs, titles and tags, and none of them ever read `content` — so every first-paint visitor was downloading all 20 write-ups to render a desktop that shows none of them
+- Prose now lives in `thoughts-content/thoughts-bodies.ts` as `THOUGHT_BODIES`, imported only by `ThoughtsService`, which is reached solely from the lazy `/thoughts` routes. It lands in a 58.26 kB lazy chunk that loads when someone actually opens a thought. `thoughts-data.ts` keeps `ThoughtEntry` and `THOUGHTS` as metadata only
+- The join stays synchronous, so the 21 prerendered routes still prerender and the reader needed no async plumbing
+- TDD: a spec asserts no `THOUGHTS` entry carries a `content` key, so prose cannot drift back into the eager module, and another asserts every slug still resolves to a non-empty body. The existing `deploying-ssr` and `mac-menu-bar` specs assert real substrings of the prose and kept the move honest
+- **Ignore Playwright output**: `test-results/`, `playwright-report/` and `playwright/.cache/` were being written into the repo untracked. Nothing from them had ever been committed, so gitignore entries were enough
+
 ## 2026-08-15 - version 1.3.4
 
 - **Design tokens**: `@paul-portfolio/tokens` `^0.1.3` → `^0.3.0`, picking up the "Verdigris & Ember" design language — teal-green primary (`#219b84`), ember secondary (`#d97e1f`), warm ink-on-paper neutrals, warm semantic surfaces, a new `violet` ramp, `--paul-font-family-display`, and the AA contrast fixes

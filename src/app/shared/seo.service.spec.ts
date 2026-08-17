@@ -10,7 +10,6 @@ const THOUGHT: ThoughtEntry = {
   date: '2026-06-15',
   summary: 'Signals replaced Zone.js change detection with fine-grained reactivity.',
   tags: ['signals', 'reactivity', 'angular'],
-  content: 'Angular Signals represent a fundamental shift.',
 };
 
 describe('SeoService', () => {
