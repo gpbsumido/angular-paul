@@ -58,6 +58,16 @@ describe('ThoughtDetailComponent', () => {
     expect(tagTexts).toContain('angular');
   });
 
+  it('formats the date in UTC, so a YYYY-MM-DD never slips to the day before', () => {
+    // 'signals' is dated 2026-06-15. JS parses that as UTC midnight, so without
+    // the 'UTC' argument any timezone west of UTC renders June 14.
+    expect(nativeEl.querySelector('.thought-detail-date')?.textContent).toContain('Jun 15, 2026');
+  });
+
+  it('shows a reading time for a prose thought', () => {
+    expect(nativeEl.querySelector('.thought-detail-date')?.textContent).toContain('min read');
+  });
+
   it('should set SEO metadata for the thought', () => {
     expect(document.title).toContain('Why Angular Signals Changed Everything');
   });
