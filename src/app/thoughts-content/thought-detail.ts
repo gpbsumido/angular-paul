@@ -1,8 +1,6 @@
 import { NgComponentOutlet } from '@angular/common';
-import { Component, computed, effect, ElementRef, inject, resource } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { map } from 'rxjs';
+import { Component, computed, effect, ElementRef, inject, input, resource } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { SeoService } from '../shared/seo.service';
 import { LESSON_PAGES } from './lessons/lessons';
 import { ReadingProgressService } from './reading-progress.service';
@@ -28,7 +26,7 @@ import { ThoughtsService } from './thoughts.service';
         </div>
         <div class="thought-detail-tags">
           @for (tag of thought.tags; track tag) {
-            <span class="thought-tag">{{ tag }}</span>
+            <a class="thought-tag" [routerLink]="['/thoughts/tag', tag]">{{ tag }}</a>
           }
         </div>
         <div class="thought-detail-content">{{ thought.content }}</div>
@@ -114,6 +112,7 @@ import { ThoughtsService } from './thoughts.service';
     }
 
     .thought-tag {
+      text-decoration: none;
       font-size: 11px;
       padding: 3px 10px;
       border-radius: 12px;
@@ -175,7 +174,6 @@ import { ThoughtsService } from './thoughts.service';
   `,
 })
 export class ThoughtDetailComponent {
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly service = inject(ThoughtsService);
   private readonly seo = inject(SeoService);
@@ -184,16 +182,14 @@ export class ThoughtDetailComponent {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   // [ng-04 signals] The slug is a signal, and everything else derives from it.
+  // It used to read route.snapshot once, and the router reuses this component
+  // when only :slug changes, so the snapshot went stale.
   //
-  // This used to read route.snapshot once. The router reuses this component
-  // when only :slug changes (lesson 01 → Next → lesson 02), so the snapshot
-  // went stale and the page kept showing lesson 01. paramMap is an Observable
-  // that emits on every change. toSignal() bridges it, and requireSync works
-  // because ActivatedRoute replays the current params synchronously.
-  private readonly slug = toSignal(
-    this.route.paramMap.pipe(map((params) => params.get('slug') ?? '')),
-    { requireSync: true },
-  );
+  // [ng-07 routing] Lesson 04 fixed that with toSignal(route.paramMap). With
+  // withComponentInputBinding() in app.config.ts, the router now sets :slug
+  // as this input directly, and updates it on reuse. No ActivatedRoute, no
+  // Observable, and a spec can set it without a router at all.
+  readonly slug = input.required<string>();
 
   // computed(): derived, memoised, recomputed only when slug() changes.
   readonly thought = computed(() => this.service.getBySlug(this.slug()));

@@ -87,12 +87,13 @@ const SHIPPING: Record<Country, string[]> = {
 
       <p>
         <strong>Interop.</strong> <code>toSignal()</code> turns an Observable into a signal and
-        <code>toObservable()</code> goes the other way. The thought reader you're in uses it. It
+        <code>toObservable()</code> goes the other way. The thought reader you're in used it. It
         used to read <code>route.snapshot</code> once, and since the router reuses the component
         when only <code>:slug</code> changes, the series links (Part N of M, below) would have
-        shown the old lesson. Now the slug is a signal and everything derives from it.
+        shown the old lesson. Now the slug is a signal and everything derives from it. (Lesson 07
+        goes one step further: the router hands the slug over as an input.)
       </p>
-      <app-code-block label="src/app/thoughts-content/thought-detail.ts" [code]="snippets.reader" />
+      <app-code-block label="thought-detail.ts, as of this lesson" [code]="snippets.reader" />
 
       <h2>Expert</h2>
       <p>

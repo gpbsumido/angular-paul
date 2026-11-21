@@ -15,7 +15,7 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { routes } from './app.routes';
 import { retryTransientErrors } from './shared/retry-transient-errors.interceptor';
@@ -37,7 +37,11 @@ export const appConfig: ApplicationConfig = {
     // order on the way back. withInterceptors() takes plain functions; the
     // class-based HTTP_INTERCEPTORS multi-provider is the legacy form.
     provideHttpClient(withFetch(), withInterceptors([retryTransientErrors])),
-    provideRouter(routes),
+    // [ng-07 routing] withComponentInputBinding(): route params, query params
+    // and route data arrive as component inputs, so a routed component can
+    // declare `slug = input.required<string>()` instead of injecting
+    // ActivatedRoute and bridging an Observable.
+    provideRouter(routes, withComponentInputBinding()),
     // SSR hydration: reuse server-rendered DOM instead of re-creating it.
     // Lesson 12.
     provideClientHydration(withEventReplay(), withIncrementalHydration()),
