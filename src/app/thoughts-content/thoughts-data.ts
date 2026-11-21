@@ -242,4 +242,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'rxjs', 'angular'],
     relatedApp: 'projects',
   },
+  {
+    slug: 'angular-07-routing',
+    title: 'Angular 07: Routing',
+    date: '2026-11-21',
+    summary:
+      'Route order, params as inputs, path vs query params, guards and server routes, with a playground that matches URLs against this site\'s real route table. Built while turning every tag into its own prerendered page.',
+    tags: ['angular-guide', 'routing', 'angular'],
+    relatedApp: 'readme',
+  },
 ];

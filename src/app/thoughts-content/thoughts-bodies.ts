@@ -262,4 +262,7 @@ So storage became an injection token. One factory decides what storage means on 
   'angular-06-rxjs': `Signals took over most of what I used RxJS for, which made it easier to see what RxJS is still for: things that happen over time. A search box where the answers can come back out of order. A request that fails once and would have worked a second later.
 
 The second one was a real gap. The Projects app showed its error state on the first network blip. Now every GET goes through a small interceptor that retries transient failures twice with backoff, and never retries anything that isn't safe to send twice. The demo below is the first one: two search boxes over the same slow server, one with mergeMap and one with switchMap.`,
+  'angular-07-routing': `Every thought has tags, and until now they were decoration. I wanted each tag to be a page: /thoughts/tag/angular-guide as a reading list for this series, prerendered like everything else under /thoughts.
+
+Wiring that up showed how much of the routing had been done by hand. The cards were divs with click handlers, so there were no real links to put the tags inside. The reader pulled its slug out of ActivatedRoute through an Observable, when the router could just hand it over as an input. And there was no wildcard route at all, so a mistyped URL failed the first navigation outright. The playground below matches URLs against this site's actual route table.`,
 };
