@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.7
+
+- **fix: the contact form accepted blank messages.** `Validators.required` only rejects an empty string, so a name or message of nothing but spaces got through. Both now use a small `notBlank` validator in `shared/validators.ts`
+- **Send explains instead of greying out.** The button used to stay disabled until the form was valid, which can't be focused and says nothing about what's wrong. It's now enabled, except while a message is sending, so it can't double-submit. Pressing it on an invalid form shows every error and moves focus to the first field that needs fixing
+- **Errors are tied to their fields.** Each error message has an id, and its input gets `aria-invalid` and `aria-describedby` while the error shows. The sending, sent and failed messages now live in one `role="status"` region that's always in the DOM, so they're announced. Name and email have `autocomplete` hints
+- **Angular guide, lesson 08: forms** (`/thoughts/angular-08-forms`). The live demo is a password pair checked by a group-level validator, plus a `FormArray` of links you can add and remove, with the form's status and raw value shown as you type. The lesson covers async validators, `ControlValueAccessor`, and Angular 21's experimental Signal Forms, checked against the installed `@angular/forms` 21.2
+- Initial bundle 391.72 kB → 392.09 kB, the lesson's metadata. Forms code stays in lazy chunks
+
 ## 2026-11-21 - version 1.4.6
 
 - **Every tag has its own page**: `/thoughts/tag/<tag>`, prerendered with its own title and canonical URL, and every tag pill in the list and the reader links to it. `/thoughts/tag/angular-guide` is now the reading list for this series. It's a path param rather than `?tag=` on purpose: prerendering writes one file per path, so a query-param page would be served the unfiltered list and then change under the reader during hydration. Prerendered routes went from 27 to 74
