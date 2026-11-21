@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.8
+
+- **Every component is OnPush.** None of the 35 components set a change detection strategy, so every one was checked on every pass. Each now uses `ChangeDetectionStrategy.OnPush`. Before switching, I audited each component for state that changes outside signals and template events, the kind OnPush stops rendering, and found none. The contact form's reset after sending is the closest call, and it now carries a comment saying why it still renders
+- **A test keeps it that way.** `architecture.spec.ts` reads every `@Component` decorator with the TypeScript parser and fails, naming the class, on any component that doesn't choose OnPush or an explicit `Eager`. Using the parser rather than a text search means the code samples printed in the lessons don't count as components
+- **Angular guide, lesson 09: change detection** (`/thoughts/angular-09-change-detection`). The live demo passes one object to an `Eager` child and an `OnPush` child: mutating it updates only the Eager one, replacing it updates both, and a signal reaches the OnPush child with no input change at all. The lesson covers zoneless scheduling, `markForCheck` vs `detectChanges`, NG0100, and the 21.2 rename of `Default` to `Eager`
+
 ## 2026-11-21 - version 1.4.7
 
 - **fix: the contact form accepted blank messages.** `Validators.required` only rejects an empty string, so a name or message of nothing but spaces got through. Both now use a small `notBlank` validator in `shared/validators.ts`
