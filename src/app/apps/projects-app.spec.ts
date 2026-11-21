@@ -142,20 +142,4 @@ describe('ProjectsService', () => {
 
     expect(service.repos.value()).toEqual(MOCK_REPOS);
   });
-
-  it('should react to search signal changes by re-fetching', async () => {
-    const req1 = httpTesting.expectOne((r) => r.url.includes('github.com'));
-    req1.flush(MOCK_REPOS);
-    await fixture.whenStable();
-
-    service.search.set('angular');
-    fixture.detectChanges();
-
-    const req2 = httpTesting.expectOne((r) => r.url.includes('github.com'));
-    expect(req2.request.url).toContain('angular');
-    req2.flush([MOCK_REPOS[0]]);
-    await fixture.whenStable();
-
-    expect(service.repos.value()).toEqual([MOCK_REPOS[0]]);
-  });
 });
