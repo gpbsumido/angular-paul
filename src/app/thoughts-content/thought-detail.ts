@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
 import { SeoService } from '../shared/seo.service';
 import { LESSON_PAGES } from './lessons/lessons';
+import { ReadingProgressService } from './reading-progress.service';
 import { ReadingTimePipe } from './reading-time.pipe';
 import { UtcDatePipe } from './utc-date.pipe';
 import { ThoughtsService } from './thoughts.service';
@@ -36,7 +37,21 @@ import { ThoughtsService } from './thoughts.service';
         }
         @if (series(); as series) {
           <nav class="series-nav" aria-label="Angular guide">
-            <span class="series-nav-position">Part {{ series.index + 1 }} of {{ series.total }}</span>
+            <span class="series-nav-position"
+              >Part {{ series.index + 1 }} of {{ series.total }} · {{ seriesCompleted() }} of
+              {{ series.total }} complete</span
+            >
+            <!-- [ng-05 di] A toggle is a button with aria-pressed, not a checkbox
+                 styled as one. The visible label changes too, so the state isn't
+                 conveyed by colour alone. -->
+            <button
+              type="button"
+              class="lesson-complete"
+              [attr.aria-pressed]="isComplete()"
+              (click)="progress.toggleComplete(thought.slug)"
+            >
+              {{ isComplete() ? 'Completed ✓' : 'Mark lesson complete' }}
+            </button>
             @if (series.previous; as previous) {
               <a [routerLink]="['/thoughts', previous.slug]" rel="prev">← {{ previous.title }}</a>
             }
@@ -130,6 +145,24 @@ import { ThoughtsService } from './thoughts.service';
     .series-nav a {
       color: var(--accent-color, #007aff);
     }
+    .lesson-complete {
+      flex-basis: 100%;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--accent-color, #007aff);
+      background: none;
+      color: var(--accent-color, #007aff);
+      font: inherit;
+      cursor: pointer;
+    }
+    .lesson-complete[aria-pressed='true'] {
+      background: var(--accent-color, #007aff);
+      color: #fff;
+    }
+    .lesson-complete:focus-visible {
+      outline: 2px solid var(--accent-color, #007aff);
+      outline-offset: 2px;
+    }
     .series-nav-next {
       margin-left: auto;
     }
@@ -146,6 +179,7 @@ export class ThoughtDetailComponent {
   private readonly router = inject(Router);
   private readonly service = inject(ThoughtsService);
   private readonly seo = inject(SeoService);
+  protected readonly progress = inject(ReadingProgressService);
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
@@ -164,6 +198,12 @@ export class ThoughtDetailComponent {
   // computed(): derived, memoised, recomputed only when slug() changes.
   readonly thought = computed(() => this.service.getBySlug(this.slug()));
   readonly series = computed(() => this.service.getSeriesPosition(this.slug(), 'angular-guide'));
+  // [ng-05 di] Reads a signal from a root service, so these update the moment
+  // the toggle (or anything else holding the same instance) changes progress.
+  readonly isComplete = computed(() => this.progress.completedSlugs().has(this.slug()));
+  readonly seriesCompleted = computed(
+    () => this.series()?.slugs.filter((slug) => this.progress.isComplete(slug)).length ?? 0,
+  );
   // Lesson pages are mostly interactive, so a word count of the intro would undersell them.
   readonly hasLessonPage = computed(() => this.slug() in LESSON_PAGES);
 

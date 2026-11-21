@@ -8,6 +8,8 @@ export type ThoughtWithContent = ThoughtEntry & { content: string };
 export interface SeriesPosition {
   index: number;
   total: number;
+  /** Every slug in the series, in order, so callers can count progress across it. */
+  slugs: string[];
   previous?: ThoughtEntry;
   next?: ThoughtEntry;
 }
@@ -35,7 +37,13 @@ export class ThoughtsService {
     const series = THOUGHTS.filter((t) => t.tags.includes(seriesTag));
     const index = series.findIndex((t) => t.slug === slug);
     if (index === -1) return undefined;
-    return { index, total: series.length, previous: series[index - 1], next: series[index + 1] };
+    return {
+      index,
+      total: series.length,
+      slugs: series.map((t) => t.slug),
+      previous: series[index - 1],
+      next: series[index + 1],
+    };
   }
 
   getByTag(tag: string): ThoughtWithContent[] {

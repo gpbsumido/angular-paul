@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SeoService } from '../shared/seo.service';
+import { ReadingProgressService } from './reading-progress.service';
 import { ThoughtsService } from './thoughts.service';
 import { UtcDatePipe } from './utc-date.pipe';
 
@@ -22,6 +23,9 @@ import { UtcDatePipe } from './utc-date.pipe';
           <time class="thought-card-date" [attr.datetime]="thought.date">{{
             thought.date | utcDate
           }}</time>
+          @if (progress.completedSlugs().has(thought.slug)) {
+            <span class="thought-card-complete">✓ Completed</span>
+          }
           <div class="thought-card-tags">
             @for (tag of thought.tags; track tag) {
               <span class="thought-tag">{{ tag }}</span>
@@ -73,6 +77,14 @@ import { UtcDatePipe } from './utc-date.pipe';
       margin-bottom: 4px;
     }
 
+    .thought-card-complete {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-color, #007aff);
+      margin-bottom: 8px;
+    }
+
     .thought-card-date {
       display: block;
       font-size: 11px;
@@ -106,6 +118,7 @@ export class ThoughtsListComponent {
   private readonly service = inject(ThoughtsService);
   private readonly router = inject(Router);
   private readonly seo = inject(SeoService);
+  protected readonly progress = inject(ReadingProgressService);
 
   readonly thoughts = this.service.getAll();
 
