@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.1
+
+- **Angular guide, lesson 02: components** (`/thoughts/angular-02-components`). Covers standalone components, `input()`, `output()`, `model()`, content projection, dynamic components and view encapsulation. The live demo is a badge whose label and tone flow in through inputs, whose count is two-way through `[(count)]`, and whose dismiss button emits an output into an event log
+- **Lesson building blocks**: the layout, demo frame, callouts and interview questions that lesson 01 had inline are now components (`Lesson`, `LessonDemo`, `Callout`, `InterviewQuestions`), and lesson 01 is rebuilt on them. `Lesson` is the only `ViewEncapsulation.None` component in the app, because it has to style projected content. It scopes every selector under `.lesson` by hand
+- **Copy button on code samples**: `CodeBlock` copies to the clipboard and announces "Copied" through a live region. If clipboard access is denied it says so instead of failing silently
+- Callouts name their kind in text ("Pitfall", "Tip", "Expert note"), so the colour bar is never the only signal
+- Initial bundle 372.98 kB → 375.71 kB. Nothing lesson-specific is eager; the growth is the `@angular/core` code behind `model()` and `output()`, which esbuild hoists into the shared core chunk once a lazy chunk uses it
+
 ## 2026-11-21 - version 1.4.0
 
 - **Interactive lessons in Thoughts**: a thought can now carry a lazily loaded lesson page under its prose. `thoughts-content/lessons/lessons.ts` maps slugs to loaders, and the reader loads the page through a `resource()` so SSR waits for it. The prerendered `/thoughts/angular-01-project-structure` HTML contains the whole lesson, demo included, not an empty slot. Each lesson is its own lazy chunk (lesson 01 is 13 kB), and the initial bundle is unchanged at 372.98 kB
