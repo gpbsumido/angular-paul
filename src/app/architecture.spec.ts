@@ -9,7 +9,7 @@ import { join, relative, resolve, dirname, sep } from 'node:path';
  * feature folder is quietly a dependency of the whole app. These tests make the
  * convention executable: break the rule and CI goes red with the file name.
  *
- * The layering this repo uses (see docs/angular-guide/01-project-structure.md):
+ * The layering this repo uses (lesson 01, /thoughts/angular-01-project-structure):
  *
  *   shell      app.ts, menu-bar/, dock/, desktop/, window-manager/, ...
  *   shared/    services and building blocks anyone may use
@@ -69,5 +69,25 @@ describe('[ng-01] architecture', () => {
       .filter((file) => /@NgModule\s*\(/.test(readFileSync(file, 'utf-8')))
       .map((file) => relative(APP_ROOT, file));
     expect(withNgModule).toEqual([]);
+  });
+
+  // [ng-09 change detection] OnPush everywhere, unless a component says
+  // otherwise out loud. The check is per decorator, not per file, because a
+  // file can declare several components. Eager (the new name for Default) is
+  // allowed only when written explicitly, so it is always a visible decision
+  // rather than a forgotten line.
+  it('every component sets OnPush, or opts into Eager explicitly', () => {
+    const decorators = files.flatMap((file) =>
+      readFileSync(file, 'utf-8')
+        .split('@Component(')
+        .slice(1)
+        .map((rest) => ({ file, decorator: rest.slice(0, rest.indexOf('export class')) })),
+    );
+    const missing = decorators
+      .filter(({ decorator }) => !/changeDetection:\s*ChangeDetectionStrategy\.(OnPush|Eager)\b/.test(decorator))
+      .map(({ file, decorator }) => `${relative(APP_ROOT, file)} (${/selector:\s*'([^']+)'/.exec(decorator)?.[1]})`);
+
+    expect(decorators.length).toBeGreaterThan(30);
+    expect(missing).toEqual([]);
   });
 });
