@@ -1,7 +1,8 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-placeholder',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="placeholder">
       <span class="placeholder-icon">{{ icon() }}</span>

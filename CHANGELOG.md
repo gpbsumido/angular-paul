@@ -2,6 +2,95 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.10
+
+- **fix: CI's typecheck checked zero files.** It ran `npx tsc --noEmit` against the root `tsconfig.json`, which has `"files": []` and only project references, so plain `tsc` compiled nothing and passed. It now typechecks `tsconfig.app.json` and `tsconfig.spec.json`
+- **CI runs the production build.** It's the only step that prerenders every route and enforces the bundle budget, and CI never ran it
+- **Every CI job has a time limit.** I've seen `ng build` and `ng test` finish their work and then never exit; without `timeout-minutes` that holds a runner for GitHub's six-hour default
+- **A spec reads the CI workflow** (`ci-workflow.spec.ts`), so none of the three gaps can come back quietly
+- **An e2e test for the lesson nav** (`e2e/lesson-nav.spec.ts`). The unit specs drive a fake `IntersectionObserver`; this one scrolls a real page in Chromium
+- **Corrected: the contact form's reset comment.** In 1.4.8 I wrote that `form.reset()` only re-rendered the OnPush contact form because a signal write sat next to it. A new spec shows it renders on its own: reactive form controls keep touched and status in signals, and `NgControlStatus` reads them in its host bindings
+- **Angular guide, lesson 11: testing** (`/thoughts/angular-11-testing`). The live demo runs the real `notBlank` validator's tests in the page, with a switch that puts back the bug lesson 08 fixed. The lesson covers component specs, `HttpTestingController` with fake timers, `RouterTestingHarness`, marble tests, fitness tests and when e2e earns its place
+
+## 2026-11-21 - version 1.4.9
+
+- **Every lesson has an "On this page" nav.** It sticks to the top while you read, jumps to a section (moving focus to its heading), and highlights the section in view with `aria-current="location"`. Smooth scrolling switches off under `prefers-reduced-motion`. The lessons had grown long enough that I kept losing my place in them
+- **Two directives build it.** `LessonSection` matches every `h2` in a lesson, gives it an id from its text and registers it with `ScrollSpy`, which watches the registered headings with an `IntersectionObserver` created only in the browser. The lesson component takes `ScrollSpy` as a host directive, so no lesson has to remember an attribute. The nav and the heading ids are both in the prerendered HTML
+- **Angular guide, lesson 10: directives** (`/thoughts/angular-10-directives`). The live demos are a structural directive built on `TemplateRef` and `ViewContainerRef`, and an attribute directive composed into a component with `hostDirectives` and a renamed input. The lesson walks through the nav's own code
+- **Initial bundle 392.64 → 394.56 kB.** All the new code is lazy, but this is the first use of `contentChildren`, `hostDirectives` and `afterNextRender`, and their runtime lives in the shared `@angular/core` chunk
+
+## 2026-11-21 - version 1.4.8
+
+- **Every component is OnPush.** None of the 35 components set a change detection strategy, so every one was checked on every pass. Each now uses `ChangeDetectionStrategy.OnPush`. Before switching, I audited each component for state that changes outside signals and template events, the kind OnPush stops rendering, and found none. The contact form's reset after sending is the closest call, and it now carries a comment saying why it still renders
+- **A test keeps it that way.** `architecture.spec.ts` reads every `@Component` decorator with the TypeScript parser and fails, naming the class, on any component that doesn't choose OnPush or an explicit `Eager`. Using the parser rather than a text search means the code samples printed in the lessons don't count as components
+- **Angular guide, lesson 09: change detection** (`/thoughts/angular-09-change-detection`). The live demo passes one object to an `Eager` child and an `OnPush` child: mutating it updates only the Eager one, replacing it updates both, and a signal reaches the OnPush child with no input change at all. The lesson covers zoneless scheduling, `markForCheck` vs `detectChanges`, NG0100, and the 21.2 rename of `Default` to `Eager`
+
+## 2026-11-21 - version 1.4.7
+
+- **fix: the contact form accepted blank messages.** `Validators.required` only rejects an empty string, so a name or message of nothing but spaces got through. Both now use a small `notBlank` validator in `shared/validators.ts`
+- **Send explains instead of greying out.** The button used to stay disabled until the form was valid, which can't be focused and says nothing about what's wrong. It's now enabled, except while a message is sending, so it can't double-submit. Pressing it on an invalid form shows every error and moves focus to the first field that needs fixing
+- **Errors are tied to their fields.** Each error message has an id, and its input gets `aria-invalid` and `aria-describedby` while the error shows. The sending, sent and failed messages now live in one `role="status"` region that's always in the DOM, so they're announced. Name and email have `autocomplete` hints
+- **Angular guide, lesson 08: forms** (`/thoughts/angular-08-forms`). The live demo is a password pair checked by a group-level validator, plus a `FormArray` of links you can add and remove, with the form's status and raw value shown as you type. The lesson covers async validators, `ControlValueAccessor`, and Angular 21's experimental Signal Forms, checked against the installed `@angular/forms` 21.2
+- Initial bundle 391.72 kB → 392.09 kB, the lesson's metadata. Forms code stays in lazy chunks
+
+## 2026-11-21 - version 1.4.6
+
+- **Every tag has its own page**: `/thoughts/tag/<tag>`, prerendered with its own title and canonical URL, and every tag pill in the list and the reader links to it. `/thoughts/tag/angular-guide` is now the reading list for this series. It's a path param rather than `?tag=` on purpose: prerendering writes one file per path, so a query-param page would be served the unfiltered list and then change under the reader during hydration. Prerendered routes went from 27 to 74
+- **Cards are links now.** The Thoughts list cards were `div role="button"`s calling `router.navigate()`, so they had no `href` for crawlers, no middle-click, and nowhere to put the tag links (a link can't sit inside a button). The title is a real `routerLink`, and a stretched `::after` keeps the whole card clickable
+- **fix: a mistyped URL failed the first navigation** with `NG04002: Cannot match any routes`. There's now a `**` route, last in the table, that redirects to the desktop
+- The reader takes `:slug` as an input through `withComponentInputBinding()` instead of `toSignal(route.paramMap)`, which drops its `ActivatedRoute` and RxJS imports. A new spec runs the real route table with the real `appConfig`, so a missing route, a wildcard in the wrong place, or a router feature that's switched off fails a test
+- **Angular guide, lesson 07: routing** (`/thoughts/angular-07-routing`). The playground parses a URL with Angular's own `UrlSerializer` and matches it against this site's actual route table. A checkbox moves the wildcard to the front, to show first-match-wins. Lesson 04's text now notes that lesson 07 replaced the code it shows
+- Initial bundle 389.82 kB → 391.72 kB for the input-binding router feature, the two new routes and the lesson metadata. I didn't split that 1.9 kB any further
+
+## 2026-11-21 - version 1.4.5
+
+- **GET requests retry transient failures.** One network blip used to put the Projects app straight into "Failed to load projects". A functional interceptor, `retryTransientErrors`, now retries any GET that fails with a network error (status 0) or a 5xx, twice, 400ms and then 800ms later. A 404 fails straight away, and nothing but GETs is ever retried, because a retried POST is a second submission
+- **Angular guide, lesson 06: RxJS and HTTP** (`/thoughts/angular-06-rxjs`). The live demo runs two search boxes over a deliberately slow fake server, where one-letter queries answer slowest. Type "sig" and mergeMap ends on the stale "s" results while switchMap shows "sig". The operator behind it has marble tests on `TestScheduler`
+- Initial bundle 384.98 kB → 389.82 kB. I measured the parts: without the interceptor it's 389.00 kB, and without lesson 06 registered it's 388.39 kB. RxJS's timer and async-scheduler code is shared by the interceptor's backoff and the lesson's `delay`, so it lands in an eager chunk either way. I tried writing the demo with `timer` instead of `delay`, and it saved 0.26 kB, not enough to beat the more readable version. That leaves 10 kB of headroom, so the remaining lessons have to stay out of eager code
+
+## 2026-11-21 - version 1.4.4
+
+- **Saved reading progress for the Angular guide**: every lesson ends with a "Mark lesson complete" toggle (a real `aria-pressed` button whose label changes too, so the state isn't colour alone). The series nav counts "N of M complete", and the Thoughts list badges completed lessons. Progress is kept in localStorage
+- **Browser storage is an injection token now.** `BROWSER_STORAGE` is localStorage in the browser and `null` during prerendering, decided once in its factory. `SettingsService` used to check `isPlatformBrowser` and reach for the global itself, in two places. Reading progress would have been the third copy, so both now inject the token, and specs hand in an in-memory `Storage` instead of clearing the real one
+- Saved progress that isn't a list of slugs throws with the bad value in the message, instead of quietly resetting someone's progress to nothing
+- **Angular guide, lesson 05: dependency injection** (`/thoughts/angular-05-dependency-injection`). A live demo puts buttons under one shared provider and under one provider each, so the injector tree is something to click rather than a diagram. The demo's instance numbers come from a provider on the page, not a module-level counter. A counter would keep counting across requests on a long-running server, which is the exact SSR leak the lesson warns about
+- Initial bundle 384.14 kB → 384.98 kB for the progress service and toggle. The lesson itself is a 14 kB lazy chunk
+
+## 2026-11-21 - version 1.4.3
+
+- **Series navigation in the reader**: every Angular guide lesson ends with "Part N of M" and links to the previous and next lessons. They're real `routerLink` anchors, so they prerender as `href`s and ⌘-click opens a new tab
+- **fix: the reader went stale on reuse.** `thought-detail.ts` read `route.snapshot` once, and the router reuses the component when only `:slug` changes, so Next would have kept showing the lesson you were on. The slug is now a signal (`toSignal(route.paramMap)`), and the thought, series position and lazy lesson page are all `computed()`/`resource()` off it. The reader also scrolls back to the top when the slug changes
+- The reader specs now drive the real router through `RouterTestingHarness` instead of mocking `ActivatedRoute.snapshot`. A snapshot mock can't express a reused component getting a new param, which is how the bug hid
+- **Dock state is read-only from outside.** `DockService` keeps private writable signals and exposes `asReadonly()` views. `app.ts` and `menu-bar.service.ts` each had their own copy of "minimize this app" writing the Map directly; both now call `minimizeApp()`
+- **Angular guide, lesson 04: signals** (`/thoughts/angular-04-signals`). Demos show three synchronous writes producing one effect run, and a `linkedSignal` shipping choice that resets when the country changes but stays writable
+- The lesson kicker says "Part 04" instead of "04 of 13", so the page doesn't show two different totals now that the series nav counts what's actually published
+- Initial bundle 377.25 kB → 384.14 kB. I measured it rather than guessed: a build without `RouterLink` is 377.83 kB, so the router's link directive is the 6.3 kB. I'm keeping it, because real prerendered links and correct modifier-click handling are worth it and later lessons reuse it, but there's now 16 kB of headroom under the 400 kB budget
+
+## 2026-11-21 - version 1.4.2
+
+- **fix: ⌃⌥Space never opened Spotlight.** `App.onKeydown` called `shortcuts.handleKeydown(event)` twice per keydown, so every toggle shortcut flipped and flipped straight back, and ⌃⌥Tab cycled two windows at a time. It's now bound once through `host: { '(document:keydown)': … }` instead of `@HostListener`
+- **fix: ⌘Space was still swallowed.** The same handler kept a `preventDefault()` on ⌘Space that the 1.3.4 remap meant to remove, so the real macOS Spotlight shortcut did nothing while the site had focus. Specs now pin both: one ⌃⌥Space opens Spotlight, and ⌘Space is left un-prevented
+- **Readable thought dates**: cards and the reader show "Jun 15, 2026" instead of `2026-06-15`, inside a `<time datetime>`. Formatting is in UTC on purpose: a bare `YYYY-MM-DD` parses as UTC midnight, so local time would show the day before for anyone west of UTC, and SSR and the browser would disagree
+- I used `DatePipe` first, and the production build put the initial bundle up 13 kB (375.71 → 389.07 kB). `@angular/common` is one module the app already loads eagerly, so `DatePipe`'s locale code landed in the initial chunk even though both views are lazy. A small `utcDate` pipe over `Intl.DateTimeFormat` brought it back to 377.25 kB. It throws on an unparseable date rather than printing "Invalid Date"
+- **Reading time** on prose thoughts via a pure `readingTime` pipe (200 wpm, rounded up). Lesson pages skip it, since a word count of their intro would undersell them
+- **Angular guide, lesson 03: templates and binding** (`/thoughts/angular-03-templates`). Two live demos: property vs attribute binding on an input you type into, and `@for`/`@empty`/`@let`/`@switch` on a removable tag list. Both bugs above are in the lesson as pitfalls
+
+## 2026-11-21 - version 1.4.1
+
+- **Angular guide, lesson 02: components** (`/thoughts/angular-02-components`). Covers standalone components, `input()`, `output()`, `model()`, content projection, dynamic components and view encapsulation. The live demo is a badge whose label and tone flow in through inputs, whose count is two-way through `[(count)]`, and whose dismiss button emits an output into an event log
+- **Lesson building blocks**: the layout, demo frame, callouts and interview questions that lesson 01 had inline are now components (`Lesson`, `LessonDemo`, `Callout`, `InterviewQuestions`), and lesson 01 is rebuilt on them. `Lesson` is the only `ViewEncapsulation.None` component in the app, because it has to style projected content. It scopes every selector under `.lesson` by hand
+- **Copy button on code samples**: `CodeBlock` copies to the clipboard and announces "Copied" through a live region. If clipboard access is denied it says so instead of failing silently
+- Callouts name their kind in text ("Pitfall", "Tip", "Expert note"), so the colour bar is never the only signal
+- Initial bundle 372.98 kB → 375.71 kB. Nothing lesson-specific is eager; the growth is the `@angular/core` code behind `model()` and `output()`, which esbuild hoists into the shared core chunk once a lazy chunk uses it
+
+## 2026-11-21 - version 1.4.0
+
+- **Interactive lessons in Thoughts**: a thought can now carry a lazily loaded lesson page under its prose. `thoughts-content/lessons/lessons.ts` maps slugs to loaders, and the reader loads the page through a `resource()` so SSR waits for it. The prerendered `/thoughts/angular-01-project-structure` HTML contains the whole lesson, demo included, not an empty slot. Each lesson is its own lazy chunk (lesson 01 is 13 kB), and the initial bundle is unchanged at 372.98 kB
+- **Angular guide, lesson 01: project structure**. The first of thirteen lessons I'm writing so I can learn Angular properly and talk about it in depth. Each goes simple → intermediate → expert → pitfalls → interview questions, and the code samples are real code from this repo. This one has a live "may this file import that one?" checker built on the same rules the architecture spec enforces
+- **Architecture fitness spec**: `src/app/architecture.spec.ts` fails if anything outside `apps/` statically imports from `apps/` (lazy `import()` is allowed, since that is the code-splitting seam), or if an `@NgModule` appears. It found three real violations on its first run
+- **Settings state moved to `shared/settings/`**: `app.ts`, `dock/dock.ts` and `menu-bar/menu-bar.ts` were all importing `SettingsService`/`AppearanceService` out of the `apps/settings/` feature folder. State the whole desktop reads isn't a feature's private business. The System Preferences screen stays in `apps/settings/`; only the services moved
+- Bootstrap files (`main.ts`, `app.config.ts`, `app.config.server.ts`) are annotated with `[ng-01]` comments, so `grep -rn "ng-01" src` finds every example the lesson refers to
+
 ## 2026-08-16 - version 1.3.7
 
 - **Changelog guard**: `src/changelog.spec.ts` asserts the top entry is the version `package.json` is on, that it has bullets under it, that no version gets two headings, that versions and dates both run newest first, and that every `## ` heading parses as `YYYY-MM-DD - version X.Y.Z`. Ported from the `changelogEntry.test.ts` in `paul-explore` and `portfolio_api`, which have had this for a while — this repo was the one without it

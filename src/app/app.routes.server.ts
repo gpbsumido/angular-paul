@@ -12,6 +12,12 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
     getPrerenderParams: async () => THOUGHTS.map((thought) => ({ slug: thought.slug })),
   },
+  {
+    path: 'thoughts/tag/:tag',
+    renderMode: RenderMode.Prerender,
+    getPrerenderParams: async () =>
+      [...new Set(THOUGHTS.flatMap((thought) => thought.tags))].map((tag) => ({ tag })),
+  },
   // The interactive desktop shell is client-rendered — hybrid rendering by route.
   {
     path: '**',

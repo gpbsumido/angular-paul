@@ -1,5 +1,6 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
@@ -10,11 +11,12 @@ import {
   PLATFORM_ID,
   signal,
 } from '@angular/core';
-import { SettingsService } from '../apps/settings/settings.service';
+import { SettingsService } from '../shared/settings/settings.service';
 import { MenuBarItem, MenuBarService } from './menu-bar.service';
 
 @Component({
   selector: 'app-menu-bar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './menu-bar.html',
   styleUrl: './menu-bar.scss',
   // The live clock differs between server render and client bootstrap; skip

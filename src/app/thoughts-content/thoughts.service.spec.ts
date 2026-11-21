@@ -46,6 +46,19 @@ describe('ThoughtsService', () => {
     }
   });
 
+  it('getSeriesPosition places a lesson among its series, in publication order', () => {
+    const position = service.getSeriesPosition('angular-02-components', 'angular-guide');
+
+    expect(position?.index).toBe(1);
+    expect(position?.total).toBe(THOUGHTS.filter((t) => t.tags.includes('angular-guide')).length);
+    expect(position?.previous?.slug).toBe('angular-01-project-structure');
+    expect(position?.next?.slug).toBe('angular-03-templates');
+  });
+
+  it('getSeriesPosition is undefined for a thought outside the series', () => {
+    expect(service.getSeriesPosition('signals', 'angular-guide')).toBeUndefined();
+  });
+
   it('getBySlug returns undefined for a non-existent slug', () => {
     const thought = service.getBySlug('does-not-exist');
 

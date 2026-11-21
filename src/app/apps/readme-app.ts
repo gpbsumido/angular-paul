@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AppLauncherService } from '../shared/app-launcher.service';
 
 @Component({
   selector: 'app-readme',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="readme">
       <h1>README.md</h1>

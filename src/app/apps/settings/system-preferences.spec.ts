@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 import { SystemPreferencesApp } from './system-preferences';
-import { SettingsService } from './settings.service';
+import { SettingsService } from '../../shared/settings/settings.service';
 
 describe('SystemPreferencesApp', () => {
   let fixture: ComponentFixture<SystemPreferencesApp>;

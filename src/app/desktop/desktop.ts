@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 @Component({
   selector: 'app-desktop',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `<div class="desktop-wallpaper" [style.background]="wallpaper()"></div>`,
   styles: `
     :host {

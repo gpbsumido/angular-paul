@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommandParserService } from './command-parser.service';
 
 interface TerminalEntry {
@@ -8,6 +8,7 @@ interface TerminalEntry {
 
 @Component({
   selector: 'app-terminal',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="terminal">
       <div class="terminal-history">

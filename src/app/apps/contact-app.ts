@@ -1,10 +1,12 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { notBlank } from '../shared/validators';
 
 type SubmissionStatus = 'idle' | 'pending' | 'success' | 'error';
 
 @Component({
   selector: 'app-contact',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule],
   template: `
     <div class="contact">
@@ -12,20 +14,41 @@ type SubmissionStatus = 'idle' | 'pending' | 'success' | 'error';
         <h3>New Message</h3>
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contact-form">
+      <!-- [ng-08 forms] novalidate: Angular's validators are the single
+           source of truth, so the browser's own bubbles don't compete. -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="contact-form" novalidate>
+        <!-- Each error is tied to its field: aria-invalid says "this is wrong",
+             aria-describedby points at the sentence that says why. Both are
+             only set while the error shows. -->
         <div class="contact-field">
           <label for="contact-name">Name</label>
-          <input id="contact-name" formControlName="name" placeholder="Your name" />
-          @if (form.controls.name.touched && form.controls.name.invalid) {
-            <span class="contact-error contact-error-name">Name is required</span>
+          <input
+            id="contact-name"
+            formControlName="name"
+            placeholder="Your name"
+            autocomplete="name"
+            [attr.aria-invalid]="showError('name') || null"
+            [attr.aria-describedby]="showError('name') ? 'contact-name-error' : null"
+          />
+          @if (showError('name')) {
+            <span id="contact-name-error" class="contact-error contact-error-name">Name is required</span>
           }
         </div>
 
         <div class="contact-field">
           <label for="contact-email">Email</label>
-          <input id="contact-email" formControlName="email" placeholder="your@email.com" />
-          @if (form.controls.email.touched && form.controls.email.invalid) {
-            <span class="contact-error contact-error-email">Valid email is required</span>
+          <input
+            id="contact-email"
+            formControlName="email"
+            placeholder="your@email.com"
+            autocomplete="email"
+            [attr.aria-invalid]="showError('email') || null"
+            [attr.aria-describedby]="showError('email') ? 'contact-email-error' : null"
+          />
+          @if (showError('email')) {
+            <span id="contact-email-error" class="contact-error contact-error-email"
+              >Valid email is required</span
+            >
           }
         </div>
 
@@ -36,31 +59,37 @@ type SubmissionStatus = 'idle' | 'pending' | 'success' | 'error';
             formControlName="message"
             placeholder="Your message..."
             rows="6"
+            [attr.aria-invalid]="showError('message') || null"
+            [attr.aria-describedby]="showError('message') ? 'contact-message-error' : null"
           ></textarea>
-          @if (form.controls.message.touched && form.controls.message.invalid) {
-            <span class="contact-error contact-error-message">Message is required</span>
+          @if (showError('message')) {
+            <span id="contact-message-error" class="contact-error contact-error-message"
+              >Message is required</span
+            >
           }
         </div>
 
+        <!-- Only disabled while sending, to stop a double submit. A button
+             disabled for being invalid can't be focused and explains nothing. -->
         <div class="contact-actions">
-          <button
-            type="submit"
-            class="contact-submit"
-            [disabled]="form.invalid || submissionStatus() === 'pending'"
-          >
+          <button type="submit" class="contact-submit" [disabled]="submissionStatus() === 'pending'">
             Send
           </button>
         </div>
 
-        @if (submissionStatus() === 'pending') {
-          <div class="contact-loading">Sending message...</div>
-        }
-        @if (submissionStatus() === 'success') {
-          <div class="contact-success">Message sent successfully!</div>
-        }
-        @if (submissionStatus() === 'error') {
-          <div class="contact-error-state">Failed to send message. Please try again.</div>
-        }
+        <!-- One live region that's always in the DOM. A region that appears
+             already holding its text often isn't announced at all. -->
+        <div role="status">
+          @if (submissionStatus() === 'pending') {
+            <div class="contact-loading">Sending message...</div>
+          }
+          @if (submissionStatus() === 'success') {
+            <div class="contact-success">Message sent successfully!</div>
+          }
+          @if (submissionStatus() === 'error') {
+            <div class="contact-error-state">Failed to send message. Please try again.</div>
+          }
+        </div>
       </form>
     </div>
   `,
@@ -191,21 +220,42 @@ type SubmissionStatus = 'idle' | 'pending' | 'success' | 'error';
 })
 export class ContactApp {
   private readonly fb = inject(FormBuilder);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
+  // [ng-08 forms] nonNullable: reset() goes back to '' rather than null, so
+  // the value type is string, not string | null.
   readonly form = this.fb.nonNullable.group({
-    name: ['', Validators.required],
+    name: ['', notBlank],
     email: ['', [Validators.required, Validators.email]],
-    message: ['', Validators.required],
+    message: ['', notBlank],
   });
 
   readonly submissionStatus = signal<SubmissionStatus>('idle');
 
+  /** Errors wait until the field is touched, so nobody is told off before they've typed. */
+  showError(field: keyof typeof this.form.controls): boolean {
+    const control = this.form.controls[field];
+    return control.touched && control.invalid;
+  }
+
   onSubmit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      // Show every error at once, then take the user to the first one.
+      this.form.markAllAsTouched();
+      const firstInvalid = Object.entries(this.form.controls).find(([, control]) => control.invalid);
+      this.host.nativeElement.querySelector<HTMLElement>(`#contact-${firstInvalid?.[0]}`)?.focus();
+      return;
+    }
 
     this.submissionStatus.set('pending');
 
     // Simulate async submission
+    // [ng-09 change detection] form.reset() re-renders this OnPush view on its
+    // own. Controls keep touched and status in signals, and NgControlStatus
+    // (the directive behind ng-touched/ng-invalid, on every formControlName
+    // input) reads them in its host bindings. I first thought only the signal
+    // write below made it render; contact-app.spec.ts has the test that
+    // proved otherwise.
     setTimeout(() => {
       this.submissionStatus.set('success');
       this.form.reset();
