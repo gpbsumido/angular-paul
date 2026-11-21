@@ -9,7 +9,9 @@ expect.extend(axeMatchers);
 
 describe('Lesson12Ssr', () => {
   const origin = (fixture: ComponentFixture<Lesson12Ssr>) =>
-    (fixture.nativeElement as HTMLElement).querySelector('#demo-render-origin')?.textContent?.trim();
+    (fixture.nativeElement as HTMLElement)
+      .querySelector('#demo-render-origin')
+      ?.textContent?.trim();
 
   async function render(): Promise<ComponentFixture<Lesson12Ssr>> {
     const fixture = TestBed.createComponent(Lesson12Ssr);
@@ -31,7 +33,13 @@ describe('Lesson12Ssr', () => {
       h.textContent?.trim(),
     );
     expect(headings).toEqual(
-      expect.arrayContaining(['Simple', 'Intermediate', 'Expert', 'Pitfalls', 'Interview questions']),
+      expect.arrayContaining([
+        'Simple',
+        'Intermediate',
+        'Expert',
+        'Pitfalls',
+        'Interview questions',
+      ]),
     );
   });
 
@@ -47,7 +55,8 @@ describe('Lesson12Ssr', () => {
     const fixture = await render();
 
     expect(origin(fixture)).toContain('Prerendered on the server');
-    expect(origin(fixture)).toContain('Nov 21, 2026, 9:05:00 AM UTC');
+    // Intl puts a narrow no-break space before AM on current ICU, so match any space.
+    expect(origin(fixture)).toMatch(/Nov 21, 2026, 9:05:00\sAM UTC/);
   });
 
   it('says so when there was no server render, as after a client-side navigation', async () => {

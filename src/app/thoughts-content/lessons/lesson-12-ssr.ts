@@ -1,4 +1,4 @@
-import { DatePipe, isPlatformServer } from '@angular/common';
+import { isPlatformServer } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -17,10 +17,17 @@ import { LessonSection } from './lesson-section';
 /** [ng-12 ssr] When the server rendered this page, as an ISO string. */
 export const RENDERED_AT = makeStateKey<string>('lesson-12-rendered-at');
 
+// Intl, not DatePipe: DatePipe's locale code lands in the initial bundle (lesson 03).
+const UTC_DATE_TIME = new Intl.DateTimeFormat('en-US', {
+  dateStyle: 'medium',
+  timeStyle: 'medium',
+  timeZone: 'UTC',
+});
+
 @Component({
   selector: 'app-lesson-12-ssr',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Lesson, LessonSection, LessonDemo, CodeBlock, Callout, InterviewQuestions, DatePipe],
+  imports: [Lesson, LessonSection, LessonDemo, CodeBlock, Callout, InterviewQuestions],
   template: `
     <app-lesson part="12">
       <h2>Simple</h2>
@@ -45,8 +52,7 @@ export const RENDERED_AT = makeStateKey<string>('lesson-12-rendered-at');
       <app-lesson-demo heading="Try it: where was this page rendered?">
         <p id="demo-render-origin" class="demo-render-origin">
           @if (renderedAt) {
-            Prerendered on the server at {{ renderedAt | date: 'MMM d, y, h:mm:ss a' : 'UTC' }} UTC,
-            then hydrated in your browser.
+            Prerendered on the server at {{ renderedAt }} UTC, then hydrated in your browser.
           } @else {
             Rendered in your browser. You got here by navigating inside the app, so no server HTML
             was involved. Reload the page to get the prerendered version.
@@ -129,7 +135,9 @@ export const RENDERED_AT = makeStateKey<string>('lesson-12-rendered-at');
         <p>
           <strong>Server and browser disagree on time zones and locales.</strong> A build server
           runs in UTC; your visitor doesn't. The demo above formats in UTC on purpose, so both sides
-          print the same string.
+          print the same string. It uses <code>Intl.DateTimeFormat</code> rather than
+          <code>DatePipe</code>: my first version used the pipe and the initial bundle grew 12 kB,
+          the same trap as lesson 03.
         </p>
       </app-callout>
       <app-callout kind="pitfall">
@@ -163,7 +171,10 @@ export const RENDERED_AT = makeStateKey<string>('lesson-12-rendered-at');
 export class Lesson12Ssr {
   private readonly transferState = inject(TransferState);
 
-  protected readonly renderedAt = this.readRenderedAt();
+  private readonly renderedAtIso = this.readRenderedAt();
+  protected readonly renderedAt = this.renderedAtIso
+    ? UTC_DATE_TIME.format(new Date(this.renderedAtIso))
+    : null;
 
   private readRenderedAt(): string | null {
     // [ng-12 ssr] One of the few places PLATFORM_ID is still right: there is no
