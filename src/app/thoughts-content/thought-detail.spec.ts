@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter, Router } from '@angular/router';
+import { provideRouter, Router, withComponentInputBinding } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { createMemoryStorage } from '../../test/memory-storage';
 import { BROWSER_STORAGE } from '../shared/browser-storage';
@@ -18,7 +18,7 @@ async function openThought(slug: string) {
       provideRouter([
         { path: 'thoughts', component: ThoughtsListComponent },
         { path: 'thoughts/:slug', component: ThoughtDetailComponent },
-      ]),
+      ], withComponentInputBinding()),
       // A fresh store per test, so progress marked in one can't leak into the next.
       { provide: BROWSER_STORAGE, useFactory: () => createMemoryStorage() },
     ],
@@ -55,6 +55,11 @@ describe('ThoughtDetailComponent', () => {
     const tagTexts = [...el.querySelectorAll('.thought-tag')].map((t) => t.textContent?.trim());
     expect(tagTexts).toContain('signals');
     expect(tagTexts).toContain('angular');
+  });
+
+  it('links each tag to its tag page', () => {
+    const hrefs = [...el.querySelectorAll('a.thought-tag')].map((a) => a.getAttribute('href'));
+    expect(hrefs).toContain('/thoughts/tag/signals');
   });
 
   it('formats the date in UTC, so a YYYY-MM-DD never slips to the day before', () => {
