@@ -1,5 +1,8 @@
 import { Component, computed, signal } from '@angular/core';
 import { CodeBlock } from './code-block';
+import { InterviewQuestions } from './interview-questions';
+import { Lesson } from './lesson';
+import { LessonDemo } from './lesson-demo';
 
 export type Layer = 'shell' | 'shared' | 'feature' | 'other-feature';
 
@@ -49,10 +52,9 @@ const LAYER_LABELS: Record<Layer, string> = {
 
 @Component({
   selector: 'app-lesson-01-structure',
-  imports: [CodeBlock],
+  imports: [Lesson, LessonDemo, CodeBlock, InterviewQuestions],
   template: `
-    <article class="lesson">
-      <p class="lesson-kicker">Angular guide · 01 of 13</p>
+    <app-lesson part="01">
 
       <h2>Simple</h2>
       <p>
@@ -87,9 +89,8 @@ const LAYER_LABELS: Record<Layer, string> = {
         how a feature becomes a lazy chunk.
       </p>
 
-      <section class="lesson-demo" aria-labelledby="checker-heading">
-        <h3 id="checker-heading">Try it: may this file import that one?</h3>
-        <div class="lesson-demo-row">
+      <app-lesson-demo heading="Try it: may this file import that one?">
+        <div class="demo-row">
           <label for="import-from">A file in</label>
           <select id="import-from" (change)="from.set(asLayer($event))">
             @for (layer of layers; track layer) {
@@ -97,7 +98,7 @@ const LAYER_LABELS: Record<Layer, string> = {
             }
           </select>
         </div>
-        <div class="lesson-demo-row">
+        <div class="demo-row">
           <label for="import-to">imports from</label>
           <select id="import-to" (change)="to.set(asLayer($event))">
             @for (layer of layers; track layer) {
@@ -105,7 +106,7 @@ const LAYER_LABELS: Record<Layer, string> = {
             }
           </select>
         </div>
-        <div class="lesson-demo-row">
+        <div class="demo-row">
           <input
             id="import-lazy"
             type="checkbox"
@@ -123,7 +124,7 @@ const LAYER_LABELS: Record<Layer, string> = {
           <strong>{{ verdict().allowed ? '✓ Allowed' : '✗ Not allowed' }}.</strong>
           {{ verdict().reason }}
         </p>
-      </section>
+      </app-lesson-demo>
 
       <h2>Expert</h2>
       <p>
@@ -169,60 +170,12 @@ const LAYER_LABELS: Record<Layer, string> = {
       </ul>
 
       <h2>Interview questions</h2>
-      @for (qa of interview; track qa.q) {
-        <details class="lesson-qa">
-          <summary>{{ qa.q }}</summary>
-          <p>{{ qa.a }}</p>
-        </details>
-      }
-    </article>
+      <app-interview-questions [questions]="interview" />
+    </app-lesson>
   `,
   styles: `
-    .lesson {
-      margin-top: 24px;
-      font-size: 14px;
-      line-height: 1.7;
-      color: var(--text-secondary, rgba(255, 255, 255, 0.8));
-    }
-    .lesson-kicker {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--accent-color, #007aff);
-    }
-    h2 {
-      margin: 28px 0 8px;
-      font-size: 17px;
-      color: var(--text-primary, #fff);
-    }
-    h3 {
-      margin: 0 0 10px;
-      font-size: 14px;
-      color: var(--text-primary, #fff);
-    }
-    code {
-      font-family: var(--font-mono, ui-monospace, monospace);
-      font-size: 0.92em;
-    }
-    .lesson-demo {
-      margin: 16px 0;
-      padding: 16px;
-      border: 1px solid var(--accent-color, #007aff);
-      border-radius: 10px;
-    }
-    .lesson-demo-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-    .lesson-demo-row label:first-child {
+    .demo-row label:first-child {
       min-width: 96px;
-    }
-    select {
-      font: inherit;
-      padding: 4px 6px;
-      border-radius: 6px;
     }
     .lesson-verdict {
       margin: 12px 0 0;
@@ -235,16 +188,6 @@ const LAYER_LABELS: Record<Layer, string> = {
     }
     .lesson-verdict--bad {
       border-color: #ff6b6b;
-    }
-    .lesson-qa {
-      margin-bottom: 8px;
-      padding: 8px 12px;
-      border: 1px solid var(--border-primary, rgba(255, 255, 255, 0.1));
-      border-radius: 8px;
-    }
-    .lesson-qa summary {
-      cursor: pointer;
-      color: var(--text-primary, #fff);
     }
   `,
 })

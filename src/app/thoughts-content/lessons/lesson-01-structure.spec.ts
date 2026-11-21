@@ -57,7 +57,7 @@ describe('Lesson01Structure', () => {
     to.dispatchEvent(new Event('change'));
     await fixture.whenStable();
 
-    expect(el.querySelector('[role="status"]')?.textContent).toContain('Not allowed');
+    expect(el.querySelector('.lesson-verdict[role="status"]')?.textContent).toContain('Not allowed');
   });
 
   it('has no axe violations', async () => {
