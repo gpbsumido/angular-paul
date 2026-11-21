@@ -16,7 +16,7 @@ import { Component, input, ViewEncapsulation } from '@angular/core';
   encapsulation: ViewEncapsulation.None,
   template: `
     <article class="lesson">
-      <p class="lesson-kicker">Angular guide · {{ part() }} of 13</p>
+      <p class="lesson-kicker">Angular guide · Part {{ part() }}</p>
       <ng-content />
     </article>
   `,
