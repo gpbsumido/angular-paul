@@ -253,4 +253,7 @@ That makes components the natural topic: what goes in through inputs, what comes
   'angular-03-templates': `Templates are where most Angular bugs live, because a binding looks right whether or not it is. Writing this lesson turned up two in this site. The desktop's keydown handler called the shortcut service twice per event, so the Spotlight shortcut opened it and closed it again in the same keypress. And every thought date was printed raw. The obvious fix, the date pipe, would have shown the day before for anyone behind UTC, because a bare YYYY-MM-DD parses as UTC midnight.
 
 Both are fixed now, and both are in the lesson as the pitfalls they are.`,
+  'angular-04-signals': `The series needed previous and next links, and adding them exposed a bug that had been waiting all along. The reader read its slug from the route snapshot once. The router reuses the component when only the slug changes, so clicking Next would have kept showing the lesson you were already on. The fix was to make the slug a signal and derive everything else from it, which is the whole idea of this lesson.
+
+The same pass turned the dock's state into a proper store. Two other files had each written their own copy of "minimize this app" straight into the dock's Map. Now that state is read-only from outside, and the rule lives in one method.`,
 };

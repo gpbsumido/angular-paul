@@ -215,4 +215,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'templates', 'angular'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-04-signals',
+    title: 'Angular 04: Signals',
+    date: '2026-11-21',
+    summary:
+      'signal, computed, effect, linkedSignal and resource, with demos of effect batching and a resettable selection. Built while making the reader follow its route and adding the previous/next links at the bottom of every lesson.',
+    tags: ['angular-guide', 'signals', 'angular'],
+    relatedApp: 'readme',
+  },
 ];
