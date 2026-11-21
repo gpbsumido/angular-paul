@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.10
+
+- **fix: CI's typecheck checked zero files.** It ran `npx tsc --noEmit` against the root `tsconfig.json`, which has `"files": []` and only project references, so plain `tsc` compiled nothing and passed. It now typechecks `tsconfig.app.json` and `tsconfig.spec.json`
+- **CI runs the production build.** It's the only step that prerenders every route and enforces the bundle budget, and CI never ran it
+- **Every CI job has a time limit.** I've seen `ng build` and `ng test` finish their work and then never exit; without `timeout-minutes` that holds a runner for GitHub's six-hour default
+- **A spec reads the CI workflow** (`ci-workflow.spec.ts`), so none of the three gaps can come back quietly
+- **An e2e test for the lesson nav** (`e2e/lesson-nav.spec.ts`). The unit specs drive a fake `IntersectionObserver`; this one scrolls a real page in Chromium
+- **Corrected: the contact form's reset comment.** In 1.4.8 I wrote that `form.reset()` only re-rendered the OnPush contact form because a signal write sat next to it. A new spec shows it renders on its own: reactive form controls keep touched and status in signals, and `NgControlStatus` reads them in its host bindings
+- **Angular guide, lesson 11: testing** (`/thoughts/angular-11-testing`). The live demo runs the real `notBlank` validator's tests in the page, with a switch that puts back the bug lesson 08 fixed. The lesson covers component specs, `HttpTestingController` with fake timers, `RouterTestingHarness`, marble tests, fitness tests and when e2e earns its place
+
 ## 2026-11-21 - version 1.4.9
 
 - **Every lesson has an "On this page" nav.** It sticks to the top while you read, jumps to a section (moving focus to its heading), and highlights the section in view with `aria-current="location"`. Smooth scrolling switches off under `prefers-reduced-motion`. The lessons had grown long enough that I kept losing my place in them
