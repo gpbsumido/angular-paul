@@ -3,17 +3,26 @@ import { Component, inject, resource } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SeoService } from '../shared/seo.service';
 import { LESSON_PAGES } from './lessons/lessons';
+import { ReadingTimePipe } from './reading-time.pipe';
+import { UtcDatePipe } from './utc-date.pipe';
 import { ThoughtsService } from './thoughts.service';
 
 @Component({
   selector: 'app-thought-detail',
-  imports: [NgComponentOutlet],
+  imports: [NgComponentOutlet, UtcDatePipe, ReadingTimePipe],
   template: `
     @if (thought) {
       <div class="thought-detail">
         <button class="thought-detail-back" (click)="goBack()">← Back</button>
         <h1 class="thought-detail-title">{{ thought.title }}</h1>
-        <div class="thought-detail-date">{{ thought.date }}</div>
+        <!-- [ng-03 templates] Formatted in UTC: see utc-date.pipe.ts for why
+             that, and why not Angular's own DatePipe. -->
+        <div class="thought-detail-date">
+          <time [attr.datetime]="thought.date">{{ thought.date | utcDate }}</time>
+          @if (!hasLessonPage) {
+            · {{ thought.content | readingTime }}
+          }
+        </div>
         <div class="thought-detail-tags">
           @for (tag of thought.tags; track tag) {
             <span class="thought-tag">{{ tag }}</span>
@@ -105,6 +114,9 @@ export class ThoughtDetailComponent {
   private readonly seo = inject(SeoService);
 
   readonly thought = this.service.getBySlug(this.route.snapshot.paramMap.get('slug') ?? '');
+
+  // Lesson pages are mostly interactive, so a word count of the intro would undersell them.
+  readonly hasLessonPage = !!this.thought && this.thought.slug in LESSON_PAGES;
 
   // A resource rather than a bare promise: while it loads it holds a pending
   // task, so SSR prerendering waits for the lesson chunk and bakes the full

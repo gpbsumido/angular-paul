@@ -2,9 +2,11 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { SeoService } from '../shared/seo.service';
 import { ThoughtsService } from './thoughts.service';
+import { UtcDatePipe } from './utc-date.pipe';
 
 @Component({
   selector: 'app-thoughts-list',
+  imports: [UtcDatePipe],
   template: `
     <div class="thoughts-list">
       <h2 class="thoughts-list-heading">Thoughts</h2>
@@ -17,7 +19,9 @@ import { ThoughtsService } from './thoughts.service';
           (keydown.enter)="navigate(thought.slug)"
         >
           <div class="thought-card-title">{{ thought.title }}</div>
-          <div class="thought-card-date">{{ thought.date }}</div>
+          <time class="thought-card-date" [attr.datetime]="thought.date">{{
+            thought.date | utcDate
+          }}</time>
           <div class="thought-card-tags">
             @for (tag of thought.tags; track tag) {
               <span class="thought-tag">{{ tag }}</span>
@@ -70,6 +74,7 @@ import { ThoughtsService } from './thoughts.service';
     }
 
     .thought-card-date {
+      display: block;
       font-size: 11px;
       color: var(--text-secondary, rgba(255, 255, 255, 0.5));
       margin-bottom: 8px;
