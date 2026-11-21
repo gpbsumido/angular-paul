@@ -55,9 +55,10 @@ export class SeoService {
     });
   }
 
-  setListMeta(): void {
-    const url = `${SITE_ORIGIN}/thoughts`;
-    const pageTitle = `Thoughts — ${SITE_NAME}`;
+  /** The Thoughts list, or one tag's page of it. Each tag page is its own canonical URL. */
+  setListMeta(tag?: string): void {
+    const url = tag ? `${SITE_ORIGIN}/thoughts/tag/${tag}` : `${SITE_ORIGIN}/thoughts`;
+    const pageTitle = tag ? `Thoughts tagged ${tag} — ${SITE_NAME}` : `Thoughts — ${SITE_NAME}`;
 
     this.title.setTitle(pageTitle);
     this.setName('description', LIST_DESCRIPTION);
