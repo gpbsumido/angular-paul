@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
-import { SettingsService } from '../apps/settings/settings.service';
+import { SettingsService } from '../shared/settings/settings.service';
 import { MenuBar } from './menu-bar';
 import { MenuBarService } from './menu-bar.service';
 

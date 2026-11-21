@@ -188,4 +188,121 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['ssr', 'deployment', 'railway', 'cloudflare'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-01-project-structure',
+    title: 'Angular 01: Project structure',
+    date: '2026-11-21',
+    summary:
+      'The first lesson in my Angular guide: how an app boots, how to lay out folders by feature, and how I enforce the layering with a test instead of a wiki page. Includes a live import checker.',
+    tags: ['angular-guide', 'architecture', 'angular'],
+    relatedApp: 'readme',
+  },
+  {
+    slug: 'angular-02-components',
+    title: 'Angular 02: Components',
+    date: '2026-11-21',
+    summary:
+      'Standalone components, input(), output(), model() and content projection, with a live demo of data crossing a component boundary. Built while extracting the reusable blocks every lesson page now uses.',
+    tags: ['angular-guide', 'components', 'angular'],
+    relatedApp: 'readme',
+  },
+  {
+    slug: 'angular-03-templates',
+    title: 'Angular 03: Templates and binding',
+    date: '2026-11-21',
+    summary:
+      'Property vs attribute binding, built-in control flow, pipes and host event bindings. Writing it turned up a keyboard handler that ran twice per keypress, and dates that would have shown the day before for half the world.',
+    tags: ['angular-guide', 'templates', 'angular'],
+    relatedApp: 'readme',
+  },
+  {
+    slug: 'angular-04-signals',
+    title: 'Angular 04: Signals',
+    date: '2026-11-21',
+    summary:
+      'signal, computed, effect, linkedSignal and resource, with demos of effect batching and a resettable selection. Built while making the reader follow its route and adding the previous/next links at the bottom of every lesson.',
+    tags: ['angular-guide', 'signals', 'angular'],
+    relatedApp: 'readme',
+  },
+  {
+    slug: 'angular-05-dependency-injection',
+    title: 'Angular 05: Dependency injection',
+    date: '2026-11-21',
+    summary:
+      'inject(), providers, InjectionTokens and the injector tree, with a live demo of shared vs per-component instances. Built while adding saved reading progress to this guide.',
+    tags: ['angular-guide', 'dependency-injection', 'angular'],
+    relatedApp: 'readme',
+  },
+  {
+    slug: 'angular-06-rxjs',
+    title: 'Angular 06: RxJS and HTTP',
+    date: '2026-11-21',
+    summary:
+      'Observables, the four higher-order mapping operators, interceptors and marble tests, with a live switchMap vs mergeMap race. Built while making the site retry requests that fail for a moment.',
+    tags: ['angular-guide', 'rxjs', 'angular'],
+    relatedApp: 'projects',
+  },
+  {
+    slug: 'angular-07-routing',
+    title: 'Angular 07: Routing',
+    date: '2026-11-21',
+    summary:
+      'Route order, params as inputs, path vs query params, guards and server routes, with a playground that matches URLs against this site\'s real route table. Built while turning every tag into its own prerendered page.',
+    tags: ['angular-guide', 'routing', 'angular'],
+    relatedApp: 'readme',
+  },
+  {
+    slug: 'angular-08-forms',
+    title: 'Angular 08: Forms',
+    date: '2026-11-21',
+    summary:
+      'Reactive forms, custom and cross-field validators, FormArray, accessible errors, ControlValueAccessor and the new Signal Forms. Built while fixing a contact form that accepted blank messages and never said what was wrong.',
+    tags: ['angular-guide', 'forms', 'angular'],
+    relatedApp: 'contact',
+  },
+  {
+    slug: 'angular-09-change-detection',
+    title: 'Angular 09: Change detection',
+    date: '2026-11-21',
+    summary:
+      'How zoneless change detection decides what to re-render, why OnPush skips mutated inputs, what signals change, and NG0100. Built while moving every component on this site to OnPush and adding a test that keeps it there.',
+    tags: ['angular-guide', 'change-detection', 'angular'],
+    relatedApp: 'readme',
+  },
+  {
+    slug: 'angular-10-directives',
+    title: 'Angular 10: Directives',
+    date: '2026-11-21',
+    summary:
+      'Attribute and structural directives, element selectors, host directives, and directives that find each other through DI. Built while adding an "On this page" nav that follows you down every lesson.',
+    tags: ['angular-guide', 'directives', 'angular'],
+    relatedApp: 'readme',
+  },
+  {
+    slug: 'angular-11-testing',
+    title: 'Angular 11: Testing',
+    date: '2026-11-21',
+    summary:
+      'Component specs with TestBed and axe, HttpTestingController with fake timers, marble tests, fitness tests and where e2e earns its place. Built while finding out my CI typecheck had been checking zero files.',
+    tags: ['angular-guide', 'testing', 'angular'],
+    relatedApp: 'contact',
+  },
+  {
+    slug: 'angular-12-ssr',
+    title: 'Angular 12: SSR and hydration',
+    date: '2026-11-21',
+    summary:
+      'Render modes per route, hydration, TransferState, browser-only code, event replay and incremental hydration. Built while stopping every prerendered page from showing the time the site was built.',
+    tags: ['angular-guide', 'ssr', 'angular'],
+    relatedApp: 'readme',
+  },
+  {
+    slug: 'angular-13-interview',
+    title: 'Angular 13: Interview prep',
+    date: '2026-11-21',
+    summary:
+      'The older Angular you will meet at work, how to migrate it, NgRx, and how to talk about what you have built. Ends with a practice deck of every interview question in the guide.',
+    tags: ['angular-guide', 'interview', 'angular'],
+    relatedApp: 'readme',
+  },
 ];

@@ -1,4 +1,11 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  output,
+  signal,
+} from '@angular/core';
 import { ProjectsService } from './projects.service';
 
 export interface GitHubRepo {
@@ -12,6 +19,7 @@ export interface GitHubRepo {
 
 @Component({
   selector: 'app-projects',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="projects">
       <div class="projects-header">

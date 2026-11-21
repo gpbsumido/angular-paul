@@ -1,10 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { SettingsService } from '../apps/settings/settings.service';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { SettingsService } from '../shared/settings/settings.service';
 import { AppLauncherService } from '../shared/app-launcher.service';
 import { DockItem, DockService } from '../shared/dock.service';
 
 @Component({
   selector: 'app-dock',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dock.html',
   styleUrl: './dock.scss',
 })

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   ElementRef,
@@ -15,6 +16,7 @@ type ResizeDirection = 'e' | 's' | 'se' | 'sw' | 'n' | 'w' | 'ne' | 'nw';
 
 @Component({
   selector: 'app-window',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './window.html',
   styleUrl: './window.scss',
 })

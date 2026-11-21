@@ -10,6 +10,15 @@ export interface DockItem {
 
 export type AppState = 'running' | 'focused' | 'minimized';
 
+/**
+ * [ng-04 signals] A signal store: private writable signals, public read-only
+ * views, and methods that are the only way to change state.
+ *
+ * runningApps used to be a public WritableSignal, and both app.ts and
+ * menu-bar.service.ts had grown their own copy of "minimize this app" that
+ * wrote the Map directly. asReadonly() makes that a compile error, and
+ * minimizeApp() is now the one place the rule lives.
+ */
 @Injectable({ providedIn: 'root' })
 export class DockService {
   readonly pinnedApps = signal<DockItem[]>([
@@ -20,13 +29,15 @@ export class DockService {
     { id: 'thoughts', label: 'Thoughts', icon: '💭', color: '#FF9800', pinned: true },
     { id: 'settings', label: 'Settings', icon: '⚙️', color: '#607D8B', pinned: true },
     { id: 'contact', label: 'Contact', icon: '✉️', color: '#03A9F4', pinned: true },
-  ]);
+  ]).asReadonly();
 
+  private readonly runningAppsState = signal<Map<string, AppState>>(new Map([['finder', 'focused']]));
   /** Map of app id → current state */
-  readonly runningApps = signal<Map<string, AppState>>(new Map([['finder', 'focused']]));
+  readonly runningApps = this.runningAppsState.asReadonly();
 
+  private readonly transientAppsState = signal<DockItem[]>([]);
   /** Apps running but not pinned — shown after the separator */
-  readonly transientApps = signal<DockItem[]>([]);
+  readonly transientApps = this.transientAppsState.asReadonly();
 
   readonly focusedAppId = computed(() => {
     for (const [id, state] of this.runningApps()) {
@@ -64,7 +75,7 @@ export class DockService {
     } else if (currentState === 'focused') {
       // Already focused — minimize all windows of this app
       running.set(app.id, 'minimized');
-      this.runningApps.set(running);
+      this.runningAppsState.set(running);
     } else {
       // Running but not focused (minimized or background) — focus it
       this.focusApp(app.id, running);
@@ -82,11 +93,11 @@ export class DockService {
     }
 
     map.set(app.id, 'focused');
-    this.runningApps.set(map);
+    this.runningAppsState.set(map);
 
     // If app is not pinned and not already transient, add it
     if (!app.pinned && !this.transientApps().some((a) => a.id === app.id)) {
-      this.transientApps.update((apps) => [...apps, app]);
+      this.transientAppsState.update((apps) => [...apps, app]);
     }
   }
 
@@ -100,15 +111,25 @@ export class DockService {
     }
 
     map.set(appId, 'focused');
-    this.runningApps.set(map);
+    this.runningAppsState.set(map);
+  }
+
+  /** Mark a running app minimized. An app that isn't running stays not running. */
+  minimizeApp(appId: string): void {
+    if (!this.runningApps().has(appId)) return;
+    // A new Map, not running.set() on the current one: a signal compares by
+    // reference, so mutating in place would notify nobody.
+    const running = new Map(this.runningApps());
+    running.set(appId, 'minimized');
+    this.runningAppsState.set(running);
   }
 
   closeApp(appId: string): void {
     const running = new Map(this.runningApps());
     running.delete(appId);
-    this.runningApps.set(running);
+    this.runningAppsState.set(running);
 
     // Remove from transient if present
-    this.transientApps.update((apps) => apps.filter((a) => a.id !== appId));
+    this.transientAppsState.update((apps) => apps.filter((a) => a.id !== appId));
   }
 }

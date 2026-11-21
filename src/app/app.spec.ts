@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { App } from './app';
+import { KeyboardShortcutService } from './shared/keyboard-shortcut.service';
 
 @Component({ template: '' })
 class StubThought {}
@@ -24,6 +25,24 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
+  });
+
+  describe('related thoughts', () => {
+    // The template calls this for every open window on every change detection
+    // pass. A new array each time would be a new input value each time.
+    it('hands a window the same array on every call', () => {
+      const app = TestBed.createComponent(App).componentInstance;
+
+      expect(app.getRelatedThoughts('projects')).toBe(app.getRelatedThoughts('projects'));
+      expect(app.getRelatedThoughts('no-such-app')).toBe(app.getRelatedThoughts('no-such-app'));
+    });
+
+    it('still lists the thoughts tied to an app, and none for an unknown one', () => {
+      const app = TestBed.createComponent(App).componentInstance;
+
+      expect(app.getRelatedThoughts('projects').length).toBeGreaterThan(0);
+      expect(app.getRelatedThoughts('no-such-app')).toEqual([]);
+    });
   });
 
   describe('thoughts reader overlay', () => {
@@ -63,6 +82,33 @@ describe('App', () => {
       expect(router.url).toBe('/');
       const reader = fixture.nativeElement.querySelector('.thoughts-reader');
       expect(reader.classList.contains('thoughts-reader--open')).toBe(false);
+    });
+  });
+
+  describe('global keyboard shortcuts', () => {
+    const press = (init: KeyboardEventInit) => {
+      const event = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, ...init });
+      document.dispatchEvent(event);
+      return event;
+    };
+
+    it('opens Spotlight on one ⌃⌥Space (each keydown is handled exactly once)', () => {
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      const shortcuts = TestBed.inject(KeyboardShortcutService);
+
+      press({ code: 'Space', key: ' ', ctrlKey: true, altKey: true });
+
+      expect(shortcuts.spotlightOpen()).toBe(true);
+    });
+
+    it('leaves ⌘Space to the browser and macOS', () => {
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+
+      const event = press({ code: 'Space', key: ' ', metaKey: true });
+
+      expect(event.defaultPrevented).toBe(false);
     });
   });
 });

@@ -1,38 +1,41 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import {
+  afterNextRender,
+  ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
-  effect,
   ElementRef,
   inject,
   output,
-  PLATFORM_ID,
   signal,
 } from '@angular/core';
-import { SettingsService } from '../apps/settings/settings.service';
+import { SettingsService } from '../shared/settings/settings.service';
 import { MenuBarItem, MenuBarService } from './menu-bar.service';
 
 @Component({
   selector: 'app-menu-bar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './menu-bar.html',
   styleUrl: './menu-bar.scss',
-  // The live clock differs between server render and client bootstrap; skip
-  // hydration for this subtree so it re-renders cleanly in the browser.
-  host: { ngSkipHydration: 'true' },
 })
 export class MenuBar {
   private readonly menuBarService = inject(MenuBarService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly platformId = inject(PLATFORM_ID);
   private readonly settings = inject(SettingsService);
 
   readonly menus = this.menuBarService.menus;
   readonly activeAppName = this.menuBarService.activeAppName;
-  private readonly now = signal(new Date());
-  readonly clock = computed(() => this.formatTime(this.now()));
+  // [ng-12 ssr] null until the browser takes over. A prerendered page is built
+  // once and served for days, so any time the server wrote would be stale, and
+  // a server/client difference is what used to need ngSkipHydration here.
+  private readonly now = signal<Date | null>(null);
+  readonly clock = computed(() => {
+    const now = this.now();
+    return now ? this.formatTime(now) : '';
+  });
   readonly openMenuId = signal<string | null>(null);
   readonly spotlightRequested = output<void>();
 
@@ -40,11 +43,12 @@ export class MenuBar {
   private outsideListener: (() => void) | null = null;
 
   constructor() {
-    effect(() => {
-      if (!isPlatformBrowser(this.platformId)) return;
-      this.intervalId = setInterval(() => {
-        this.now.set(new Date());
-      }, 1000);
+    // [ng-12 ssr] afterNextRender never runs on the server, so it replaces the
+    // PLATFORM_ID check. It runs after hydration has claimed the server DOM, so
+    // filling the clock in here can't cause a mismatch.
+    afterNextRender(() => {
+      this.now.set(new Date());
+      this.intervalId = setInterval(() => this.now.set(new Date()), 1000);
     });
 
     this.destroyRef.onDestroy(() => {

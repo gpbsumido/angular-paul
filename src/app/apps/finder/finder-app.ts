@@ -1,8 +1,16 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  output,
+  signal,
+} from '@angular/core';
 import { FileSystemService, FileEntry } from './file-system.service';
 
 @Component({
   selector: 'app-finder',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="finder">
       <div class="finder-toolbar">

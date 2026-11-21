@@ -71,5 +71,14 @@ describe('SeoService', () => {
       expect(title.getTitle()).toContain(SITE_NAME);
       expect(doc.querySelector('script[type="application/ld+json"]')).toBeNull();
     });
+
+    it('gives a tag page its own title and canonical URL', () => {
+      service.setListMeta('signals');
+
+      expect(title.getTitle()).toContain('signals');
+      expect(doc.querySelector('link[rel="canonical"]')?.getAttribute('href')).toMatch(
+        /\/thoughts\/tag\/signals$/,
+      );
+    });
   });
 });

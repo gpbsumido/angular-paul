@@ -204,12 +204,7 @@ export class MenuBarService {
     const win = this.activeWindow();
     if (!win) return;
     this.windowManager.minimizeWindow(win.id);
-    const running = this.dock.runningApps();
-    if (running.has(win.appId)) {
-      const map = new Map(running);
-      map.set(win.appId, 'minimized');
-      this.dock.runningApps.set(map);
-    }
+    this.dock.minimizeApp(win.appId);
   }
 
   private zoomActiveWindow(): void {

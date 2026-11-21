@@ -1,5 +1,11 @@
-import { effect, Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+// [ng-01 structure] Why this lives in shared/ and not apps/settings/:
+// the dock (icon size), the menu bar (clock format) and the root shell (theme)
+// all read it. State that the whole app depends on is not a feature's private
+// business. It sat in apps/settings/ until architecture.spec.ts flagged three
+// shell files importing it. The *screen* that edits it (system-preferences.ts)
+// stays in the feature folder. The *state* moved down a layer.
+import { effect, Injectable, inject, signal } from '@angular/core';
+import { BROWSER_STORAGE } from '../browser-storage';
 
 export type Theme = 'dark' | 'light';
 export type ClockFormat = '12h' | '24h';
@@ -25,7 +31,11 @@ const DEFAULTS: SettingsData = {
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  private readonly platformId = inject(PLATFORM_ID);
+  // [ng-05 di] This used to inject PLATFORM_ID and reach for the global
+  // localStorage behind an isPlatformBrowser() check, twice. Depending on the
+  // token instead means the platform decision lives in one factory, and a
+  // spec can hand in its own Storage instead of clearing the real one.
+  private readonly storage = inject(BROWSER_STORAGE);
   private readonly initial = this.loadFromStorage();
 
   readonly theme = signal<Theme>(this.initial.theme);
@@ -68,9 +78,9 @@ export class SettingsService {
   }
 
   private loadFromStorage(): SettingsData {
-    if (!isPlatformBrowser(this.platformId)) return { ...DEFAULTS };
+    if (!this.storage) return { ...DEFAULTS };
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = this.storage.getItem(STORAGE_KEY);
       if (!raw) return { ...DEFAULTS };
       return { ...DEFAULTS, ...JSON.parse(raw) };
     } catch {
@@ -79,7 +89,6 @@ export class SettingsService {
   }
 
   private saveToStorage(data: SettingsData) {
-    if (!isPlatformBrowser(this.platformId)) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    this.storage?.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 }

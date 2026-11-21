@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { createMemoryStorage } from '../../../test/memory-storage';
+import { BROWSER_STORAGE } from '../browser-storage';
 import { SettingsService } from './settings.service';
 
 describe('SettingsService', () => {
@@ -75,5 +77,28 @@ describe('SettingsService', () => {
     expect(restored.wallpaper()).toBe('solid-red');
     expect(restored.dockSize()).toBe(80);
     expect(restored.accentColor()).toBe('#ff0000');
+  });
+
+  it('reads and writes through BROWSER_STORAGE, so a spec or the server can swap it', () => {
+    const storage = createMemoryStorage({ settings: JSON.stringify({ theme: 'light' }) });
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ providers: [{ provide: BROWSER_STORAGE, useValue: storage }] });
+    const injected = TestBed.inject(SettingsService);
+
+    expect(injected.theme()).toBe('light');
+    injected.setDockSize(40);
+    TestBed.flushEffects();
+    expect(JSON.parse(storage.getItem('settings')!).dockSize).toBe(40);
+  });
+
+  it('uses the defaults and saves nothing when there is no storage', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({ providers: [{ provide: BROWSER_STORAGE, useValue: null }] });
+    const serverSide = TestBed.inject(SettingsService);
+
+    serverSide.setTheme('light');
+    TestBed.flushEffects();
+    expect(serverSide.theme()).toBe('light');
+    expect(localStorage.getItem('settings')).toBeNull();
   });
 });

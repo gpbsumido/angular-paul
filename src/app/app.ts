@@ -1,5 +1,5 @@
 import { NgComponentOutlet } from '@angular/common';
-import { Component, effect, HostListener, inject, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -8,7 +8,7 @@ import { Desktop } from './desktop/desktop';
 import { DesktopIconsComponent } from './desktop-icons/desktop-icons';
 import { Dock } from './dock/dock';
 import { MenuBar } from './menu-bar/menu-bar';
-import { AppearanceService } from './apps/settings/appearance.service';
+import { AppearanceService } from './shared/settings/appearance.service';
 import { AppLauncherService } from './shared/app-launcher.service';
 import { DockService } from './shared/dock.service';
 import { KeyboardShortcutService } from './shared/keyboard-shortcut.service';
@@ -17,8 +17,20 @@ import { THOUGHTS } from './thoughts-content/thoughts-data';
 import { Window } from './window-manager/window';
 import { WindowManagerService } from './window-manager/window-manager.service';
 
+// THOUGHTS never changes at runtime, so group it once. The template asks for
+// these on every change detection pass, and a fresh array each time would be
+// a new input value for every open window.
+const RELATED_THOUGHT_SLUGS_BY_APP_ID = new Map<string, string[]>();
+for (const thought of THOUGHTS) {
+  if (!thought.relatedApp) continue;
+  const slugs = RELATED_THOUGHT_SLUGS_BY_APP_ID.get(thought.relatedApp) ?? [];
+  RELATED_THOUGHT_SLUGS_BY_APP_ID.set(thought.relatedApp, [...slugs, thought.slug]);
+}
+const NO_RELATED_THOUGHTS: string[] = [];
+
 @Component({
   selector: 'app-root',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterOutlet,
     Desktop,
@@ -32,6 +44,10 @@ import { WindowManagerService } from './window-manager/window-manager.service';
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
+  // [ng-03 templates] Event binding on the host, or here on `document`.
+  // Preferred over @HostListener: it's plain metadata, it's type-checked
+  // against the class, and it's the style the Angular team now recommends.
+  host: { '(document:keydown)': 'onKeydown($event)' },
 })
 export class App {
   protected readonly launcher = inject(AppLauncherService);
@@ -76,15 +92,15 @@ export class App {
     });
   }
 
-  @HostListener('document:keydown', ['$event'])
+  // [ng-03 templates] Bound through `host: { '(document:keydown)': … }` above.
+  // This used to call handleKeydown twice, so every toggle shortcut flipped
+  // and flipped back: ⌃⌥Space never opened Spotlight. It also still
+  // preventDefault()ed ⌘Space, which the 1.3.4 remap meant to hand back to
+  // the browser. One event, one handler call.
   onKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape' && this.onThoughtsRoute()) {
       this.closeThoughts();
       return;
-    }
-    this.shortcuts.handleKeydown(event);
-    if (event.metaKey && event.code === 'Space') {
-      event.preventDefault();
     }
     this.shortcuts.handleKeydown(event);
   }
@@ -135,12 +151,7 @@ export class App {
 
   onWindowMinimized(windowId: string, appId: string): void {
     this.windowManager.minimizeWindow(windowId);
-    const running = this.dockService.runningApps();
-    if (running.has(appId)) {
-      const map = new Map(running);
-      map.set(appId, 'minimized');
-      this.dockService.runningApps.set(map);
-    }
+    this.dockService.minimizeApp(appId);
   }
 
   onWindowMaximized(windowId: string): void {
@@ -153,7 +164,7 @@ export class App {
   }
 
   getRelatedThoughts(appId: string): string[] {
-    return THOUGHTS.filter((t) => t.relatedApp === appId).map((t) => t.slug);
+    return RELATED_THOUGHT_SLUGS_BY_APP_ID.get(appId) ?? NO_RELATED_THOUGHTS;
   }
 
   onThoughtRequested(slug: string): void {

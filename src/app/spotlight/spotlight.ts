@@ -1,8 +1,9 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, output, signal } from '@angular/core';
 import { SearchService, SearchResultGroup } from '../shared/search.service';
 
 @Component({
   selector: 'app-spotlight',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './spotlight.html',
   styleUrl: './spotlight.scss',
 })

@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, viewChildren } from '@angular/core';
 import { AppLauncherService } from '../shared/app-launcher.service';
 import { DockService } from '../shared/dock.service';
 import { DesktopIconComponent } from './desktop-icon';
@@ -11,6 +11,7 @@ export interface DesktopIconData {
 
 @Component({
   selector: 'app-desktop-icons',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DesktopIconComponent],
   template: `
     <div class="desktop-icons-grid">

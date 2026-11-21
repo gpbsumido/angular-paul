@@ -22,6 +22,18 @@ describe('serverRoutes', () => {
     expect(slugs).toEqual(expected);
   });
 
+  it('prerenders a page for every tag', async () => {
+    const route = serverRoutes.find((r) => r.path === 'thoughts/tag/:tag');
+    expect(route?.renderMode).toBe(RenderMode.Prerender);
+
+    const params = await (
+      route as unknown as { getPrerenderParams: () => Promise<{ tag: string }[]> }
+    ).getPrerenderParams();
+    const expected = [...new Set(THOUGHTS.flatMap((t) => t.tags))].sort();
+
+    expect(params.map((p) => p.tag).sort()).toEqual(expected);
+  });
+
   it('keeps the catch-all route client-rendered', () => {
     const route = serverRoutes.find((r) => r.path === '**');
     expect(route?.renderMode).toBe(RenderMode.Client);
