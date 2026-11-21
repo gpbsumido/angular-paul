@@ -111,4 +111,15 @@ describe('ThoughtDetailComponent with an interactive lesson page', () => {
     expect(el.querySelector('app-lesson-02-components')).toBeTruthy();
     expect(el.querySelector('app-lesson-01-structure')).toBeNull();
   });
+
+  it('scrolls back to the top when the slug changes, since the component is reused', async () => {
+    const { harness } = await openThought('angular-01-project-structure');
+    const host = harness.routeNativeElement!.closest('app-thought-detail') as HTMLElement;
+    host.scrollTop = 500;
+
+    await harness.navigateByUrl('/thoughts/angular-02-components', ThoughtDetailComponent);
+    await harness.fixture.whenStable();
+
+    expect(host.scrollTop).toBe(0);
+  });
 });
