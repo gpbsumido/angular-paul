@@ -27,6 +27,24 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
+  describe('related thoughts', () => {
+    // The template calls this for every open window on every change detection
+    // pass. A new array each time would be a new input value each time.
+    it('hands a window the same array on every call', () => {
+      const app = TestBed.createComponent(App).componentInstance;
+
+      expect(app.getRelatedThoughts('projects')).toBe(app.getRelatedThoughts('projects'));
+      expect(app.getRelatedThoughts('no-such-app')).toBe(app.getRelatedThoughts('no-such-app'));
+    });
+
+    it('still lists the thoughts tied to an app, and none for an unknown one', () => {
+      const app = TestBed.createComponent(App).componentInstance;
+
+      expect(app.getRelatedThoughts('projects').length).toBeGreaterThan(0);
+      expect(app.getRelatedThoughts('no-such-app')).toEqual([]);
+    });
+  });
+
   describe('thoughts reader overlay', () => {
     let fixture: ComponentFixture<App>;
     let router: Router;
