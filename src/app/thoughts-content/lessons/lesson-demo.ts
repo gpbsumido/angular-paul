@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 let nextDemoId = 0;
 
@@ -12,6 +12,7 @@ let nextDemoId = 0;
  */
 @Component({
   selector: 'app-lesson-demo',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="lesson-demo" [attr.aria-labelledby]="headingId">
       <h3 [id]="headingId">{{ heading() }}</h3>

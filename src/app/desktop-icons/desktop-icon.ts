@@ -1,7 +1,8 @@
-import { Component, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 
 @Component({
   selector: 'app-desktop-icon',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
       class="desktop-icon"

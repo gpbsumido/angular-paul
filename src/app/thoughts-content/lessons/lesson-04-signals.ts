@@ -1,4 +1,4 @@
-import { Component, computed, effect, linkedSignal, signal, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, linkedSignal, signal, untracked } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
@@ -15,6 +15,7 @@ const SHIPPING: Record<Country, string[]> = {
 
 @Component({
   selector: 'app-lesson-04-signals',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions],
   template: `
     <app-lesson part="04">

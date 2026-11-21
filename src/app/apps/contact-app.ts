@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { notBlank } from '../shared/validators';
 
@@ -6,6 +6,7 @@ type SubmissionStatus = 'idle' | 'pending' | 'success' | 'error';
 
 @Component({
   selector: 'app-contact',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule],
   template: `
     <div class="contact">
@@ -249,6 +250,9 @@ export class ContactApp {
     this.submissionStatus.set('pending');
 
     // Simulate async submission
+    // [ng-09 change detection] form.reset() changes plain control state,
+    // which marks nothing for check. It renders because the signal write next
+    // to it does. Drop that write and the old errors stay on screen.
     setTimeout(() => {
       this.submissionStatus.set('success');
       this.form.reset();

@@ -1,9 +1,10 @@
-import { Component, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, output, signal } from '@angular/core';
 
 export type AboutTab = 'overview' | 'skills' | 'experience';
 
 @Component({
   selector: 'app-about',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="about">
       <div class="about-avatar">👤</div>

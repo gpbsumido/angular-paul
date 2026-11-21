@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
@@ -9,6 +9,7 @@ const STARTING_TAGS = ['signals', 'pipes', 'control-flow'];
 
 @Component({
   selector: 'app-lesson-03-templates',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions],
   template: `
     <app-lesson part="03">

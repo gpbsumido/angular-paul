@@ -1,4 +1,4 @@
-import { Component, input, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, ViewEncapsulation } from '@angular/core';
 
 /**
  * [ng-02 components] The shared typography for every lesson page.
@@ -13,6 +13,7 @@ import { Component, input, ViewEncapsulation } from '@angular/core';
  */
 @Component({
   selector: 'app-lesson',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   template: `
     <article class="lesson">

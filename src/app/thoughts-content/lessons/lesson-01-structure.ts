@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
@@ -52,6 +52,7 @@ const LAYER_LABELS: Record<Layer, string> = {
 
 @Component({
   selector: 'app-lesson-01-structure',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Lesson, LessonDemo, CodeBlock, InterviewQuestions],
   template: `
     <app-lesson part="01">

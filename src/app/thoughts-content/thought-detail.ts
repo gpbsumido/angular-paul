@@ -1,5 +1,5 @@
 import { NgComponentOutlet } from '@angular/common';
-import { Component, computed, effect, ElementRef, inject, input, resource } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, inject, input, resource } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { SeoService } from '../shared/seo.service';
 import { LESSON_PAGES } from './lessons/lessons';
@@ -10,6 +10,7 @@ import { ThoughtsService } from './thoughts.service';
 
 @Component({
   selector: 'app-thought-detail',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgComponentOutlet, RouterLink, UtcDatePipe, ReadingTimePipe],
   template: `
     @if (thought(); as thought) {

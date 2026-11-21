@@ -1,4 +1,4 @@
-import { Component, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 
 /**
  * A labelled, scrollable code sample for lesson pages.
@@ -13,6 +13,7 @@ import { Component, input, output, signal } from '@angular/core';
  */
 @Component({
   selector: 'app-code-block',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <figure class="code-block">
       <figcaption class="code-block-bar">

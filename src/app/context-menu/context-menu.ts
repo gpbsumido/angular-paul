@@ -1,5 +1,13 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, DestroyRef, inject, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 
 export interface ContextMenuItem {
   id: string;
@@ -20,6 +28,7 @@ export const DEFAULT_DESKTOP_MENU_ITEMS: ContextMenuItem[] = [
 
 @Component({
   selector: 'app-context-menu',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (visible()) {
       <div class="context-menu" [style.left.px]="x()" [style.top.px]="y()">

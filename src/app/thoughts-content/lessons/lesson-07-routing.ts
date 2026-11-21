@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { PRIMARY_OUTLET, UrlSerializer } from '@angular/router';
 import { routes } from '../../app.routes';
 import { Callout } from './callout';
@@ -13,6 +13,7 @@ const entries = (record: Record<string, unknown>) =>
 
 @Component({
   selector: 'app-lesson-07-routing',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions],
   template: `
     <app-lesson part="07">

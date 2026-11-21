@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 export type CalloutKind = 'tip' | 'pitfall' | 'expert';
 
@@ -19,6 +19,7 @@ const LABELS: Record<CalloutKind, string> = {
  */
 @Component({
   selector: 'app-callout',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     role: 'note',
     '[class]': '"callout callout--" + kind()',

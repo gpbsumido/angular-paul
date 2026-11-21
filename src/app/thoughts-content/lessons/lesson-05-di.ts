@@ -1,4 +1,4 @@
-import { Component, inject, Injectable, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Injectable, input, signal } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
@@ -37,6 +37,7 @@ export class Tally {
 /** Provides a Tally for everything inside it, including projected content. */
 @Component({
   selector: 'app-tally-scope',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [Tally],
   template: `<div class="tally-scope"><ng-content /></div>`,
   styles: `
@@ -55,6 +56,7 @@ export class TallyScope {}
 /** Asks for a Tally and gets whichever one the nearest scope above it provides. */
 @Component({
   selector: 'app-tally-button',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <button type="button" class="tally-button" [attr.data-name]="name()" (click)="tally.increment()">
       {{ name() }}: {{ tally.count() }} <span class="tally-instance">(instance #{{ tally.id }})</span>
@@ -74,6 +76,7 @@ export class TallyButton {
 
 @Component({
   selector: 'app-lesson-05-di',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions, TallyScope, TallyButton],
   providers: [TallyNumbering],
   template: `

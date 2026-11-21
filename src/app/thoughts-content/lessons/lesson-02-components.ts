@@ -1,4 +1,4 @@
-import { Component, input, model, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, model, output, signal } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
@@ -17,6 +17,7 @@ type Tone = 'info' | 'warn';
  */
 @Component({
   selector: 'app-demo-badge',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[class.demo-badge--warn]': 'tone() === "warn"' },
   template: `
     <ng-content select="[badgeIcon]" />
@@ -70,6 +71,7 @@ export class DemoBadge {
 
 @Component({
   selector: 'app-lesson-02-components',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions, DemoBadge],
   template: `
     <app-lesson part="02">

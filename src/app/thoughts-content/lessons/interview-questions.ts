@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
 export interface InterviewQuestion {
   q: string;
@@ -12,6 +12,7 @@ export interface InterviewQuestion {
  */
 @Component({
   selector: 'app-interview-questions',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @for (item of questions(); track item.q) {
       <details class="qa">

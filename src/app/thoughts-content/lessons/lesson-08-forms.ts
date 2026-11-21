@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
@@ -18,6 +18,7 @@ const matchingPasswords: ValidatorFn = (group): ValidationErrors | null => {
 
 @Component({
   selector: 'app-lesson-08-forms',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions, ReactiveFormsModule],
   template: `
     <app-lesson part="08">

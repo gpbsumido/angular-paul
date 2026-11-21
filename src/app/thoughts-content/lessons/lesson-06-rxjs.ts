@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { delay, filter, Observable, of } from 'rxjs';
 import { THOUGHTS } from '../thoughts-data';
@@ -29,6 +29,7 @@ function slowSearch(query: string): Observable<SearchResult> {
 
 @Component({
   selector: 'app-lesson-06-rxjs',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions],
   template: `
     <app-lesson part="06">

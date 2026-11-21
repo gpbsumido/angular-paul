@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SeoService } from '../shared/seo.service';
 import { ReadingProgressService } from './reading-progress.service';
@@ -7,6 +7,7 @@ import { UtcDatePipe } from './utc-date.pipe';
 
 @Component({
   selector: 'app-thoughts-list',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, UtcDatePipe],
   template: `
     <div class="thoughts-list">

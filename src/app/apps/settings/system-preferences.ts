@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { SettingsService } from '../../shared/settings/settings.service';
 
 type Pane = 'appearance' | 'dock' | 'general';
@@ -10,6 +10,7 @@ interface SidebarItem {
 
 @Component({
   selector: 'app-system-preferences',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="settings">
       <nav class="settings-sidebar">
