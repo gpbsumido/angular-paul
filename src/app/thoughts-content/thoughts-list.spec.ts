@@ -25,6 +25,11 @@ describe('ThoughtsListComponent', () => {
     nativeEl = fixture.nativeElement as HTMLElement;
   });
 
+  it('formats card dates in UTC, like the reader does', () => {
+    const dates = [...nativeEl.querySelectorAll('.thought-card-date')].map((d) => d.textContent);
+    expect(dates).toContain('Jun 15, 2026');
+  });
+
   it('should render a card for each thought entry', () => {
     const service = TestBed.inject(ThoughtsService);
     const cards = nativeEl.querySelectorAll('.thought-card');
