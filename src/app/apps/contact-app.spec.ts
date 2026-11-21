@@ -151,8 +151,9 @@ describe('ContactApp', () => {
 
     const success = nativeEl.querySelector('.contact-success');
     expect(success).toBeTruthy();
-    // Announced, not just painted: screen readers hear a live region change.
-    expect(success?.getAttribute('role')).toBe('status');
+    // Announced, not just painted: it's inside a live region that was
+    // already in the DOM, so screen readers hear the change.
+    expect(success?.closest('[role="status"]')).toBeTruthy();
   });
 
   it('should reset the form after successful submission', async () => {
