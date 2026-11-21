@@ -188,4 +188,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['ssr', 'deployment', 'railway', 'cloudflare'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-01-project-structure',
+    title: 'Angular 01: Project structure',
+    date: '2026-11-21',
+    summary:
+      'The first lesson in my Angular guide: how an app boots, how to lay out folders by feature, and how I enforce the layering with a test instead of a wiki page. Includes a live import checker.',
+    tags: ['angular-guide', 'architecture', 'angular'],
+    relatedApp: 'readme',
+  },
 ];

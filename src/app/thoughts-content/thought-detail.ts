@@ -1,10 +1,13 @@
-import { Component, inject } from '@angular/core';
+import { NgComponentOutlet } from '@angular/common';
+import { Component, inject, resource } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SeoService } from '../shared/seo.service';
+import { LESSON_PAGES } from './lessons/lessons';
 import { ThoughtsService } from './thoughts.service';
 
 @Component({
   selector: 'app-thought-detail',
+  imports: [NgComponentOutlet],
   template: `
     @if (thought) {
       <div class="thought-detail">
@@ -17,6 +20,9 @@ import { ThoughtsService } from './thoughts.service';
           }
         </div>
         <div class="thought-detail-content">{{ thought.content }}</div>
+        @if (lessonPage.value(); as page) {
+          <ng-container *ngComponentOutlet="page" />
+        }
       </div>
     } @else {
       <div class="thought-detail-not-found">Thought not found.</div>
@@ -99,6 +105,13 @@ export class ThoughtDetailComponent {
   private readonly seo = inject(SeoService);
 
   readonly thought = this.service.getBySlug(this.route.snapshot.paramMap.get('slug') ?? '');
+
+  // A resource rather than a bare promise: while it loads it holds a pending
+  // task, so SSR prerendering waits for the lesson chunk and bakes the full
+  // interactive page into the static HTML instead of an empty slot.
+  readonly lessonPage = resource({
+    loader: () => LESSON_PAGES[this.thought?.slug ?? '']?.() ?? Promise.resolve(undefined),
+  });
 
   constructor() {
     if (this.thought) {
