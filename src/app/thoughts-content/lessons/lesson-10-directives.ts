@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonDemo } from './lesson-demo';
@@ -278,30 +279,5 @@ export class ScrollSpy {
 @Component({ selector: 'app-lesson', hostDirectives: [ScrollSpy], ... })`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'What kinds of directives are there?',
-      a: 'Components, which are directives with a template; attribute directives, which change the appearance or behaviour of their host element; and structural directives, which add or remove DOM by rendering a TemplateRef into a ViewContainerRef. Since Angular 17 the built-in @if, @for and @switch blocks cover most structural needs without a directive.',
-    },
-    {
-      q: 'What does the * in *ngIf do?',
-      a: 'It is shorthand. The element is wrapped in an <ng-template>, and the expression is bound to an input named after the directive selector. Microsyntax like "let item of items; trackBy: f" maps to more inputs, such as ngForOf and ngForTrackBy, and to template context variables.',
-    },
-    {
-      q: 'What are host directives and why use them?',
-      a: 'hostDirectives on a component or directive applies other standalone directives to its host element, as if their attributes were written there. You pick which inputs and outputs to expose and can alias them. It is composition instead of inheritance: behaviour like focus handling, tooltips or scroll tracking can be shared without base classes, and consumers cannot forget to add it.',
-    },
-    {
-      q: 'How do parent and child directives communicate?',
-      a: 'Through DI. A child injects the parent directive, optionally, from its element injector and registers itself, the way NgModel registers with NgForm or my headings register with ScrollSpy. The parent can also use contentChildren to query children. Registration keeps the parent generic, and queries are good when the parent needs an ordered list of children to render.',
-    },
-    {
-      q: '@HostBinding and @HostListener vs the host property?',
-      a: 'Both do the same job. The Angular style guide now prefers the host property in the decorator metadata, because all host bindings sit in one place and work cleanly with signals. The decorators still work, and plenty of existing code uses them.',
-    },
-    {
-      q: 'Where should DOM work in a directive happen?',
-      a: 'Not in the constructor, because children do not exist yet and on the server there is no browser DOM. Use afterNextRender or afterEveryRender for browser-only work like measuring or observers, and DestroyRef to clean up. Bindings in the host metadata are the safe way to write to the host element, since Angular applies them on the server too.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-10-directives'];
 }

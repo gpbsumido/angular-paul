@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.12
+
+- **Interview practice deck.** The last lesson ends with a flashcard deck of all 78 interview questions in the guide: one question at a time, the answer hidden until asked for, "Got it" to take a card out and "Ask again" to send it to the back, filterable by topic. The questions were scattered across twelve pages, a few at the bottom of each, which is no way to revise
+- **Every lesson's questions live in one bank** (`interview-bank.ts`), keyed by lesson. Each lesson reads its own entry, and the deck reads all of them without importing twelve lesson components. A spec checks every lesson has at least five, none repeats, and each page renders its own. The cost: about 12 kB gzipped of question text now loads with the first lesson you open, instead of 1–3 kB per page
+- **Angular guide, lesson 13: interview prep** (`/thoughts/angular-13-interview`). NgModule-era Angular side by side with the same component written today, the migration schematics, NgRx Store and SignalStore, and how to turn the bugs from this guide into interview answers
+- **fix: the no-NgModules fitness test matched code samples.** Lesson 13 prints an `@NgModule` as an example, and the regex flagged it. It now reads real decorators with the TypeScript parser, the same fix the OnPush check got in 1.4.8
+
+## 2026-11-21 - version 1.4.11
+
+- **fix: prerendered pages showed the time the site was built.** The menu bar clock rendered on the server, so every Thoughts page shipped a frozen build-time clock until the JavaScript loaded. The clock now renders empty on the server and starts in `afterNextRender`, which only runs in the browser
+- **The menu bar hydrates.** It was marked `ngSkipHydration` to hide that server/browser difference, so the browser threw away the server's HTML for the whole bar and drew it again. With the difference gone, the attribute is gone. The interval also no longer starts from inside an `effect` with no signal dependencies
+- **A spec renders the menu bar on the real server platform** (`menu-bar.server.spec.ts`, through `renderApplication`). TestBed runs browser-only hooks, so it can't show what the server sends
+- **Angular guide, lesson 12: SSR and hydration** (`/thoughts/angular-12-ssr`). The live demo says whether the page you're reading was prerendered or rendered in your browser: the server writes its render time into `TransferState` and the browser reads it back. The lesson covers render modes per route, hydration, browser-only code, the HTTP transfer cache, event replay, incremental hydration and `PendingTasks`
+- I formatted the demo's time with `DatePipe` first, and the initial bundle went to 407.07 kB, over the 400 kB budget. It's the lesson 03 trap again; `Intl.DateTimeFormat` brought it back to 395.26 kB
+
 ## 2026-11-21 - version 1.4.10
 
 - **fix: CI's typecheck checked zero files.** It ran `npx tsc --noEmit` against the root `tsconfig.json`, which has `"files": []` and only project references, so plain `tsc` compiled nothing and passed. It now typechecks `tsconfig.app.json` and `tsconfig.spec.json`

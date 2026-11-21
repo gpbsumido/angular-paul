@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, linkedSignal, signal, untracked } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonSection } from './lesson-section';
@@ -245,30 +246,5 @@ readonly lessonPage = resource({
 });`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'What problem do signals solve compared to Zone.js change detection?',
-      a: 'Zone.js patched every async API and re-checked the whole component tree after any event, because Angular could not know what changed. Signals record exactly which views read which values, so Angular can refresh only what depends on a change. That enables zoneless apps: smaller bundles, cleaner stack traces, less wasted work.',
-    },
-    {
-      q: 'signal vs computed vs effect vs linkedSignal?',
-      a: 'signal holds writable state. computed derives read-only state, lazily and memoised. linkedSignal derives state that can also be written locally and resets when its source changes. effect runs side effects outside the signal graph, such as the DOM, storage or logging, and should not be used to sync signals.',
-    },
-    {
-      q: 'Why does updating an array inside a signal sometimes not re-render?',
-      a: 'Signals use Object.is equality by default. Mutating the existing array keeps the same reference, so nothing is notified. Replace it instead, with update(list => [...list, item]), or supply a custom equal function if you really need one.',
-    },
-    {
-      q: 'When would you still use RxJS?',
-      a: 'For events over time: debouncing input, cancelling in-flight requests with switchMap, websockets, retries and polling. Signals are for current state. toSignal and toObservable bridge the two at the edges.',
-    },
-    {
-      q: 'How do you expose state from a service safely?',
-      a: 'Keep writable signals private and expose asReadonly() views plus methods that encode the allowed transitions. Consumers then get reactivity without being able to bypass the rules. Components get computed() views where they need derived data.',
-    },
-    {
-      q: 'What is resource() and when is it better than subscribing?',
-      a: 'A signal-based async primitive. You give it reactive params and a loader, and it exposes value, status, error and isLoading as signals. It cancels stale loads when params change and registers as a pending task, so SSR waits for it. It replaces the subscribe-and-set-loading-flags boilerplate in most read-only data fetching.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-04-signals'];
 }

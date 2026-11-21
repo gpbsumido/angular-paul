@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonSection } from './lesson-section';
@@ -291,30 +292,5 @@ contact.email().errors();     // a signal
 <input [formField]="contact.email" />`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'Reactive or template-driven forms?',
-      a: 'Template-driven forms build the model from ngModel in the template: quick for simple cases, but the logic is spread through HTML and hard to unit test. Reactive forms define the model in TypeScript, which makes them strongly typed, testable without a DOM, and better for dynamic fields, cross-field validation and complex flows. I default to reactive. In Angular 21, Signal Forms are an experimental third option built on signals.',
-    },
-    {
-      q: 'How do you write a custom validator, and a cross-field one?',
-      a: 'A ValidatorFn takes a control and returns null when valid or an errors object like { blank: true }. For rules involving several fields, such as password confirmation or a date range, put the validator on the FormGroup so it sees every value and re-runs when any of them changes. Read it with group.hasError().',
-    },
-    {
-      q: 'What does a ControlValueAccessor do?',
-      a: 'It is the bridge between a form control and a component or element. writeValue pushes the model into the view, registerOnChange and registerOnTouched give the component callbacks to report changes back, and setDisabledState handles disabling. Provide it with NG_VALUE_ACCESSOR as a multi provider, and formControlName and ngModel work on your component.',
-    },
-    {
-      q: 'How do async validators work?',
-      a: 'They return an Observable or Promise of errors or null, and run only after the sync validators pass. While they run, the control status is PENDING. To avoid a request per keystroke, use updateOn: blur or debounce inside the validator with timer() and switchMap, since the validator is resubscribed on each value change.',
-    },
-    {
-      q: 'How do you make a form accessible?',
-      a: 'Every input has a real label. Errors show once the field is touched, and are linked with aria-invalid and aria-describedby. The submit button stays enabled, and an invalid submit marks everything touched and focuses the first invalid field. Results go into a live region that already exists in the DOM. Use autocomplete attributes for personal data.',
-    },
-    {
-      q: 'What changed with typed forms?',
-      a: 'Since Angular 14, FormControl, FormGroup and FormArray are generic and infer their types from initial values, so form.value.email is typed and typos are compile errors. nonNullable controls reset to their initial value instead of null, which removes string | null everywhere. UntypedFormGroup exists for migrating old code.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-08-forms'];
 }

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonSection } from './lesson-section';
@@ -253,30 +254,5 @@ onKeydown(event: KeyboardEvent): void {
 }`,
   };
 
-  protected readonly interview = [
-    {
-      q: "What's the difference between property binding and attribute binding?",
-      a: '[x] sets the DOM property, the live value. [attr.x] sets the HTML attribute, the initial value. They diverge for things like an input value after typing. Use attr only when there is no property, such as aria-*, colspan or SVG attributes.',
-    },
-    {
-      q: 'Why does @for require track, and what should you track by?',
-      a: 'track lets Angular map items to DOM rows across changes, so it can move or keep rows instead of recreating them. Track a stable unique id. $index is only safe for static lists that never reorder or delete.',
-    },
-    {
-      q: 'Pure vs impure pipes?',
-      a: "A pure pipe re-runs only when its input reference changes, so it is effectively memoised per binding. An impure pipe runs on every change detection pass. Most custom pipes should be pure. AsyncPipe is the classic impure one, because it has to check for new emissions.",
-    },
-    {
-      q: 'Built-in control flow vs *ngIf / *ngFor?',
-      a: "@if, @for and @switch are part of the template language. They need no imports, @if narrows types, @for makes tracking mandatory and has @empty, and they're faster. The structural directives desugar to ng-template plus a directive and are still common in older code. There's an automatic migration: ng generate @angular/core:control-flow.",
-    },
-    {
-      q: 'How do you listen to a global event like keydown on document?',
-      a: "host: { '(document:keydown)': 'onKey($event)' } in the component metadata, or @HostListener in older code. Both clean themselves up when the component is destroyed. Never add a raw addEventListener without removing it in DestroyRef.",
-    },
-    {
-      q: 'How does Angular protect against XSS in templates?',
-      a: 'Interpolation is always text-escaped, and values bound into innerHTML, URLs and styles are sanitized by context. bypassSecurityTrust* disables that for one value, so it should only ever see trusted input.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-03-templates'];
 }

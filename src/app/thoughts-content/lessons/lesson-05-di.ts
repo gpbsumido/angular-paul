@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Injectable, input, signal } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonSection } from './lesson-section';
@@ -273,30 +274,5 @@ private readonly analytics = inject(Analytics, { optional: true });
 private readonly parentMenu = inject(Menu, { skipSelf: true, optional: true });`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'What is dependency injection, and why does Angular use it?',
-      a: 'A class declares what it needs and the framework supplies it, instead of the class constructing its own dependencies. That decouples code from concrete implementations, so you can swap them per environment (browser vs server) or per test, and it lets Angular control lifetimes: one app-wide instance, or one per component subtree.',
-    },
-    {
-      q: "What does providedIn: 'root' do, and how is it different from listing a service in providers?",
-      a: "providedIn: 'root' registers the service with the root environment injector: one instance for the app, created lazily, and dropped from the bundle if nothing injects it. Listing it in a component's providers creates a new instance for that component and its children. Doing both gives you two instances, a classic source of state that silently stops syncing.",
-    },
-    {
-      q: 'When do you need an InjectionToken?',
-      a: 'When the thing you inject is not a class: an interface, a config object, a string or a browser global. Interfaces are erased at runtime, so they cannot be lookup keys. In this project BROWSER_STORAGE is a token for Storage, with a factory that returns localStorage in the browser and null on the server.',
-    },
-    {
-      q: 'How does Angular resolve a dependency?',
-      a: 'It walks the element injector tree first, starting at the requesting element and going up through ancestor components. Then it walks the environment injectors: lazy route injectors, root, then platform. The first provider found wins. If none is found it throws NG0201, unless the request was optional. Modifiers like self, skipSelf and host change where the walk starts or stops.',
-    },
-    {
-      q: 'inject() or constructor injection?',
-      a: 'They resolve the same way. inject() is the modern default: it works in field initialisers and functions (guards, interceptors, factories), plays well with inheritance because subclasses do not have to pass dependencies to super(), and does not depend on TypeScript decorator metadata. It must be called in an injection context.',
-    },
-    {
-      q: 'How do you test a service that touches localStorage or the network?',
-      a: 'Put the dependency behind DI and override it in TestBed. Use { provide: TOKEN, useValue: fake } for a token, or provideHttpClientTesting() for HttpClient. The service code never changes between tests and production, and the tests never touch real global state.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-05-dependency-injection'];
 }

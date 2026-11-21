@@ -4,6 +4,7 @@ import { delay, filter, Observable, of } from 'rxjs';
 import { THOUGHTS } from '../thoughts-data';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonSection } from './lesson-section';
@@ -298,30 +299,5 @@ provideHttpClient(withFetch(), withInterceptors([retryTransientErrors])),`,
 });`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'switchMap, mergeMap, concatMap, exhaustMap: when do you use each?',
-      a: 'All four map a value to an inner Observable. switchMap cancels the previous inner stream, so use it when only the latest matters: search, route params. mergeMap runs them in parallel, for independent work. concatMap queues them in order, for writes that must not interleave. exhaustMap ignores new values while one is running, for a submit button double-click or a login request.',
-    },
-    {
-      q: 'What is the difference between a hot and a cold Observable?',
-      a: 'A cold Observable starts its work separately for each subscriber: every subscribe to an HttpClient call sends a request. A hot one shares a single source that runs regardless, like DOM events or a Subject. You make a cold one shared with share() or shareReplay().',
-    },
-    {
-      q: 'How do you avoid memory leaks with subscriptions in Angular?',
-      a: "Mostly by not subscribing manually: toSignal() and the async pipe unsubscribe when the component is destroyed. For a manual subscribe, use takeUntilDestroyed(), which takes a DestroyRef from the injection context. Streams that complete on their own, like a single HTTP call, don't leak, but they aren't cancelled either unless you unsubscribe.",
-    },
-    {
-      q: 'Subject, BehaviorSubject, ReplaySubject?',
-      a: 'A Subject is both an Observable and an Observer: you push values in with next() and subscribers get them from then on. BehaviorSubject requires an initial value and gives new subscribers the current one immediately, which made it the service-store pattern before signals. ReplaySubject replays the last N values to late subscribers.',
-    },
-    {
-      q: 'What is an HTTP interceptor, and what have you used one for?',
-      a: 'A function in the HttpClient pipeline that sees every request and its response Observable. Typical uses: adding auth headers, retrying, logging, turning errors into user messages, and caching. On my site one retries GETs that fail with a network error or 5xx, with exponential backoff, and never retries POSTs, because those are not safe to repeat.',
-    },
-    {
-      q: 'Signals or RxJS?',
-      a: 'Both, at different jobs. Signals hold state that the UI reads synchronously. RxJS models events over time: debouncing, cancellation, retries, combining streams. A common shape is signal input, then toObservable, then the operators, then toSignal back out for the template.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-06-rxjs'];
 }
