@@ -1,3 +1,9 @@
+// [ng-01 structure] Why this lives in shared/ and not apps/settings/:
+// the dock (icon size), the menu bar (clock format) and the root shell (theme)
+// all read it. State that the whole app depends on is not a feature's private
+// business. It sat in apps/settings/ until architecture.spec.ts flagged three
+// shell files importing it. The *screen* that edits it (system-preferences.ts)
+// stays in the feature folder. The *state* moved down a layer.
 import { effect, Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 

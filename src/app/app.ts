@@ -8,7 +8,7 @@ import { Desktop } from './desktop/desktop';
 import { DesktopIconsComponent } from './desktop-icons/desktop-icons';
 import { Dock } from './dock/dock';
 import { MenuBar } from './menu-bar/menu-bar';
-import { AppearanceService } from './apps/settings/appearance.service';
+import { AppearanceService } from './shared/settings/appearance.service';
 import { AppLauncherService } from './shared/app-launcher.service';
 import { DockService } from './shared/dock.service';
 import { KeyboardShortcutService } from './shared/keyboard-shortcut.service';

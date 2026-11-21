@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { SettingsService } from './settings.service';
+import { SettingsService } from '../../shared/settings/settings.service';
 
 type Pane = 'appearance' | 'dock' | 'general';
 

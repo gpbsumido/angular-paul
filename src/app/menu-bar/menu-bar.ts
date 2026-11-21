@@ -10,7 +10,7 @@ import {
   PLATFORM_ID,
   signal,
 } from '@angular/core';
-import { SettingsService } from '../apps/settings/settings.service';
+import { SettingsService } from '../shared/settings/settings.service';
 import { MenuBarItem, MenuBarService } from './menu-bar.service';
 
 @Component({
