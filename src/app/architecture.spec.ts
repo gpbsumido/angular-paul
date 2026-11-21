@@ -39,17 +39,21 @@ function staticRelativeImports(file: string): string[] {
 }
 
 /**
- * Real `@Component(...)` decorators on classes, read with the TypeScript
- * parser. A text search also matches the code samples the lessons print.
+ * Real `@Component(...)`, `@NgModule(...)` etc. decorators on classes, read
+ * with the TypeScript parser. A text search also matches the code samples the
+ * lessons print.
  */
-function componentDecorators(file: string): { file: string; className: string; metadata: string }[] {
+function classDecorators(
+  file: string,
+  decoratorName: string,
+): { file: string; className: string; metadata: string }[] {
   const source = ts.createSourceFile(file, readFileSync(file, 'utf-8'), ts.ScriptTarget.Latest, true);
   const found: { file: string; className: string; metadata: string }[] = [];
   const visit = (node: ts.Node) => {
     if (ts.isClassDeclaration(node)) {
       for (const decorator of ts.getDecorators(node) ?? []) {
         const call = decorator.expression;
-        if (ts.isCallExpression(call) && ts.isIdentifier(call.expression) && call.expression.text === 'Component') {
+        if (ts.isCallExpression(call) && ts.isIdentifier(call.expression) && call.expression.text === decoratorName) {
           found.push({ file, className: node.name?.text ?? '(anonymous)', metadata: call.arguments[0]?.getText(source) ?? '' });
         }
       }
@@ -89,8 +93,8 @@ describe('[ng-01] architecture', () => {
 
   it('has no NgModules — every component, directive and pipe is standalone', () => {
     const withNgModule = files
-      .filter((file) => /@NgModule\s*\(/.test(readFileSync(file, 'utf-8')))
-      .map((file) => relative(APP_ROOT, file));
+      .flatMap((file) => classDecorators(file, 'NgModule'))
+      .map(({ file, className }) => `${relative(APP_ROOT, file)} (${className})`);
     expect(withNgModule).toEqual([]);
   });
 
@@ -100,7 +104,7 @@ describe('[ng-01] architecture', () => {
   // allowed only when written explicitly, so it is always a visible decision
   // rather than a forgotten line.
   it('every component sets OnPush, or opts into Eager explicitly', () => {
-    const decorators = files.flatMap(componentDecorators);
+    const decorators = files.flatMap((file) => classDecorators(file, 'Component'));
     const missing = decorators
       .filter(({ metadata }) => !/changeDetection:\s*ChangeDetectionStrategy\.(OnPush|Eager)\b/.test(metadata))
       .map(({ file, className }) => `${relative(APP_ROOT, file)} (${className})`);
@@ -111,7 +115,7 @@ describe('[ng-01] architecture', () => {
 
   it('the decorator finder skips @Component( inside code-sample strings', () => {
     const lesson02 = join(APP_ROOT, 'thoughts-content/lessons/lesson-02-components.ts');
-    expect(componentDecorators(lesson02).map(({ className }) => className)).toEqual([
+    expect(classDecorators(lesson02, 'Component').map(({ className }) => className)).toEqual([
       'DemoBadge',
       'Lesson02Components',
     ]);
