@@ -260,4 +260,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'forms', 'angular'],
     relatedApp: 'contact',
   },
+  {
+    slug: 'angular-09-change-detection',
+    title: 'Angular 09: Change detection',
+    date: '2026-11-21',
+    summary:
+      'How zoneless change detection decides what to re-render, why OnPush skips mutated inputs, what signals change, and NG0100. Built while moving every component on this site to OnPush and adding a test that keeps it there.',
+    tags: ['angular-guide', 'change-detection', 'angular'],
+    relatedApp: 'readme',
+  },
 ];

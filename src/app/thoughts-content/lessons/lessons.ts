@@ -19,4 +19,6 @@ export const LESSON_PAGES: Record<string, () => Promise<Type<unknown>>> = {
   'angular-06-rxjs': () => import('./lesson-06-rxjs').then((m) => m.Lesson06Rxjs),
   'angular-07-routing': () => import('./lesson-07-routing').then((m) => m.Lesson07Routing),
   'angular-08-forms': () => import('./lesson-08-forms').then((m) => m.Lesson08Forms),
+  'angular-09-change-detection': () =>
+    import('./lesson-09-change-detection').then((m) => m.Lesson09ChangeDetection),
 };

@@ -268,4 +268,7 @@ Wiring that up showed how much of the routing had been done by hand. The cards w
   'angular-08-forms': `I opened the contact form to use as this lesson's example and found three things wrong with it. A message of nothing but spaces passed validation, because Validators.required only rejects an empty string. Send stayed greyed out until everything was valid, and nothing said why. And the error messages were just text sitting near the fields, with nothing telling a screen reader which field they belonged to.
 
 All three are fixed now. Send stays enabled; pressing it shows every problem and puts focus on the first one. The demo below covers what the contact form doesn't need: a rule that spans two fields, and a list of fields that grows and shrinks.`,
+  'angular-09-change-detection': `Until this lesson, none of the 35 components on this site set a change detection strategy, so every one of them was checked on every pass. Before switching them all to OnPush, I went through each looking for state that changes outside signals and template events, since that's the state OnPush silently stops rendering. There was none, which says more about the earlier lessons moving everything to signals than about luck. The closest call is the contact form's reset, which only shows up because a signal write sits next to it.
+
+A test in architecture.spec.ts now fails on any component that doesn't choose a strategy. The demo below sets an Eager child next to an OnPush one and passes both the same object, so you can watch mutation leave one of them behind.`,
 };
