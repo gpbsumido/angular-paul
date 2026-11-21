@@ -1,7 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { createMemoryStorage } from '../../test/memory-storage';
+import { BROWSER_STORAGE } from '../shared/browser-storage';
 import { ThoughtDetailComponent } from './thought-detail';
+import { ReadingProgressService } from './reading-progress.service';
 import { ThoughtsListComponent } from './thoughts-list';
 
 /**
@@ -16,6 +19,8 @@ async function openThought(slug: string) {
         { path: 'thoughts', component: ThoughtsListComponent },
         { path: 'thoughts/:slug', component: ThoughtDetailComponent },
       ]),
+      // A fresh store per test, so progress marked in one can't leak into the next.
+      { provide: BROWSER_STORAGE, useFactory: () => createMemoryStorage() },
     ],
   });
   const harness = await RouterTestingHarness.create();
@@ -64,6 +69,10 @@ describe('ThoughtDetailComponent', () => {
 
   it('should set SEO metadata for the thought', () => {
     expect(document.title).toContain('Why Angular Signals Changed Everything');
+  });
+
+  it('offers no complete toggle on a prose-only thought', () => {
+    expect(el.querySelector('.lesson-complete')).toBeNull();
   });
 
   it('renders no lesson page or series nav for a prose-only thought', () => {
@@ -121,5 +130,28 @@ describe('ThoughtDetailComponent with an interactive lesson page', () => {
     await harness.fixture.whenStable();
 
     expect(host.scrollTop).toBe(0);
+  });
+
+  it('lets the reader mark a lesson complete, as a pressed toggle button', async () => {
+    const { harness, el } = await openThought('angular-02-components');
+    const toggle = el.querySelector<HTMLButtonElement>('button.lesson-complete')!;
+
+    expect(toggle.getAttribute('aria-pressed')).toBe('false');
+    expect(toggle.textContent).toContain('Mark lesson complete');
+
+    toggle.click();
+    await harness.fixture.whenStable();
+
+    expect(toggle.getAttribute('aria-pressed')).toBe('true');
+    expect(toggle.textContent).toContain('Completed');
+    expect(TestBed.inject(ReadingProgressService).isComplete('angular-02-components')).toBe(true);
+  });
+
+  it('shows how much of the series is complete', async () => {
+    const { harness, el } = await openThought('angular-01-project-structure');
+    el.querySelector<HTMLButtonElement>('button.lesson-complete')!.click();
+    await harness.fixture.whenStable();
+
+    expect(el.querySelector('.series-nav-position')?.textContent).toMatch(/1 of \d+ complete/);
   });
 });

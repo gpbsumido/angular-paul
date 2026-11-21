@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
+import { createMemoryStorage } from '../../test/memory-storage';
+import { BROWSER_STORAGE } from '../shared/browser-storage';
+import { ReadingProgressService } from './reading-progress.service';
 import { ThoughtsListComponent } from './thoughts-list';
 import { ThoughtsService } from './thoughts.service';
 
@@ -16,6 +19,7 @@ describe('ThoughtsListComponent', () => {
           { path: 'thoughts', component: ThoughtsListComponent },
           { path: 'thoughts/:slug', component: ThoughtsListComponent },
         ]),
+        { provide: BROWSER_STORAGE, useFactory: () => createMemoryStorage() },
       ],
     }).compileComponents();
 
@@ -55,5 +59,15 @@ describe('ThoughtsListComponent', () => {
 
   it('should set SEO metadata for the thoughts list', () => {
     expect(document.title).toContain('Thoughts');
+  });
+
+  it('badges the cards of completed lessons', async () => {
+    TestBed.inject(ReadingProgressService).toggleComplete('angular-02-components');
+    await fixture.whenStable();
+
+    const badges = [...nativeEl.querySelectorAll('.thought-card-complete')];
+    expect(badges.length).toBe(1);
+    expect(badges[0].closest('.thought-card')?.textContent).toContain('Angular 02');
+    expect(badges[0].textContent).toContain('Completed');
   });
 });
