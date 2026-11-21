@@ -139,12 +139,7 @@ export class App {
 
   onWindowMinimized(windowId: string, appId: string): void {
     this.windowManager.minimizeWindow(windowId);
-    const running = this.dockService.runningApps();
-    if (running.has(appId)) {
-      const map = new Map(running);
-      map.set(appId, 'minimized');
-      this.dockService.runningApps.set(map);
-    }
+    this.dockService.minimizeApp(appId);
   }
 
   onWindowMaximized(windowId: string): void {
