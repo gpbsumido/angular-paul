@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, model, output, signal } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonSection } from './lesson-section';
@@ -259,30 +260,5 @@ export class Callout {
 }`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'What makes a component standalone, and why did Angular move to it?',
-      a: 'It declares its own dependencies in imports: [] instead of belonging to an NgModule. The dependency graph is explicit per component, lazy loading works at component granularity, and there is one fewer concept to learn. Standalone has been the default since v19.',
-    },
-    {
-      q: 'input() vs @Input()?',
-      a: 'input() returns a read-only signal, so you derive from it with computed() and there is no need for ngOnChanges. It supports required inputs and transforms, and the compiler type-checks it. @Input() is a decorated mutable field and still everywhere in older code.',
-    },
-    {
-      q: 'How does two-way binding work?',
-      a: 'It is sugar. [(x)]="v" expands to [x]="v" (xChange)="v = $event". model() declares both halves at once. With a signal you pass the signal itself, [(count)]="count", and Angular writes to it.',
-    },
-    {
-      q: 'What is content projection and when would you use multi-slot?',
-      a: 'Passing markup from parent into a child through <ng-content>. Multi-slot uses select with a CSS selector to route parts, for example a card with header, body and footer slots. The parent still owns the projected content: it is created and change-detected as part of the parent.',
-    },
-    {
-      q: 'How do you create a component dynamically?',
-      a: 'Declaratively with NgComponentOutlet (inputs via ngComponentOutletInputs), or imperatively with ViewContainerRef.createComponent(). Combine either with a dynamic import() so the component is its own lazy chunk. This site loads every lesson page that way.',
-    },
-    {
-      q: 'What are the view encapsulation modes?',
-      a: 'Emulated (default) rewrites selectors with generated attributes so styles stay scoped. None makes them global. ShadowDom uses native shadow roots. Use None sparingly and scope selectors by hand. ::ng-deep is deprecated.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-02-components'];
 }

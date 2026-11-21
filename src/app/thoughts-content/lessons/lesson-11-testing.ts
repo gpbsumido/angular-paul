@@ -3,6 +3,7 @@ import type { AbstractControl, ValidationErrors } from '@angular/forms';
 import { notBlank } from '../../shared/validators';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonDemo } from './lesson-demo';
@@ -282,30 +283,5 @@ it('runs the production build', () => {
 });`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'What do you test in an Angular component?',
-      a: 'Its behaviour through its public surface: what renders for given inputs, what happens on clicks and typing, which outputs it emits, and what it asks its services to do. Not private methods or internal fields, because those tests break on refactors that change nothing a user can see. I also run axe in component specs so accessibility regressions fail like any other bug.',
-    },
-    {
-      q: 'How do you test a component that makes HTTP calls?',
-      a: 'Provide provideHttpClient() and provideHttpClientTesting(), then inject HttpTestingController. Trigger the behaviour, use expectOne to assert the request, flush a response or an error, and assert on the rendered result. verify() in afterEach fails the test if any request was left unanswered. For retries and debouncing, add fake timers so the test controls time.',
-    },
-    {
-      q: 'Unit, integration or e2e?',
-      a: 'Mostly fast unit and component tests, because they pin behaviour cheaply and run on every save. Integration-style specs use the real config, for example routing tested against appConfig. A few e2e tests cover what needs a real browser: layout, scrolling, IntersectionObserver, and the critical user journeys. E2e tests are slow and more prone to flakiness, so each one should earn its place.',
-    },
-    {
-      q: 'How do you test RxJS code?',
-      a: 'With marble tests on the RxJS TestScheduler. Inside scheduler.run(), every timer uses virtual time, so delays, debounces and races are deterministic and instant. You describe input streams as marble strings and assert the output against an expected one. For simple cases, subscribing and asserting after fake timers is fine too.',
-    },
-    {
-      q: 'Karma and Jasmine vs Jest vs Vitest?',
-      a: 'Karma with Jasmine was the Angular default for years and ran tests in a real browser. New Angular 21 projects default to Vitest through the @angular/build:unit-test builder, which runs in jsdom with an optional browser mode. Jest was a common community choice in between. The TestBed API is the same in all of them, so most specs move between runners with little change.',
-    },
-    {
-      q: 'Tell me about a test that caught something.',
-      a: 'On my site, a fitness test that reads the CI workflow showed that its typecheck step checked zero files. The root tsconfig only has project references, so plain tsc compiles nothing. CI had been green the whole time. The spec now requires the real tsconfigs, a production build, and a timeout on every job.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-11-testing'];
 }

@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonSection } from './lesson-section';
@@ -254,30 +255,5 @@ replace() { this.profile = { ...this.profile, visits: this.profile.visits + 1 };
 });`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'How does change detection work in Angular?',
-      a: 'Angular walks the component tree and re-evaluates template bindings, patching the DOM where values changed. With Zone.js, a pass ran after any async event because Angular could not know what changed. In a zoneless app, a pass is scheduled by signal changes, template events, markForCheck or setInput. OnPush and signals then narrow which components are actually checked.',
-    },
-    {
-      q: 'When is an OnPush component checked?',
-      a: 'When one of its inputs receives a new reference, when an event fires in its template or a child, when a signal read in its template changes, or when markForCheck is called on it or a descendant (the async pipe does that). Mutating an object input in place triggers none of these.',
-    },
-    {
-      q: 'What causes ExpressionChangedAfterItHasBeenChecked, and how do you fix it?',
-      a: 'In development mode Angular runs a second verification pass and throws if a binding changed after it was checked. That means state was changed during change detection itself: in ngAfterViewInit, by a child updating a parent, or by a getter returning a new object each time. Fix the data flow, for example by deriving the value with computed or setting it earlier. Wrapping it in setTimeout hides the bug and costs an extra render.',
-    },
-    {
-      q: 'markForCheck vs detectChanges?',
-      a: 'markForCheck marks the view and its ancestors dirty so the next scheduled pass checks them. It is cheap and the usual choice. detectChanges synchronously runs change detection on that view and its children immediately, which is useful in tests or for detached views but easy to overuse.',
-    },
-    {
-      q: 'How do signals change the picture?',
-      a: 'A signal knows exactly which views read it, so a change marks only those views for refresh, and Angular can skip OnPush ancestors. That is what makes zoneless practical: no global check after every event, and OnPush costs almost nothing to adopt when state is in signals.',
-    },
-    {
-      q: 'How would you move a large app to OnPush?',
-      a: 'Component by component, leaves first, since they have the fewest dependencies. Look for plain fields mutated asynchronously, inputs mutated in place, and tests that rely on detectChanges after setting a field. Convert that state to signals or immutable updates. Then enforce it with the ESLint rule or a fitness test so new components start as OnPush. I did exactly that on my site and enforced it with a spec.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-09-change-detection'];
 }

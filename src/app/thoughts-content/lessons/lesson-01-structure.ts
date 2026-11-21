@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonSection } from './lesson-section';
@@ -241,26 +242,5 @@ apps/                      one folder per desktop app, lazy loaded
 });`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'How would you structure a large Angular app?',
-      a: 'By feature, with three layers: a thin shell, shared building blocks, and lazy-loaded feature folders. Dependencies point one way: features and shell depend on shared, never on each other. I enforce that with a lint rule or a fitness test, because a convention nobody checks decays.',
-    },
-    {
-      q: 'What replaced AppModule?',
-      a: 'bootstrapApplication(RootComponent, appConfig). appConfig holds the providers an AppModule used to import, as provideRouter, provideHttpClient and so on. Components declare their own dependencies in imports: [] instead of a module doing it for them.',
-    },
-    {
-      q: "What's the difference between providers in app.config.ts and in a route?",
-      a: "app.config.ts providers live in the root environment injector: one instance for the whole app. A route's providers array creates a child environment injector, so the service exists only for that route subtree and can be lazy loaded with it.",
-    },
-    {
-      q: 'Why are barrel files risky in Angular?',
-      a: 'They hide the real dependency graph. Circular imports appear easily, and importing one symbol from a barrel can drag in the whole folder, including a feature you meant to lazy load, which defeats code splitting.',
-    },
-    {
-      q: 'Which tsconfig and compiler flags would you insist on?',
-      a: 'strict for TypeScript, and strictTemplates in angularCompilerOptions so bindings are type-checked in templates. Turning them off hides real bugs, such as passing a possibly-undefined value to an input.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-01-project-structure'];
 }

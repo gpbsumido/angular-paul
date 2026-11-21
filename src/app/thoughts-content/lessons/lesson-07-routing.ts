@@ -3,6 +3,7 @@ import { PRIMARY_OUTLET, UrlSerializer } from '@angular/router';
 import { routes } from '../../app.routes';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonSection } from './lesson-section';
@@ -242,30 +243,5 @@ readonly slug = input.required<string>();`,
 ];`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'How does the router decide which route matches?',
-      a: 'It walks the route array in order and takes the first route whose path fits, depth-first through children. So specific routes go before general ones, and the ** wildcard goes last. An empty-path redirect needs pathMatch: full, or it matches every URL by prefix.',
-    },
-    {
-      q: 'How do you read route parameters in a component?',
-      a: 'Today, with withComponentInputBinding() enabled, declare an input with the param name and the router sets it, including on reuse. Without it, inject ActivatedRoute and use paramMap, an Observable, or toSignal(paramMap). Avoid route.snapshot in components the router may reuse, because it never updates.',
-    },
-    {
-      q: 'What are guards and resolvers?',
-      a: 'Guards are functions that run during navigation. canActivate decides entry, canMatch decides whether a route is considered at all (good for feature flags and lazy loading), canDeactivate guards leaving, for example with unsaved changes. They can return a UrlTree to redirect. Resolvers fetch data before activation. Many apps now load in the component with resource() instead, so the page can render a loading state rather than blocking navigation.',
-    },
-    {
-      q: 'How does lazy loading work with standalone components?',
-      a: 'loadComponent takes a function returning a dynamic import of a component, and loadChildren returns a routes array. The bundler splits each into its own chunk, fetched on first navigation. Preloading strategies, such as PreloadAllModules or a custom one, can fetch chunks in the background after startup.',
-    },
-    {
-      q: 'Path params or query params?',
-      a: 'Path params identify the resource: /thoughts/:slug. Query params carry optional view state: sorting, filters, paging. With SSR or prerendering, anything that should be its own page with its own HTML and canonical URL needs to be in the path. On my site that is why tag pages are /thoughts/tag/:tag.',
-    },
-    {
-      q: 'How do you test routing?',
-      a: 'With RouterTestingHarness: configure provideRouter with real routes, navigate by URL, and assert on the rendered component and router.url. It catches what mocked ActivatedRoute specs miss, such as component reuse on a param change. In my project a spec runs the real route table with the real app config, so a missing wildcard or router feature fails a test.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-07-routing'];
 }

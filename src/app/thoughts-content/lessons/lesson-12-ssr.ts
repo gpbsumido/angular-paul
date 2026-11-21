@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { Callout } from './callout';
 import { CodeBlock } from './code-block';
+import { INTERVIEW_BANK } from './interview-bank';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
 import { LessonDemo } from './lesson-demo';
@@ -244,30 +245,5 @@ afterNextRender(() => {
 }`,
   };
 
-  protected readonly interview = [
-    {
-      q: 'What is the difference between CSR, SSR and SSG?',
-      a: 'CSR renders in the browser: fast to serve, but nothing shows until the JavaScript runs, and crawlers see an empty shell. SSR renders on the server per request, so the HTML is complete and can depend on the request, at the cost of server time. SSG, or prerendering, renders once at build time and serves static files, which is the cheapest and fastest when content only changes on deploy. Angular 21 chooses per route with RenderMode.Client, Server and Prerender in the server routes.',
-    },
-    {
-      q: 'What is hydration, and what breaks it?',
-      a: "Hydration is the browser adopting the server's DOM instead of re-creating it, so there's no flicker or lost scroll position. It needs the first client render to match the server's. It breaks when the two renders differ, for example a time, a random value or a locale, or when code changes the DOM outside Angular. Angular reports NG0500 for structural mismatches. ngSkipHydration opts a subtree out, but that's a workaround, not a fix.",
-    },
-    {
-      q: 'How do you run code that needs the browser?',
-      a: 'afterNextRender for one-time setup and afterEveryRender for work after every render. Both only run in the browser, after the DOM exists. Inject DOCUMENT rather than touching the global, and provide browser APIs like localStorage through a token with a server fallback. isPlatformBrowser still exists, but render hooks are usually the better fit.',
-    },
-    {
-      q: 'How do you avoid fetching data twice with SSR?',
-      a: "With hydration on, HttpClient's transfer cache stores GET and HEAD responses made on the server in TransferState, and the browser reuses them during hydration. For data that doesn't come through HttpClient, write it to TransferState yourself with makeStateKey on the server and read it in the browser.",
-    },
-    {
-      q: 'What is incremental hydration?',
-      a: 'A @defer block with a hydrate trigger, such as hydrate on viewport, interaction or idle, renders fully on the server but stays dehydrated in the browser until the trigger fires, and its code is only downloaded then. Users see the content immediately while less JavaScript runs on load. hydrate never keeps static content static. It needs withIncrementalHydration() in provideClientHydration.',
-    },
-    {
-      q: 'Tell me about an SSR bug you fixed.',
-      a: 'My site prerenders its blog pages, and every one of them shipped the menu bar clock as it was at build time. The bar was also marked ngSkipHydration, so the browser threw the server DOM away and rebuilt it. I made the clock render empty on the server, started it in afterNextRender, and removed ngSkipHydration so the bar hydrates. A spec renders the bar through the real server platform and asserts both.',
-    },
-  ];
+  protected readonly interview = INTERVIEW_BANK['angular-12-ssr'];
 }
