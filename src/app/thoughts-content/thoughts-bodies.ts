@@ -247,4 +247,7 @@ The payoff is measurable, which is the entire reason to reach for SSR. curl the 
   'angular-01-project-structure': `I am writing an Angular guide I can learn from and point to: thirteen short lessons, each one tied to a real change in this site. Every lesson goes simple, then intermediate, then expert, then the pitfalls, then the questions I would expect in an interview. The code samples are the actual code from this repo, not toy examples.
 
 This first one is about the shape of a project: what boots it, where things go, and how to keep the layering honest once there are more files than anyone can hold in their head.`,
+  'angular-02-components': `Lesson one's page had all its layout, demo frame and Q&A markup inline. Copying that twelve more times would have been the wrong move, so this lesson is the refactor: the page is now built from small components (a layout, a demo frame, callouts, an interview-question list, and a code block that copies to the clipboard), and lesson one was rebuilt on them.
+
+That makes components the natural topic: what goes in through inputs, what comes out through outputs, what gets projected, and when a component should own nothing at all.`,
 };

@@ -10,4 +10,6 @@ import { Type } from '@angular/core';
 export const LESSON_PAGES: Record<string, () => Promise<Type<unknown>>> = {
   'angular-01-project-structure': () =>
     import('./lesson-01-structure').then((m) => m.Lesson01Structure),
+  'angular-02-components': () =>
+    import('./lesson-02-components').then((m) => m.Lesson02Components),
 };

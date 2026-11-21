@@ -197,4 +197,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'architecture', 'angular'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-02-components',
+    title: 'Angular 02: Components',
+    date: '2026-11-21',
+    summary:
+      'Standalone components, input(), output(), model() and content projection, with a live demo of data crossing a component boundary. Built while extracting the reusable blocks every lesson page now uses.',
+    tags: ['angular-guide', 'components', 'angular'],
+    relatedApp: 'readme',
+  },
 ];
