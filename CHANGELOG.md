@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.4
+
+- **Saved reading progress for the Angular guide**: every lesson ends with a "Mark lesson complete" toggle (a real `aria-pressed` button whose label changes too, so the state isn't colour alone). The series nav counts "N of M complete", and the Thoughts list badges completed lessons. Progress is kept in localStorage
+- **Browser storage is an injection token now.** `BROWSER_STORAGE` is localStorage in the browser and `null` during prerendering, decided once in its factory. `SettingsService` used to check `isPlatformBrowser` and reach for the global itself, in two places. Reading progress would have been the third copy, so both now inject the token, and specs hand in an in-memory `Storage` instead of clearing the real one
+- Saved progress that isn't a list of slugs throws with the bad value in the message, instead of quietly resetting someone's progress to nothing
+- **Angular guide, lesson 05: dependency injection** (`/thoughts/angular-05-dependency-injection`). A live demo puts buttons under one shared provider and under one provider each, so the injector tree is something to click rather than a diagram. The demo's instance numbers come from a provider on the page, not a module-level counter. A counter would keep counting across requests on a long-running server, which is the exact SSR leak the lesson warns about
+- Initial bundle 384.14 kB → 384.98 kB for the progress service and toggle. The lesson itself is a 14 kB lazy chunk
+
 ## 2026-11-21 - version 1.4.3
 
 - **Series navigation in the reader**: every Angular guide lesson ends with "Part N of M" and links to the previous and next lessons. They're real `routerLink` anchors, so they prerender as `href`s and ⌘-click opens a new tab
