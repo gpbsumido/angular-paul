@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/c
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
+import { LessonSection } from './lesson-section';
 import { LessonDemo } from './lesson-demo';
 
 export type Layer = 'shell' | 'shared' | 'feature' | 'other-feature';
@@ -53,7 +54,7 @@ const LAYER_LABELS: Record<Layer, string> = {
 @Component({
   selector: 'app-lesson-01-structure',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Lesson, LessonDemo, CodeBlock, InterviewQuestions],
+  imports: [Lesson,LessonSection, LessonDemo, CodeBlock, InterviewQuestions],
   template: `
     <app-lesson part="01">
 

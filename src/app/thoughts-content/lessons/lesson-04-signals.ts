@@ -3,6 +3,7 @@ import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
+import { LessonSection } from './lesson-section';
 import { LessonDemo } from './lesson-demo';
 
 const UNIT_PRICE = 12;
@@ -16,7 +17,7 @@ const SHIPPING: Record<Country, string[]> = {
 @Component({
   selector: 'app-lesson-04-signals',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions],
+  imports: [Lesson,LessonSection, LessonDemo, CodeBlock, Callout, InterviewQuestions],
   template: `
     <app-lesson part="04">
       <h2>Simple</h2>

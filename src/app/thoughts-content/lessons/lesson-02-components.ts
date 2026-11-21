@@ -3,6 +3,7 @@ import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
+import { LessonSection } from './lesson-section';
 import { LessonDemo } from './lesson-demo';
 
 type Tone = 'info' | 'warn';
@@ -72,7 +73,7 @@ export class DemoBadge {
 @Component({
   selector: 'app-lesson-02-components',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions, DemoBadge],
+  imports: [Lesson,LessonSection, LessonDemo, CodeBlock, Callout, InterviewQuestions, DemoBadge],
   template: `
     <app-lesson part="02">
       <h2>Simple</h2>

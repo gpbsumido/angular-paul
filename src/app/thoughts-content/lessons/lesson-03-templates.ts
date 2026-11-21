@@ -3,6 +3,7 @@ import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
+import { LessonSection } from './lesson-section';
 import { LessonDemo } from './lesson-demo';
 
 const STARTING_TAGS = ['signals', 'pipes', 'control-flow'];
@@ -10,7 +11,7 @@ const STARTING_TAGS = ['signals', 'pipes', 'control-flow'];
 @Component({
   selector: 'app-lesson-03-templates',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions],
+  imports: [Lesson,LessonSection, LessonDemo, CodeBlock, Callout, InterviewQuestions],
   template: `
     <app-lesson part="03">
       <h2>Simple</h2>

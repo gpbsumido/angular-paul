@@ -10,6 +10,7 @@ import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
+import { LessonSection } from './lesson-section';
 import { LessonDemo } from './lesson-demo';
 
 interface Profile {
@@ -63,6 +64,7 @@ export class OnPushProfileCard {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     Lesson,
+    LessonSection,
     LessonDemo,
     CodeBlock,
     Callout,

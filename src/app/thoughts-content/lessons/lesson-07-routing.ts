@@ -5,6 +5,7 @@ import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
+import { LessonSection } from './lesson-section';
 import { LessonDemo } from './lesson-demo';
 import { firstMatch } from './route-match';
 
@@ -14,7 +15,7 @@ const entries = (record: Record<string, unknown>) =>
 @Component({
   selector: 'app-lesson-07-routing',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions],
+  imports: [Lesson,LessonSection, LessonDemo, CodeBlock, Callout, InterviewQuestions],
   template: `
     <app-lesson part="07">
       <h2>Simple</h2>

@@ -3,6 +3,7 @@ import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
+import { LessonSection } from './lesson-section';
 import { LessonDemo } from './lesson-demo';
 
 /**
@@ -77,7 +78,7 @@ export class TallyButton {
 @Component({
   selector: 'app-lesson-05-di',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions, TallyScope, TallyButton],
+  imports: [Lesson,LessonSection, LessonDemo, CodeBlock, Callout, InterviewQuestions, TallyScope, TallyButton],
   providers: [TallyNumbering],
   template: `
     <app-lesson part="05">

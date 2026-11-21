@@ -6,6 +6,7 @@ import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
+import { LessonSection } from './lesson-section';
 import { LessonDemo } from './lesson-demo';
 import { searchAsYouType, SearchStrategy } from './search-race';
 
@@ -30,7 +31,7 @@ function slowSearch(query: string): Observable<SearchResult> {
 @Component({
   selector: 'app-lesson-06-rxjs',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions],
+  imports: [Lesson,LessonSection, LessonDemo, CodeBlock, Callout, InterviewQuestions],
   template: `
     <app-lesson part="06">
       <h2>Simple</h2>

@@ -24,13 +24,13 @@ class Host {}
 describe('Lesson', () => {
   let fixture: ComponentFixture<Host>;
   let el: HTMLElement;
-  let scrollIntoView: ReturnType<typeof vi.fn>;
+  let scrollIntoView: ReturnType<typeof vi.fn<Element['scrollIntoView']>>;
 
   const tocButtons = () => [...el.querySelectorAll<HTMLButtonElement>('nav[aria-label="On this page"] button')];
 
   beforeEach(async () => {
     FakeIntersectionObserver.install();
-    scrollIntoView = vi.fn();
+    scrollIntoView = vi.fn<Element['scrollIntoView']>();
     Element.prototype.scrollIntoView = scrollIntoView;
     fixture = TestBed.createComponent(Host);
     await fixture.whenStable();

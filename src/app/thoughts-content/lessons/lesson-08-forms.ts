@@ -4,6 +4,7 @@ import { Callout } from './callout';
 import { CodeBlock } from './code-block';
 import { InterviewQuestions } from './interview-questions';
 import { Lesson } from './lesson';
+import { LessonSection } from './lesson-section';
 import { LessonDemo } from './lesson-demo';
 
 /**
@@ -19,7 +20,7 @@ const matchingPasswords: ValidatorFn = (group): ValidationErrors | null => {
 @Component({
   selector: 'app-lesson-08-forms',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Lesson, LessonDemo, CodeBlock, Callout, InterviewQuestions, ReactiveFormsModule],
+  imports: [Lesson,LessonSection, LessonDemo, CodeBlock, Callout, InterviewQuestions, ReactiveFormsModule],
   template: `
     <app-lesson part="08">
       <h2>Simple</h2>
