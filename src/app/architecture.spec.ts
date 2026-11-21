@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, resolve, dirname, sep } from 'node:path';
+import * as ts from 'typescript';
 
 /**
  * [ng-01 structure] Architecture fitness tests.
@@ -35,6 +36,28 @@ function staticRelativeImports(file: string): string[] {
   const source = readFileSync(file, 'utf-8');
   const specifiers = [...source.matchAll(/^\s*(?:import|export)\b[^;]*?\bfrom\s+'(\.[^']+)'/gm)];
   return specifiers.map((match) => resolve(dirname(file), match[1]));
+}
+
+/**
+ * Real `@Component(...)` decorators on classes, read with the TypeScript
+ * parser. A text search also matches the code samples the lessons print.
+ */
+function componentDecorators(file: string): { file: string; className: string; metadata: string }[] {
+  const source = ts.createSourceFile(file, readFileSync(file, 'utf-8'), ts.ScriptTarget.Latest, true);
+  const found: { file: string; className: string; metadata: string }[] = [];
+  const visit = (node: ts.Node) => {
+    if (ts.isClassDeclaration(node)) {
+      for (const decorator of ts.getDecorators(node) ?? []) {
+        const call = decorator.expression;
+        if (ts.isCallExpression(call) && ts.isIdentifier(call.expression) && call.expression.text === 'Component') {
+          found.push({ file, className: node.name?.text ?? '(anonymous)', metadata: call.arguments[0]?.getText(source) ?? '' });
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(source);
+  return found;
 }
 
 const isInside = (file: string, folder: string) =>
@@ -77,17 +100,20 @@ describe('[ng-01] architecture', () => {
   // allowed only when written explicitly, so it is always a visible decision
   // rather than a forgotten line.
   it('every component sets OnPush, or opts into Eager explicitly', () => {
-    const decorators = files.flatMap((file) =>
-      readFileSync(file, 'utf-8')
-        .split('@Component(')
-        .slice(1)
-        .map((rest) => ({ file, decorator: rest.slice(0, rest.indexOf('export class')) })),
-    );
+    const decorators = files.flatMap(componentDecorators);
     const missing = decorators
-      .filter(({ decorator }) => !/changeDetection:\s*ChangeDetectionStrategy\.(OnPush|Eager)\b/.test(decorator))
-      .map(({ file, decorator }) => `${relative(APP_ROOT, file)} (${/selector:\s*'([^']+)'/.exec(decorator)?.[1]})`);
+      .filter(({ metadata }) => !/changeDetection:\s*ChangeDetectionStrategy\.(OnPush|Eager)\b/.test(metadata))
+      .map(({ file, className }) => `${relative(APP_ROOT, file)} (${className})`);
 
     expect(decorators.length).toBeGreaterThan(30);
     expect(missing).toEqual([]);
+  });
+
+  it('the decorator finder skips @Component( inside code-sample strings', () => {
+    const lesson02 = join(APP_ROOT, 'thoughts-content/lessons/lesson-02-components.ts');
+    expect(componentDecorators(lesson02).map(({ className }) => className)).toEqual([
+      'DemoBadge',
+      'Lesson02Components',
+    ]);
   });
 });
