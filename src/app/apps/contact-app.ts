@@ -250,9 +250,12 @@ export class ContactApp {
     this.submissionStatus.set('pending');
 
     // Simulate async submission
-    // [ng-09 change detection] form.reset() changes plain control state,
-    // which marks nothing for check. It renders because the signal write next
-    // to it does. Drop that write and the old errors stay on screen.
+    // [ng-09 change detection] form.reset() re-renders this OnPush view on its
+    // own. Controls keep touched and status in signals, and NgControlStatus
+    // (the directive behind ng-touched/ng-invalid, on every formControlName
+    // input) reads them in its host bindings. I first thought only the signal
+    // write below made it render; contact-app.spec.ts has the test that
+    // proved otherwise.
     setTimeout(() => {
       this.submissionStatus.set('success');
       this.form.reset();

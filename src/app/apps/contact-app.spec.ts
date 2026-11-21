@@ -171,4 +171,21 @@ describe('ContactApp', () => {
     expect(component.form.value.email).toBeFalsy();
     expect(component.form.value.message).toBeFalsy();
   });
+
+  // [ng-11 testing] Pins a correction. Lesson 09 claimed reset() renders only
+  // because a signal write sits next to it. It renders on its own: each
+  // formControlName input carries NgControlStatus, whose host bindings read the
+  // control's touched and status signals. No detectChanges() here on purpose.
+  it('clears shown errors on reset() alone, with no other state change or event', async () => {
+    component.form.markAllAsTouched();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(nativeEl.querySelector('.contact-error-name')).toBeTruthy();
+
+    component.form.reset();
+    await fixture.whenStable();
+
+    expect(nativeEl.querySelector('.contact-error-name')).toBeNull();
+    expect(nativeEl.querySelector('.contact-error-email')).toBeNull();
+  });
 });
