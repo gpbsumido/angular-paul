@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.9
+
+- **Every lesson has an "On this page" nav.** It sticks to the top while you read, jumps to a section (moving focus to its heading), and highlights the section in view with `aria-current="location"`. Smooth scrolling switches off under `prefers-reduced-motion`. The lessons had grown long enough that I kept losing my place in them
+- **Two directives build it.** `LessonSection` matches every `h2` in a lesson, gives it an id from its text and registers it with `ScrollSpy`, which watches the registered headings with an `IntersectionObserver` created only in the browser. The lesson component takes `ScrollSpy` as a host directive, so no lesson has to remember an attribute. The nav and the heading ids are both in the prerendered HTML
+- **Angular guide, lesson 10: directives** (`/thoughts/angular-10-directives`). The live demos are a structural directive built on `TemplateRef` and `ViewContainerRef`, and an attribute directive composed into a component with `hostDirectives` and a renamed input. The lesson walks through the nav's own code
+- **Initial bundle 392.64 → 394.56 kB.** All the new code is lazy, but this is the first use of `contentChildren`, `hostDirectives` and `afterNextRender`, and their runtime lives in the shared `@angular/core` chunk
+
 ## 2026-11-21 - version 1.4.8
 
 - **Every component is OnPush.** None of the 35 components set a change detection strategy, so every one was checked on every pass. Each now uses `ChangeDetectionStrategy.OnPush`. Before switching, I audited each component for state that changes outside signals and template events, the kind OnPush stops rendering, and found none. The contact form's reset after sending is the closest call, and it now carries a comment saying why it still renders
