@@ -40,6 +40,6 @@ describe('app routes', () => {
 
     expect(harness.routeDebugElement?.componentInstance).toBeInstanceOf(ThoughtsListComponent);
     expect(titles.length).toBeGreaterThan(0);
-    expect(titles.every((title) => title.includes('Angular 0'))).toBe(true);
+    expect(titles.every((title) => /Angular \d{2}:/.test(title))).toBe(true);
   });
 });

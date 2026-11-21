@@ -269,4 +269,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'change-detection', 'angular'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-10-directives',
+    title: 'Angular 10: Directives',
+    date: '2026-11-21',
+    summary:
+      'Attribute and structural directives, element selectors, host directives, and directives that find each other through DI. Built while adding an "On this page" nav that follows you down every lesson.',
+    tags: ['angular-guide', 'directives', 'angular'],
+    relatedApp: 'readme',
+  },
 ];

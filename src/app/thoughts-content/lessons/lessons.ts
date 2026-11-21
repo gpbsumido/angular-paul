@@ -21,4 +21,5 @@ export const LESSON_PAGES: Record<string, () => Promise<Type<unknown>>> = {
   'angular-08-forms': () => import('./lesson-08-forms').then((m) => m.Lesson08Forms),
   'angular-09-change-detection': () =>
     import('./lesson-09-change-detection').then((m) => m.Lesson09ChangeDetection),
+  'angular-10-directives': () => import('./lesson-10-directives').then((m) => m.Lesson10Directives),
 };
