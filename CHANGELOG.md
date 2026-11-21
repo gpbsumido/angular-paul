@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.5
+
+- **GET requests retry transient failures.** One network blip used to put the Projects app straight into "Failed to load projects". A functional interceptor, `retryTransientErrors`, now retries any GET that fails with a network error (status 0) or a 5xx, twice, 400ms and then 800ms later. A 404 fails straight away, and nothing but GETs is ever retried, because a retried POST is a second submission
+- **Angular guide, lesson 06: RxJS and HTTP** (`/thoughts/angular-06-rxjs`). The live demo runs two search boxes over a deliberately slow fake server, where one-letter queries answer slowest. Type "sig" and mergeMap ends on the stale "s" results while switchMap shows "sig". The operator behind it has marble tests on `TestScheduler`
+- Initial bundle 384.98 kB → 389.82 kB. I measured the parts: without the interceptor it's 389.00 kB, and without lesson 06 registered it's 388.39 kB. RxJS's timer and async-scheduler code is shared by the interceptor's backoff and the lesson's `delay`, so it lands in an eager chunk either way. I tried writing the demo with `timer` instead of `delay`, and it saved 0.26 kB, not enough to beat the more readable version. That leaves 10 kB of headroom, so the remaining lessons have to stay out of eager code
+
 ## 2026-11-21 - version 1.4.4
 
 - **Saved reading progress for the Angular guide**: every lesson ends with a "Mark lesson complete" toggle (a real `aria-pressed` button whose label changes too, so the state isn't colour alone). The series nav counts "N of M complete", and the Thoughts list badges completed lessons. Progress is kept in localStorage
