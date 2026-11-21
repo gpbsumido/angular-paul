@@ -265,4 +265,7 @@ The second one was a real gap. The Projects app showed its error state on the fi
   'angular-07-routing': `Every thought has tags, and until now they were decoration. I wanted each tag to be a page: /thoughts/tag/angular-guide as a reading list for this series, prerendered like everything else under /thoughts.
 
 Wiring that up showed how much of the routing had been done by hand. The cards were divs with click handlers, so there were no real links to put the tags inside. The reader pulled its slug out of ActivatedRoute through an Observable, when the router could just hand it over as an input. And there was no wildcard route at all, so a mistyped URL failed the first navigation outright. The playground below matches URLs against this site's actual route table.`,
+  'angular-08-forms': `I opened the contact form to use as this lesson's example and found three things wrong with it. A message of nothing but spaces passed validation, because Validators.required only rejects an empty string. Send stayed greyed out until everything was valid, and nothing said why. And the error messages were just text sitting near the fields, with nothing telling a screen reader which field they belonged to.
+
+All three are fixed now. Send stays enabled; pressing it shows every problem and puts focus on the first one. The demo below covers what the contact form doesn't need: a rule that spans two fields, and a list of fields that grows and shrinks.`,
 };

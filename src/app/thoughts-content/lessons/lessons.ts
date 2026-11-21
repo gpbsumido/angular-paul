@@ -18,4 +18,5 @@ export const LESSON_PAGES: Record<string, () => Promise<Type<unknown>>> = {
   'angular-05-dependency-injection': () => import('./lesson-05-di').then((m) => m.Lesson05Di),
   'angular-06-rxjs': () => import('./lesson-06-rxjs').then((m) => m.Lesson06Rxjs),
   'angular-07-routing': () => import('./lesson-07-routing').then((m) => m.Lesson07Routing),
+  'angular-08-forms': () => import('./lesson-08-forms').then((m) => m.Lesson08Forms),
 };

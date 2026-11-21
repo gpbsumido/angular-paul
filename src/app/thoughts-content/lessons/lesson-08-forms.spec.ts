@@ -58,7 +58,7 @@ describe('Lesson08Forms', () => {
     await click('#demo-add-link');
     expect(rows()).toBe(2);
 
-    await click('.demo-link-row:last-child .demo-remove-link');
+    await click('.demo-link-row:last-of-type .demo-remove-link');
     expect(rows()).toBe(1);
   });
 

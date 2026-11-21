@@ -251,4 +251,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'routing', 'angular'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-08-forms',
+    title: 'Angular 08: Forms',
+    date: '2026-11-21',
+    summary:
+      'Reactive forms, custom and cross-field validators, FormArray, accessible errors, ControlValueAccessor and the new Signal Forms. Built while fixing a contact form that accepted blank messages and never said what was wrong.',
+    tags: ['angular-guide', 'forms', 'angular'],
+    relatedApp: 'contact',
+  },
 ];
