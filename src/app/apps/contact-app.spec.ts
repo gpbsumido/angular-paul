@@ -1,5 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import * as axeMatchers from 'vitest-axe/matchers';
+import { axe } from '../../test/a11y';
 import { ContactApp } from './contact-app';
+
+expect.extend(axeMatchers);
 
 describe('ContactApp', () => {
   let fixture: ComponentFixture<ContactApp>;
@@ -23,9 +27,57 @@ describe('ContactApp', () => {
     expect(nativeEl.querySelector('textarea[formControlName="message"]')).toBeTruthy();
   });
 
-  it('should disable the submit button when the form is invalid', () => {
+  // [ng-08 forms] Send used to be disabled until the form was valid. A
+  // disabled button can't be focused, explains nothing, and leaves someone
+  // who can't see the inline errors with no idea what's wrong. Now it's always
+  // enabled, and pressing it on an invalid form shows every error.
+  it('keeps Send enabled, so pressing it can explain what is missing', () => {
     const btn = nativeEl.querySelector('.contact-submit') as HTMLButtonElement;
-    expect(btn.disabled).toBe(true);
+    expect(btn.disabled).toBe(false);
+  });
+
+  it('submitting an invalid form shows every error, focuses the first bad field, and sends nothing', async () => {
+    component.form.controls.name.setValue('Paul');
+    (nativeEl.querySelector('.contact-submit') as HTMLButtonElement).click();
+    await fixture.whenStable();
+
+    expect(nativeEl.querySelector('.contact-error-email')).toBeTruthy();
+    expect(nativeEl.querySelector('.contact-error-message')).toBeTruthy();
+    expect(nativeEl.querySelector('.contact-error-name')).toBeNull();
+    expect(document.activeElement?.id).toBe('contact-email');
+    expect(component.submissionStatus()).toBe('idle');
+  });
+
+  it('rejects a name or message that is only whitespace', () => {
+    component.form.setValue({ name: '   ', email: 'test@example.com', message: '\n\t ' });
+
+    expect(component.form.controls.name.hasError('blank')).toBe(true);
+    expect(component.form.controls.message.hasError('blank')).toBe(true);
+    expect(component.form.valid).toBe(false);
+  });
+
+  it('ties each shown error to its field with aria-invalid and aria-describedby', async () => {
+    component.form.controls.email.setValue('not-an-email');
+    component.form.controls.email.markAsTouched();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const email = nativeEl.querySelector('#contact-email')!;
+    const describedBy = email.getAttribute('aria-describedby');
+    expect(email.getAttribute('aria-invalid')).toBe('true');
+    expect(describedBy).toBeTruthy();
+    expect(nativeEl.querySelector(`#${describedBy}`)?.textContent).toContain('Valid email');
+
+    const name = nativeEl.querySelector('#contact-name')!;
+    expect(name.getAttribute('aria-invalid')).toBeNull();
+    expect(name.getAttribute('aria-describedby')).toBeNull();
+  });
+
+  it('has no axe violations while errors are showing', async () => {
+    component.form.markAllAsTouched();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(await axe(nativeEl)).toHaveNoViolations();
   });
 
   it('should show a validation error when name is empty and touched', () => {
@@ -55,18 +107,6 @@ describe('ContactApp', () => {
 
     const error = nativeEl.querySelector('.contact-error-message');
     expect(error).toBeTruthy();
-  });
-
-  it('should enable the submit button when the form is valid', () => {
-    component.form.setValue({
-      name: 'Test User',
-      email: 'test@example.com',
-      message: 'Hello!',
-    });
-    fixture.detectChanges();
-
-    const btn = nativeEl.querySelector('.contact-submit') as HTMLButtonElement;
-    expect(btn.disabled).toBe(false);
   });
 
   it('should call the submission handler when a valid form is submitted', () => {
@@ -111,6 +151,8 @@ describe('ContactApp', () => {
 
     const success = nativeEl.querySelector('.contact-success');
     expect(success).toBeTruthy();
+    // Announced, not just painted: screen readers hear a live region change.
+    expect(success?.getAttribute('role')).toBe('status');
   });
 
   it('should reset the form after successful submission', async () => {
