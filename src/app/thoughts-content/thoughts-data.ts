@@ -278,4 +278,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'directives', 'angular'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-11-testing',
+    title: 'Angular 11: Testing',
+    date: '2026-11-21',
+    summary:
+      'Component specs with TestBed and axe, HttpTestingController with fake timers, marble tests, fitness tests and where e2e earns its place. Built while finding out my CI typecheck had been checking zero files.',
+    tags: ['angular-guide', 'testing', 'angular'],
+    relatedApp: 'contact',
+  },
 ];

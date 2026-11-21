@@ -274,4 +274,7 @@ A test in architecture.spec.ts now fails on any component that doesn't choose a 
   'angular-10-directives': `By lesson nine the pages were long enough that I kept losing my place in them, so every lesson now has an "On this page" nav that sticks to the top and highlights the section you're in. It comes from two small directives, and they cover most of what directives are for.
 
 One gives every heading an id and registers it. The other watches those headings and reports which one is in view. The lesson component picks that up as a host directive rather than anyone remembering to add an attribute. The demos below cover the parts the nav didn't need: a structural directive, and an input renamed through hostDirectives.`,
+  'angular-11-testing': `I wrote a spec that reads this site's CI workflow, mostly as an example of a fitness test. It failed straight away. The typecheck step ran tsc against a root tsconfig that only holds project references, so it had been checking zero files while showing green. CI also never ran the production build, and no job had a time limit. Earlier in this series I had a test run print "426 passed" and then never exit, so that last one wasn't theoretical.
+
+The same lesson caught me out a second time. A test I wrote to pin a claim from lesson 09 passed when the claim said it shouldn't, and the claim turned out to be wrong. The demo below runs the real contact form validator's tests in the page, with a switch that puts back the bug lesson 08 fixed.`,
 };
