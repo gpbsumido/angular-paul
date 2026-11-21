@@ -1,5 +1,5 @@
 import { NgComponentOutlet } from '@angular/common';
-import { Component, effect, HostListener, inject, viewChild } from '@angular/core';
+import { Component, effect, inject, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -32,6 +32,10 @@ import { WindowManagerService } from './window-manager/window-manager.service';
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
+  // [ng-03 templates] Event binding on the host, or here on `document`.
+  // Preferred over @HostListener: it's plain metadata, it's type-checked
+  // against the class, and it's the style the Angular team now recommends.
+  host: { '(document:keydown)': 'onKeydown($event)' },
 })
 export class App {
   protected readonly launcher = inject(AppLauncherService);
@@ -76,15 +80,15 @@ export class App {
     });
   }
 
-  @HostListener('document:keydown', ['$event'])
+  // [ng-03 templates] Bound through `host: { '(document:keydown)': … }` above.
+  // This used to call handleKeydown twice, so every toggle shortcut flipped
+  // and flipped back: ⌃⌥Space never opened Spotlight. It also still
+  // preventDefault()ed ⌘Space, which the 1.3.4 remap meant to hand back to
+  // the browser. One event, one handler call.
   onKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape' && this.onThoughtsRoute()) {
       this.closeThoughts();
       return;
-    }
-    this.shortcuts.handleKeydown(event);
-    if (event.metaKey && event.code === 'Space') {
-      event.preventDefault();
     }
     this.shortcuts.handleKeydown(event);
   }
