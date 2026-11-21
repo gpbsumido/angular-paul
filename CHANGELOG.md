@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.0
+
+- **Interactive lessons in Thoughts**: a thought can now carry a lazily loaded lesson page under its prose. `thoughts-content/lessons/lessons.ts` maps slugs to loaders, and the reader loads the page through a `resource()` so SSR waits for it. The prerendered `/thoughts/angular-01-project-structure` HTML contains the whole lesson, demo included, not an empty slot. Each lesson is its own lazy chunk (lesson 01 is 13 kB), and the initial bundle is unchanged at 372.98 kB
+- **Angular guide, lesson 01: project structure**. The first of thirteen lessons I'm writing so I can learn Angular properly and talk about it in depth. Each goes simple → intermediate → expert → pitfalls → interview questions, and the code samples are real code from this repo. This one has a live "may this file import that one?" checker built on the same rules the architecture spec enforces
+- **Architecture fitness spec**: `src/app/architecture.spec.ts` fails if anything outside `apps/` statically imports from `apps/` (lazy `import()` is allowed, since that is the code-splitting seam), or if an `@NgModule` appears. It found three real violations on its first run
+- **Settings state moved to `shared/settings/`**: `app.ts`, `dock/dock.ts` and `menu-bar/menu-bar.ts` were all importing `SettingsService`/`AppearanceService` out of the `apps/settings/` feature folder. State the whole desktop reads isn't a feature's private business. The System Preferences screen stays in `apps/settings/`; only the services moved
+- Bootstrap files (`main.ts`, `app.config.ts`, `app.config.server.ts`) are annotated with `[ng-01]` comments, so `grep -rn "ng-01" src` finds every example the lesson refers to
+
 ## 2026-08-16 - version 1.3.7
 
 - **Changelog guard**: `src/changelog.spec.ts` asserts the top entry is the version `package.json` is on, that it has bullets under it, that no version gets two headings, that versions and dates both run newest first, and that every `## ` heading parses as `YYYY-MM-DD - version X.Y.Z`. Ported from the `changelogEntry.test.ts` in `paul-explore` and `portfolio_api`, which have had this for a while — this repo was the one without it
