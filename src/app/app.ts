@@ -17,6 +17,17 @@ import { THOUGHTS } from './thoughts-content/thoughts-data';
 import { Window } from './window-manager/window';
 import { WindowManagerService } from './window-manager/window-manager.service';
 
+// THOUGHTS never changes at runtime, so group it once. The template asks for
+// these on every change detection pass, and a fresh array each time would be
+// a new input value for every open window.
+const RELATED_THOUGHT_SLUGS_BY_APP_ID = new Map<string, string[]>();
+for (const thought of THOUGHTS) {
+  if (!thought.relatedApp) continue;
+  const slugs = RELATED_THOUGHT_SLUGS_BY_APP_ID.get(thought.relatedApp) ?? [];
+  RELATED_THOUGHT_SLUGS_BY_APP_ID.set(thought.relatedApp, [...slugs, thought.slug]);
+}
+const NO_RELATED_THOUGHTS: string[] = [];
+
 @Component({
   selector: 'app-root',
   imports: [
@@ -153,7 +164,7 @@ export class App {
   }
 
   getRelatedThoughts(appId: string): string[] {
-    return THOUGHTS.filter((t) => t.relatedApp === appId).map((t) => t.slug);
+    return RELATED_THOUGHT_SLUGS_BY_APP_ID.get(appId) ?? NO_RELATED_THOUGHTS;
   }
 
   onThoughtRequested(slug: string): void {
