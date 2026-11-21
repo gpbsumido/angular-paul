@@ -233,4 +233,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'dependency-injection', 'angular'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-06-rxjs',
+    title: 'Angular 06: RxJS and HTTP',
+    date: '2026-11-21',
+    summary:
+      'Observables, the four higher-order mapping operators, interceptors and marble tests, with a live switchMap vs mergeMap race. Built while making the site retry requests that fail for a moment.',
+    tags: ['angular-guide', 'rxjs', 'angular'],
+    relatedApp: 'projects',
+  },
 ];

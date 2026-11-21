@@ -259,4 +259,7 @@ The same pass turned the dock's state into a proper store. Two other files had e
   'angular-05-dependency-injection': `Four lessons in, the guide needed a way to remember where I'd got to. A "mark complete" toggle needs storage, the site is prerendered, and the server has no localStorage. The settings service already solved that with an isPlatformBrowser check, written out twice. A second feature needing the same check felt like the moment to fix the pattern instead of copying it.
 
 So storage became an injection token. One factory decides what storage means on each platform. Both services ask for the token, and the specs hand in an in-memory version instead of clearing the real one. The toggle is at the bottom of this page.`,
+  'angular-06-rxjs': `Signals took over most of what I used RxJS for, which made it easier to see what RxJS is still for: things that happen over time. A search box where the answers can come back out of order. A request that fails once and would have worked a second later.
+
+The second one was a real gap. The Projects app showed its error state on the first network blip. Now every GET goes through a small interceptor that retries transient failures twice with backoff, and never retries anything that isn't safe to send twice. The demo below is the first one: two search boxes over the same slow server, one with mergeMap and one with switchMap.`,
 };

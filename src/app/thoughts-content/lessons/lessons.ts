@@ -16,4 +16,5 @@ export const LESSON_PAGES: Record<string, () => Promise<Type<unknown>>> = {
     import('./lesson-03-templates').then((m) => m.Lesson03Templates),
   'angular-04-signals': () => import('./lesson-04-signals').then((m) => m.Lesson04Signals),
   'angular-05-dependency-injection': () => import('./lesson-05-di').then((m) => m.Lesson05Di),
+  'angular-06-rxjs': () => import('./lesson-06-rxjs').then((m) => m.Lesson06Rxjs),
 };

@@ -11,15 +11,16 @@ describe('Lesson06Rxjs', () => {
   let el: HTMLElement;
 
   const text = (selector: string) => el.querySelector(selector)?.textContent ?? '';
+  // Under fake timers the zoneless scheduler's own timeouts are fake too, so
+  // advancing the clock is what runs change detection, not whenStable().
   const type = async (value: string) => {
     const input = el.querySelector<HTMLInputElement>('#race-query')!;
     input.value = value;
     input.dispatchEvent(new Event('input'));
-    await fixture.whenStable();
+    await vi.advanceTimersByTimeAsync(20);
   };
 
   beforeEach(async () => {
-    vi.useFakeTimers();
     await TestBed.configureTestingModule({ imports: [Lesson06Rxjs] }).compileComponents();
     fixture = TestBed.createComponent(Lesson06Rxjs);
     await fixture.whenStable();
@@ -40,18 +41,17 @@ describe('Lesson06Rxjs', () => {
   });
 
   it('typing fast leaves mergeMap showing a stale query and switchMap the current one', async () => {
+    vi.useFakeTimers();
     await type('s');
     await type('si');
     await type('sig');
     await vi.advanceTimersByTimeAsync(2000);
-    await fixture.whenStable();
 
     expect(text('#race-merge')).toContain('"s"');
     expect(text('#race-switch')).toContain('"sig"');
   });
 
   it('has no axe violations', async () => {
-    vi.useRealTimers();
     expect(await axe(el)).toHaveNoViolations();
   });
 });
