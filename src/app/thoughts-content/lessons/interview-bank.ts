@@ -317,4 +317,34 @@ export const INTERVIEW_BANK: Record<string, readonly InterviewQuestion[]> = {
       a: 'My site prerenders its blog pages, and every one of them shipped the menu bar clock as it was at build time. The bar was also marked ngSkipHydration, so the browser threw the server DOM away and rebuilt it. I made the clock render empty on the server, started it in afterNextRender, and removed ngSkipHydration so the bar hydrates. A spec renders the bar through the real server platform and asserts both.',
     },
   ],
+  'angular-13-interview': [
+    {
+      q: 'What has changed in Angular over the last few major versions?',
+      a: 'Standalone components arrived in 14 and became the default in 19. Signals came in 16, built-in control flow and @defer in 17. Zoneless change detection went stable in 20 and is the default for new apps in 21, which also made Vitest the default test runner and introduced experimental Signal Forms. The direction is the same throughout: less framework magic, finer-grained reactivity, and smaller bundles.',
+    },
+    {
+      q: 'How would you migrate an NgModule app to standalone and the new syntax?',
+      a: 'Upgrade one major version at a time with ng update until I am on a current version. Then run the standalone schematic, which works in passes: convert declarations, remove the NgModules that are now empty, then switch to bootstrapApplication. After that the control-flow, inject, signal input and output migrations. One schematic per change, with the tests green between each, so a regression points at one step.',
+    },
+    {
+      q: 'When would you reach for NgRx?',
+      a: 'When a lot of state is shared across features, many parts of the app react to the same events, and the team wants one enforced pattern with devtools and action logs. For most apps, services that expose signals are enough, and that is what my own site uses. NgRx SignalStore is a middle ground: structured, but without actions and reducers.',
+    },
+    {
+      q: 'Walk me through the NgRx data flow.',
+      a: 'A component dispatches an action, which describes something that happened. A reducer, a pure function, takes the current state and the action and returns new state. Selectors derive memoised slices of that state, which components read, as signals with selectSignal or as Observables. Effects listen for actions to run side effects such as HTTP calls, and dispatch new actions with the results.',
+    },
+    {
+      q: 'What is the difference between AngularJS and Angular?',
+      a: 'AngularJS is version 1.x: JavaScript, controllers and $scope, digest-cycle dirty checking. Angular, from version 2 on, is a complete rewrite in TypeScript built on components, dependency injection and an ahead-of-time compiler. They share a name and little else. AngularJS support ended in 2021.',
+    },
+    {
+      q: "What's the hardest Angular bug you've debugged?",
+      a: 'After moving every component on my site to OnPush, ng test and ng build finished their work and then never exited. I bisected the change in a separate worktree and dumped the handles keeping Node alive: an esbuild service process. The trigger was two components with byte-identical inline styles. I made the styles distinct, wrote it up, and added a timeout to every CI job so a hang fails in minutes instead of holding a runner for six hours.',
+    },
+    {
+      q: 'Walk me through an Angular project you have built.',
+      a: 'My portfolio is a macOS-style desktop in Angular 21. The desktop shell is client-rendered, and the writing is prerendered per route for speed and SEO. State lives in services that expose signals; the menu bar, for example, is a computed signal derived from window and dock state. Windows are dynamic components. Every component is OnPush, a fitness test keeps it that way, and CI runs lint, both typechecks, unit tests with axe, a production build and e2e accessibility checks.',
+    },
+  ],
 };

@@ -296,4 +296,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'ssr', 'angular'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-13-interview',
+    title: 'Angular 13: Interview prep',
+    date: '2026-11-21',
+    summary:
+      'The older Angular you will meet at work, how to migrate it, NgRx, and how to talk about what you have built. Ends with a practice deck of every interview question in the guide.',
+    tags: ['angular-guide', 'interview', 'angular'],
+    relatedApp: 'readme',
+  },
 ];

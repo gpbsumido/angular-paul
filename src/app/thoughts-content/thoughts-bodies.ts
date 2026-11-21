@@ -281,4 +281,8 @@ The same lesson caught me out a second time. A test I wrote to pin a claim from 
   'angular-12-ssr': `Every Thoughts page on this site is prerendered at build time, and every one of them shipped the menu bar clock as it read during the build. Open a page a week later and the bar showed last week's time until the JavaScript loaded. The bar was also marked ngSkipHydration, so the browser threw away the HTML the server sent and drew the whole bar again.
 
 The fix was small once I could see what the server actually sends: the clock renders empty on the server, starts in afterNextRender, and the bar hydrates like everything else. A spec renders it through the real server platform to keep it that way. The demo below tells you whether the page you're reading came from the server or from your browser.`,
+
+  'angular-13-interview': `This guide started because I wanted to be able to say I'm fluent in Angular and back it up. Twelve lessons in, the part that would actually come up in an interview was scattered across twelve pages, a handful of questions at the bottom of each.
+
+So the last lesson pulls them together. Every lesson's questions now live in one bank, and the practice deck below drills all of them, one card at a time. Around it is what the other lessons skipped: the NgModule-era Angular most jobs still run, the schematics that migrate it, NgRx, and how to turn the bugs from this guide into answers.`,
 };
