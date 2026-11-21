@@ -39,7 +39,9 @@ describe('Lesson13Interview', () => {
   it('practises every question in the guide, starting with lesson 01', () => {
     const total = Object.values(INTERVIEW_BANK).flat().length;
 
-    expect(el.querySelector('#practice-progress')?.textContent?.trim()).toBe(`${total} left, 0 known`);
+    expect(el.querySelector('#practice-progress')?.textContent?.trim()).toBe(
+      `${total} left, 0 known`,
+    );
     expect(el.querySelector('#practice-topic')?.textContent?.trim()).toBe('Project structure');
   });
 
