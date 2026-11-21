@@ -9,6 +9,22 @@ describe('DockService', () => {
     service = TestBed.inject(DockService);
   });
 
+  it('exposes its state read-only, so only the service can change it', () => {
+    expect('set' in service.runningApps).toBe(false);
+    expect('set' in service.pinnedApps).toBe(false);
+    expect('set' in service.transientApps).toBe(false);
+  });
+
+  it('minimizeApp marks a running app minimized', () => {
+    service.minimizeApp('finder');
+    expect(service.getState('finder')).toBe('minimized');
+  });
+
+  it('minimizeApp ignores an app that is not running', () => {
+    service.minimizeApp('terminal');
+    expect(service.isRunning('terminal')).toBe(false);
+  });
+
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
