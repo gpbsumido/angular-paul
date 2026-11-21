@@ -206,4 +206,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'components', 'angular'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-03-templates',
+    title: 'Angular 03: Templates and binding',
+    date: '2026-11-21',
+    summary:
+      'Property vs attribute binding, built-in control flow, pipes and host event bindings. Writing it turned up a keyboard handler that ran twice per keypress, and dates that would have shown the day before for half the world.',
+    tags: ['angular-guide', 'templates', 'angular'],
+    relatedApp: 'readme',
+  },
 ];

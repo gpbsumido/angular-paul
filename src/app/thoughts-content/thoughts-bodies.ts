@@ -250,4 +250,7 @@ This first one is about the shape of a project: what boots it, where things go, 
   'angular-02-components': `Lesson one's page had all its layout, demo frame and Q&A markup inline. Copying that twelve more times would have been the wrong move, so this lesson is the refactor: the page is now built from small components (a layout, a demo frame, callouts, an interview-question list, and a code block that copies to the clipboard), and lesson one was rebuilt on them.
 
 That makes components the natural topic: what goes in through inputs, what comes out through outputs, what gets projected, and when a component should own nothing at all.`,
+  'angular-03-templates': `Templates are where most Angular bugs live, because a binding looks right whether or not it is. Writing this lesson turned up two in this site. The desktop's keydown handler called the shortcut service twice per event, so the Spotlight shortcut opened it and closed it again in the same keypress. And every thought date was printed raw. The obvious fix, the date pipe, would have shown the day before for anyone behind UTC, because a bare YYYY-MM-DD parses as UTC midnight.
+
+Both are fixed now, and both are in the lesson as the pitfalls they are.`,
 };
