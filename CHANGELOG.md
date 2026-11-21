@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.3
+
+- **Series navigation in the reader**: every Angular guide lesson ends with "Part N of M" and links to the previous and next lessons. They're real `routerLink` anchors, so they prerender as `href`s and ⌘-click opens a new tab
+- **fix: the reader went stale on reuse.** `thought-detail.ts` read `route.snapshot` once, and the router reuses the component when only `:slug` changes, so Next would have kept showing the lesson you were on. The slug is now a signal (`toSignal(route.paramMap)`), and the thought, series position and lazy lesson page are all `computed()`/`resource()` off it. The reader also scrolls back to the top when the slug changes
+- The reader specs now drive the real router through `RouterTestingHarness` instead of mocking `ActivatedRoute.snapshot`. A snapshot mock can't express a reused component getting a new param, which is how the bug hid
+- **Dock state is read-only from outside.** `DockService` keeps private writable signals and exposes `asReadonly()` views. `app.ts` and `menu-bar.service.ts` each had their own copy of "minimize this app" writing the Map directly; both now call `minimizeApp()`
+- **Angular guide, lesson 04: signals** (`/thoughts/angular-04-signals`). Demos show three synchronous writes producing one effect run, and a `linkedSignal` shipping choice that resets when the country changes but stays writable
+- The lesson kicker says "Part 04" instead of "04 of 13", so the page doesn't show two different totals now that the series nav counts what's actually published
+- Initial bundle 377.25 kB → 384.14 kB. I measured it rather than guessed: a build without `RouterLink` is 377.83 kB, so the router's link directive is the 6.3 kB. I'm keeping it, because real prerendered links and correct modifier-click handling are worth it and later lessons reuse it, but there's now 16 kB of headroom under the 400 kB budget
+
 ## 2026-11-21 - version 1.4.2
 
 - **fix: ⌃⌥Space never opened Spotlight.** `App.onKeydown` called `shortcuts.handleKeydown(event)` twice per keydown, so every toggle shortcut flipped and flipped straight back, and ⌃⌥Tab cycled two windows at a time. It's now bound once through `host: { '(document:keydown)': … }` instead of `@HostListener`
