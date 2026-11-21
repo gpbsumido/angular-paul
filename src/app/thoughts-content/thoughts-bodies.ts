@@ -256,4 +256,7 @@ Both are fixed now, and both are in the lesson as the pitfalls they are.`,
   'angular-04-signals': `The series needed previous and next links, and adding them exposed a bug that had been waiting all along. The reader read its slug from the route snapshot once. The router reuses the component when only the slug changes, so clicking Next would have kept showing the lesson you were already on. The fix was to make the slug a signal and derive everything else from it, which is the whole idea of this lesson.
 
 The same pass turned the dock's state into a proper store. Two other files had each written their own copy of "minimize this app" straight into the dock's Map. Now that state is read-only from outside, and the rule lives in one method.`,
+  'angular-05-dependency-injection': `Four lessons in, the guide needed a way to remember where I'd got to. A "mark complete" toggle needs storage, the site is prerendered, and the server has no localStorage. The settings service already solved that with an isPlatformBrowser check, written out twice. A second feature needing the same check felt like the moment to fix the pattern instead of copying it.
+
+So storage became an injection token. One factory decides what storage means on each platform. Both services ask for the token, and the specs hand in an in-memory version instead of clearing the real one. The toggle is at the bottom of this page.`,
 };

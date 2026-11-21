@@ -224,4 +224,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'signals', 'angular'],
     relatedApp: 'readme',
   },
+  {
+    slug: 'angular-05-dependency-injection',
+    title: 'Angular 05: Dependency injection',
+    date: '2026-11-21',
+    summary:
+      'inject(), providers, InjectionTokens and the injector tree, with a live demo of shared vs per-component instances. Built while adding saved reading progress to this guide.',
+    tags: ['angular-guide', 'dependency-injection', 'angular'],
+    relatedApp: 'readme',
+  },
 ];
