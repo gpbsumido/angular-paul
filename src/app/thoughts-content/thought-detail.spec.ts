@@ -62,3 +62,49 @@ describe('ThoughtDetailComponent', () => {
     expect(document.title).toContain('Why Angular Signals Changed Everything');
   });
 });
+
+describe('ThoughtDetailComponent with an interactive lesson page', () => {
+  it('renders the lazily loaded lesson page under the prose', async () => {
+    await TestBed.configureTestingModule({
+      imports: [ThoughtDetailComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: (key: string) => (key === 'slug' ? 'angular-01-project-structure' : null),
+              },
+            },
+          },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(ThoughtDetailComponent);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    expect(el.querySelector('.thought-detail-title')?.textContent).toContain('Project structure');
+    expect(el.querySelector('app-lesson-01-structure')).toBeTruthy();
+  });
+
+  it('renders no lesson page for a prose-only thought', async () => {
+    await TestBed.configureTestingModule({
+      imports: [ThoughtDetailComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { paramMap: { get: () => 'signals' } } },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(ThoughtDetailComponent);
+    await fixture.whenStable();
+
+    expect((fixture.nativeElement as HTMLElement).querySelector('[class^="lesson"]')).toBeNull();
+  });
+});
