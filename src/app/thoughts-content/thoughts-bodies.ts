@@ -277,4 +277,8 @@ One gives every heading an id and registers it. The other watches those headings
   'angular-11-testing': `I wrote a spec that reads this site's CI workflow, mostly as an example of a fitness test. It failed straight away. The typecheck step ran tsc against a root tsconfig that only holds project references, so it had been checking zero files while showing green. CI also never ran the production build, and no job had a time limit. Earlier in this series I had a test run print "426 passed" and then never exit, so that last one wasn't theoretical.
 
 The same lesson caught me out a second time. A test I wrote to pin a claim from lesson 09 passed when the claim said it shouldn't, and the claim turned out to be wrong. The demo below runs the real contact form validator's tests in the page, with a switch that puts back the bug lesson 08 fixed.`,
+
+  'angular-12-ssr': `Every Thoughts page on this site is prerendered at build time, and every one of them shipped the menu bar clock as it read during the build. Open a page a week later and the bar showed last week's time until the JavaScript loaded. The bar was also marked ngSkipHydration, so the browser threw away the HTML the server sent and drew the whole bar again.
+
+The fix was small once I could see what the server actually sends: the clock renders empty on the server, starts in afterNextRender, and the bar hydrates like everything else. A spec renders it through the real server platform to keep it that way. The demo below tells you whether the page you're reading came from the server or from your browser.`,
 };

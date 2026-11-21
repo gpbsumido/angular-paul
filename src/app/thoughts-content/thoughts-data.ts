@@ -287,4 +287,13 @@ export const THOUGHTS: ThoughtEntry[] = [
     tags: ['angular-guide', 'testing', 'angular'],
     relatedApp: 'contact',
   },
+  {
+    slug: 'angular-12-ssr',
+    title: 'Angular 12: SSR and hydration',
+    date: '2026-11-21',
+    summary:
+      'Render modes per route, hydration, TransferState, browser-only code, event replay and incremental hydration. Built while stopping every prerendered page from showing the time the site was built.',
+    tags: ['angular-guide', 'ssr', 'angular'],
+    relatedApp: 'readme',
+  },
 ];
