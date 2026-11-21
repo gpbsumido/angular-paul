@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.6
+
+- **Every tag has its own page**: `/thoughts/tag/<tag>`, prerendered with its own title and canonical URL, and every tag pill in the list and the reader links to it. `/thoughts/tag/angular-guide` is now the reading list for this series. It's a path param rather than `?tag=` on purpose: prerendering writes one file per path, so a query-param page would be served the unfiltered list and then change under the reader during hydration. Prerendered routes went from 27 to 74
+- **Cards are links now.** The Thoughts list cards were `div role="button"`s calling `router.navigate()`, so they had no `href` for crawlers, no middle-click, and nowhere to put the tag links (a link can't sit inside a button). The title is a real `routerLink`, and a stretched `::after` keeps the whole card clickable
+- **fix: a mistyped URL failed the first navigation** with `NG04002: Cannot match any routes`. There's now a `**` route, last in the table, that redirects to the desktop
+- The reader takes `:slug` as an input through `withComponentInputBinding()` instead of `toSignal(route.paramMap)`, which drops its `ActivatedRoute` and RxJS imports. A new spec runs the real route table with the real `appConfig`, so a missing route, a wildcard in the wrong place, or a router feature that's switched off fails a test
+- **Angular guide, lesson 07: routing** (`/thoughts/angular-07-routing`). The playground parses a URL with Angular's own `UrlSerializer` and matches it against this site's actual route table. A checkbox moves the wildcard to the front, to show first-match-wins. Lesson 04's text now notes that lesson 07 replaced the code it shows
+- Initial bundle 389.82 kB → 391.72 kB for the input-binding router feature, the two new routes and the lesson metadata. I didn't split that 1.9 kB any further
+
 ## 2026-11-21 - version 1.4.5
 
 - **GET requests retry transient failures.** One network blip used to put the Projects app straight into "Failed to load projects". A functional interceptor, `retryTransientErrors`, now retries any GET that fails with a network error (status 0) or a 5xx, twice, 400ms and then 800ms later. A 404 fails straight away, and nothing but GETs is ever retried, because a retried POST is a second submission
