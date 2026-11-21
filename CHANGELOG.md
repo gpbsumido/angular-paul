@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-11-21 - version 1.4.2
+
+- **fix: ⌃⌥Space never opened Spotlight.** `App.onKeydown` called `shortcuts.handleKeydown(event)` twice per keydown, so every toggle shortcut flipped and flipped straight back, and ⌃⌥Tab cycled two windows at a time. It's now bound once through `host: { '(document:keydown)': … }` instead of `@HostListener`
+- **fix: ⌘Space was still swallowed.** The same handler kept a `preventDefault()` on ⌘Space that the 1.3.4 remap meant to remove, so the real macOS Spotlight shortcut did nothing while the site had focus. Specs now pin both: one ⌃⌥Space opens Spotlight, and ⌘Space is left un-prevented
+- **Readable thought dates**: cards and the reader show "Jun 15, 2026" instead of `2026-06-15`, inside a `<time datetime>`. Formatting is in UTC on purpose: a bare `YYYY-MM-DD` parses as UTC midnight, so local time would show the day before for anyone west of UTC, and SSR and the browser would disagree
+- I used `DatePipe` first, and the production build put the initial bundle up 13 kB (375.71 → 389.07 kB). `@angular/common` is one module the app already loads eagerly, so `DatePipe`'s locale code landed in the initial chunk even though both views are lazy. A small `utcDate` pipe over `Intl.DateTimeFormat` brought it back to 377.25 kB. It throws on an unparseable date rather than printing "Invalid Date"
+- **Reading time** on prose thoughts via a pure `readingTime` pipe (200 wpm, rounded up). Lesson pages skip it, since a word count of their intro would undersell them
+- **Angular guide, lesson 03: templates and binding** (`/thoughts/angular-03-templates`). Two live demos: property vs attribute binding on an input you type into, and `@for`/`@empty`/`@let`/`@switch` on a removable tag list. Both bugs above are in the lesson as pitfalls
+
 ## 2026-11-21 - version 1.4.1
 
 - **Angular guide, lesson 02: components** (`/thoughts/angular-02-components`). Covers standalone components, `input()`, `output()`, `model()`, content projection, dynamic components and view encapsulation. The live demo is a badge whose label and tone flow in through inputs, whose count is two-way through `[(count)]`, and whose dismiss button emits an output into an event log
