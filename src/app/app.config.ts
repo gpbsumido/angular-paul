@@ -14,10 +14,11 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
+import { retryTransientErrors } from './shared/retry-transient-errors.interceptor';
 import {
   provideClientHydration,
   withEventReplay,
@@ -32,7 +33,10 @@ export const appConfig: ApplicationConfig = {
     // Covered properly in lesson 09.
     provideZonelessChangeDetection(),
     // HttpClient backed by fetch() instead of XHR — required for good SSR.
-    provideHttpClient(withFetch()),
+    // [ng-06 rxjs] Interceptors run in array order on the way out and reverse
+    // order on the way back. withInterceptors() takes plain functions; the
+    // class-based HTTP_INTERCEPTORS multi-provider is the legacy form.
+    provideHttpClient(withFetch(), withInterceptors([retryTransientErrors])),
     provideRouter(routes),
     // SSR hydration: reuse server-rendered DOM instead of re-creating it.
     // Lesson 12.
